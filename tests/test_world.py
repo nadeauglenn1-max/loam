@@ -61,6 +61,37 @@ def test_forage_can_be_fatal_in_a_deadly_place():
     assert any(f["cause"] == "forage" for f in w.fallen)
 
 
+def test_predator_takes_the_lone_forager():
+    w = _w(4)
+    a = w.agents["a0"]
+    a.location = "the deepwood"
+    a.genome.forage_skill = 0.0
+    w.predator = "the deepwood"
+    w.bloom["the deepwood"] = 10.0
+    w._forage(a, ScriptedRandom([0.0]))     # the beast catches a lone forager
+    assert not a.alive
+    assert any(f["cause"] == "predator" for f in w.fallen)
+
+
+def test_a_group_faces_the_beast_and_survives():
+    w = _w(4)
+    for aid in ("a0", "a1", "a2"):
+        w.agents[aid].location = "the deepwood"
+    g = w.agents["a0"]
+    g.genome.forage_skill = 0.0
+    w.predator = "the deepwood"
+    w.bloom["the deepwood"] = 10.0
+    w._forage(g, ScriptedRandom([0.99]))    # three together drive it off; terrain misses
+    assert g.alive
+    assert any("beast" in m for m in g.memory.events)
+
+
+def test_predator_roams_a_dangerous_place():
+    w = _w(3)
+    w._roam_predator(ScriptedRandom())
+    assert w.predator in config.PREDATOR_PLACES
+
+
 def test_forage_finds_nothing_when_bare():
     w = _w(2)
     a = w.agents["a0"]

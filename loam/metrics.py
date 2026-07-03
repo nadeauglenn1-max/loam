@@ -96,10 +96,12 @@ def census(world: "World") -> dict:
         "generations": (max(gens) + 1) if gens else 0,
         "avg_age": round(sum(a.age for a in living.values()) / n, 1) if n else 0,
         "avg_vitality": round(sum(a.vitality for a in living.values()) / n, 2) if n else 0,
+        "avg_bravery": round(sum(a.genome.bravery for a in living.values()) / n, 3) if n else 0,
         "births": t.get("births", 0),
         "deaths_hunger": t.get("deaths_hunger", 0),
         "deaths_age": t.get("deaths_age", 0),
         "deaths_forage": t.get("deaths_forage", 0),
+        "deaths_predator": t.get("deaths_predator", 0),
         "deaths_violence": t.get("deaths_violence", 0),
         "gifts": t.get("gifts", 0),
         "seizures": t.get("seizures", 0),
@@ -109,17 +111,23 @@ def census(world: "World") -> dict:
     }
 
 
+def _total_deaths(c: dict) -> int:
+    return (c["deaths_hunger"] + c["deaths_age"] + c["deaths_forage"]
+            + c["deaths_predator"] + c["deaths_violence"])
+
+
 def snapshot(world: "World") -> dict:
     frac, edges, total = coverage(world)
     c = census(world)
     return {"tick": world.tick, "coverage": round(frac, 4),
             "population": c["population"], "generations": c["generations"],
-            "births": c["births"], "deaths": c["deaths_hunger"] + c["deaths_age"]
-            + c["deaths_forage"] + c["deaths_violence"]}
+            "avg_bravery": c["avg_bravery"], "births": c["births"],
+            "deaths": _total_deaths(c)}
 
 
 def _notable(world: "World", limit: int = 14) -> list[str]:
-    keys = ("born", "died", "was lost", "was killed", "learned", "seized", "gave bloom", "expecting")
+    keys = ("born", "died", "was lost", "was killed", "the beast", "learned",
+            "seized", "gave bloom", "expecting", "driven off")
     hits = [line for line in world.feed if any(k in line for k in keys)]
     return hits[-limit:]
 
@@ -135,11 +143,20 @@ def chronicle(world: "World") -> str:
 
     lines.append(f"{c['population']} beings alive across {c['generations']} generation(s); "
                  f"average age {c['avg_age']}, average vitality {c['avg_vitality']}.")
+
+    # the courage of the people, and how it has moved
+    born_brave = world.history[0]["avg_bravery"] if world.history and "avg_bravery" in world.history[0] else None
+    drift = ""
+    if born_brave is not None:
+        d = c["avg_bravery"] - born_brave
+        way = "steadied" if abs(d) < 0.02 else ("grown bolder" if d > 0 else "grown warier")
+        drift = f" — {way} from {born_brave:.2f} at the start"
+    lines.append(f"The courage of the people is {c['avg_bravery']:.2f}{drift}. The beast prowls {world.predator}.")
     lines.append("")
 
     lines.append("The toll so far:")
-    lines.append(f"  born: {c['births']}   |   died — hunger {c['deaths_hunger']}, "
-                 f"age {c['deaths_age']}, the wild {c['deaths_forage']}, violence {c['deaths_violence']}")
+    lines.append(f"  born: {c['births']}   |   died — hunger {c['deaths_hunger']}, age {c['deaths_age']}, "
+                 f"the wild {c['deaths_forage']}, the beast {c['deaths_predator']}, violence {c['deaths_violence']}")
     lines.append(f"  matings {c['matings']}, harvests {c['harvests']}, "
                  f"crop failures {c['crop_failures']}")
     lines.append("")

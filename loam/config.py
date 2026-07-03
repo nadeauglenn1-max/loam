@@ -82,4 +82,19 @@ LIFESPAN_MEAN = 620
 LIFESPAN_SPREAD = 180            # ± range around the mean at genesis
 SKILL_MUTATION = 0.15            # std-dev of skill drift from parent to child
 APPETITE_MUTATION = 0.2          # std-dev of want-appetite drift
+BRAVERY_MUTATION = 0.12          # std-dev of courage drift — what selection tunes
 LIFESPAN_MUTATION = 90           # ± drift of lifespan from parent blend
+
+# ---- the predator ------------------------------------------------------------
+# A beast that roams the dangerous places, hunting whoever forages there. Lone
+# foragers are easy prey; a group can share the risk and drive it off. The point
+# is not death for its own sake — it is the pressure that selects for courage
+# that is calibrated: brave enough to eat, not so reckless as to be eaten.
+# The beast roams every place that holds food — leaving only the hearth as
+# refuge, and the hearth cannot feed a crowd. With no free safe haven, the two
+# death-pressures (the beast prunes the reckless, hunger prunes the timid)
+# balance, and courage evolves to a calibrated middle instead of collapsing to
+# cowardice. (Verified: with a free refuge, bravery floors and the world dwindles.)
+PREDATOR_PLACES = ("the meadow", "the mire", "the thornwood", "the deepwood")
+PREDATOR_LETHAL = 0.5            # base kill chance when it catches a lone forager
+PREDATOR_DRIVEN_OFF = 3          # this many foragers together drive it off (no kill)

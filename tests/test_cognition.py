@@ -43,6 +43,30 @@ def test_grower_moves_to_farmland_when_it_cannot_grow_here():
     assert d.kind == "move" and d.place == "the meadow"
 
 
+def test_the_bold_forage_deeper_than_the_timid():
+    from loam.cognition import _boldness, _forage_ground
+    w = _w()
+    bold, timid = w.agents["a0"], w.agents["a1"]
+    for x in (bold, timid):
+        x.genome.forage_skill = 0.5
+        x.vitality = 0.8
+    bold.genome.bravery, timid.genome.bravery = 0.95, 0.1
+    depths = ["the meadow", "the mire", "the thornwood", "the deepwood"]
+    assert depths.index(_forage_ground(_boldness(bold))) > \
+           depths.index(_forage_ground(_boldness(timid)))
+
+
+def test_desperation_lends_the_timid_nerve():
+    from loam.cognition import _boldness
+    w = _w()
+    a = w.agents["a0"]
+    a.genome.bravery, a.genome.forage_skill = 0.2, 0.3
+    a.vitality = 0.9
+    calm = _boldness(a)
+    a.vitality = 0.1                      # starving
+    assert _boldness(a) > calm            # need pushes even the timid deeper
+
+
 def test_grower_migrates_when_the_soil_here_is_dead():
     w = _w()
     a = _solo(w)

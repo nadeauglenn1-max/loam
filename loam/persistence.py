@@ -22,7 +22,8 @@ def _agent_to_dict(a: Agent) -> dict:
     return {
         "id": a.id, "name": a.name,
         "genome": {"appetites": a.genome.appetites, "forage_skill": a.genome.forage_skill,
-                   "grow_skill": a.genome.grow_skill, "lifespan": a.genome.lifespan},
+                   "grow_skill": a.genome.grow_skill, "bravery": a.genome.bravery,
+                   "lifespan": a.genome.lifespan},
         "language": {"word_of": a.language.word_of, "concept_of": a.language.concept_of},
         "lexicon": {"known": a.lexicon.known, "evidence": a.lexicon.evidence},
         "wants": {"appetite": a.wants.appetite, "focus": a.wants.focus, "intensity": a.wants.intensity},
@@ -41,7 +42,9 @@ def _agent_from_dict(d: dict) -> Agent:
     gd = d["genome"]
     return Agent(
         id=aid, name=d["name"],
-        genome=Genome(dict(gd["appetites"]), gd["forage_skill"], gd["grow_skill"], gd["lifespan"]),
+        genome=Genome(appetites=dict(gd["appetites"]), forage_skill=gd["forage_skill"],
+                      grow_skill=gd["grow_skill"], bravery=gd.get("bravery", 0.5),
+                      lifespan=gd["lifespan"]),
         language=PrivateLanguage(aid, dict(d["language"]["word_of"]), dict(d["language"]["concept_of"])),
         lexicon=Lexicon(dict(d["lexicon"]["known"]), dict(d["lexicon"]["evidence"])),
         wants=Wants(aid, dict(d["wants"]["appetite"]), d["wants"]["focus"], d["wants"]["intensity"]),
@@ -58,6 +61,7 @@ def _agent_from_dict(d: dict) -> Agent:
 def to_dict(w: World) -> dict:
     return {
         "seed": w.seed, "tick": w.tick, "present": w.present, "next_index": w.next_index,
+        "predator": w.predator,
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
         "bloom": w.bloom, "feed": w.feed,
         "utterances": [vars(u) for u in w.utterances],
@@ -67,7 +71,7 @@ def to_dict(w: World) -> dict:
 
 def from_dict(d: dict, model=None) -> World:
     w = World(seed=d["seed"], tick=d["tick"], present=d.get("present", False),
-              next_index=d.get("next_index", 0))
+              next_index=d.get("next_index", 0), predator=d.get("predator", ""))
     if model is not None:
         w.cognition = model
     for ad in d["agents"]:

@@ -32,6 +32,7 @@ class Genome:
     appetites: dict[str, float] = field(default_factory=dict)  # per-concept pull
     forage_skill: float = 0.5                                  # 0..1
     grow_skill: float = 0.5                                    # 0..1
+    bravery: float = 0.5                                       # 0..1 willingness to risk
     lifespan: int = config.LIFESPAN_MEAN
 
     @classmethod
@@ -41,8 +42,11 @@ class Genome:
         lean = _unit(f"{agent_id}:lean")
         forage = _clamp(0.25 + 0.6 * lean + 0.15 * _unit(f"{agent_id}:forage"))
         grow = _clamp(0.25 + 0.6 * (1 - lean) + 0.15 * _unit(f"{agent_id}:grow"))
+        # Founders vary widely in courage — the timid, the bold, the reckless.
+        bravery = _clamp(0.15 + 0.7 * _unit(f"{agent_id}:brave"))
         span = config.LIFESPAN_MEAN + int((_unit(f"{agent_id}:span") - 0.5) * 2 * config.LIFESPAN_SPREAD)
-        return cls(appetites=appetites, forage_skill=forage, grow_skill=grow, lifespan=span)
+        return cls(appetites=appetites, forage_skill=forage, grow_skill=grow,
+                   bravery=bravery, lifespan=span)
 
     @classmethod
     def inherit(cls, a: "Genome", b: "Genome", rng: _random.Random) -> "Genome":
@@ -56,6 +60,8 @@ class Genome:
                         + rng.gauss(0, config.SKILL_MUTATION))
         grow = _clamp(rng.choice((a.grow_skill, b.grow_skill))
                       + rng.gauss(0, config.SKILL_MUTATION))
+        bravery = _clamp(rng.choice((a.bravery, b.bravery)) + rng.gauss(0, config.BRAVERY_MUTATION))
         span = int((a.lifespan + b.lifespan) / 2 + rng.gauss(0, config.LIFESPAN_MUTATION))
         span = max(120, span)
-        return cls(appetites=appetites, forage_skill=forage, grow_skill=grow, lifespan=span)
+        return cls(appetites=appetites, forage_skill=forage, grow_skill=grow,
+                   bravery=bravery, lifespan=span)

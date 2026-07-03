@@ -58,13 +58,19 @@ class Cognition(Protocol):
         ...
 
 
-# Skill-stratified wild grounds: the bolder the forager, the deeper it dares.
-def _forage_ground(skill: float) -> str:
-    if skill < 0.45:
+# How far into danger a being will go: its courage, its skill, and its need.
+# The timid stay shallow (and may starve in the crowd); the bold go deep (and
+# may be eaten); desperation lends even the timid nerve.
+def _boldness(a: "Agent") -> float:
+    return 0.4 * a.genome.bravery + 0.35 * a.genome.forage_skill + 0.25 * (1 - a.vitality)
+
+
+def _forage_ground(boldness: float) -> str:
+    if boldness < 0.4:
         return "the meadow"
-    if skill < 0.62:
+    if boldness < 0.58:
         return "the mire"
-    if skill < 0.78:
+    if boldness < 0.75:
         return "the thornwood"
     return "the deepwood"
 
@@ -106,10 +112,10 @@ class RuleCognition:
                     return Decision("move", place=best, thought=thought)
                 if here["wild"] > 0 and soil_here > 0.5:
                     return Decision("forage", thought=thought)
-                return Decision("move", place=_forage_ground(a.genome.forage_skill), thought=thought)
+                return Decision("move", place=_forage_ground(_boldness(a)), thought=thought)
             if here["wild"] > 0 and soil_here > 0.5:
                 return Decision("forage", thought=thought)
-            return Decision("move", place=_forage_ground(a.genome.forage_skill), thought=thought)
+            return Decision("move", place=_forage_ground(_boldness(a)), thought=thought)
 
         # 2. thriving and bonded: sometimes breed
         if a.vitality > 0.8 and world._fertile(a):
@@ -207,11 +213,17 @@ class ClaudeCognition:
             f"{'safe' if d['danger'] < 0.1 else 'risky' if d['danger'] < 0.45 else 'deadly'}"
             for p, d in PLACES.items())
         memory = " | ".join(a.memory.recent(4)) or "nothing yet"
+        temper = ("bold" if a.genome.bravery > 0.66 else
+                  "cautious" if a.genome.bravery < 0.4 else "steady")
+        beast = (f"The beast is HERE with you." if world.predator == a.location
+                 else f"The beast is said to prowl {world.predator}.")
         return (
             f"You are {a.name}. You are {a.condition} (vitality {a.vitality:.2f}), "
             f"age {a.age} of about {a.genome.lifespan}, holding {a.bloom:.1f} bloom.\n"
-            f"You are gifted at {'growing' if a.genome.grow_skill > a.genome.forage_skill else 'foraging'}.\n"
-            f"You are at {a.location}: {affords}; {danger} to forage; wild bloom here ~{stock:.0f}.\n"
+            f"You are gifted at {'growing' if a.genome.grow_skill > a.genome.forage_skill else 'foraging'}, "
+            f"and by nature {temper}.\n"
+            f"You are at {a.location}: {affords}; {danger} to forage; wild bloom here ~{stock:.0f}. {beast}\n"
+            f"A lone forager is easy prey; foraging together is far safer.\n"
             f"Beside you: {beside}.\n"
             f"Right now you also want: {a.wants.focus}.\n"
             f"The places you know:\n{places}\n"

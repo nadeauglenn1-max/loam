@@ -30,6 +30,7 @@ class World:
     history: list[dict] = field(default_factory=list)
     fallen: list[dict] = field(default_factory=list)        # obituaries
     tally: dict[str, int] = field(default_factory=dict)     # lifetime event counts
+    predator: str = ""                                      # where the beast prowls
     next_index: int = 0
     present: bool = False
     cognition: Cognition = field(default_factory=RuleCognition, repr=False)
@@ -44,6 +45,7 @@ class World:
         w.next_index = n_agents
         for place, d in PLACES.items():
             w.bloom[place] = d["wild"] * config.WILD_MAX_SCALE * 0.5   # half-stocked at genesis
+        w.predator = config.PREDATOR_PLACES[0]
         w._log(f"A world wakes with {n_agents} beings at {config.STARTING_PLACE}.")
         return w
 
@@ -71,6 +73,7 @@ class World:
         self.tick += 1
         rng = self._rng()
         self._regrow(rng)
+        self._roam_predator(rng)
         order = sorted(self.living(), key=lambda a: a.id)
         rng.shuffle(order)
         for agent in order:
@@ -102,6 +105,18 @@ class World:
                 ceiling,
                 self.bloom.get(place, 0.0) + d["wild"] * config.WILD_REGROW_SCALE * rng.uniform(0.5, 1.5),
             )
+
+    def _roam_predator(self, rng: random.Random) -> None:
+        """The beast prowls toward where beings gather in the wild — picking off
+        the exposed, but wary of a true crowd."""
+        crowds = [(p, sum(1 for a in self.living() if a.location == p))
+                  for p in config.PREDATOR_PLACES]
+        drawn = [(p, n) for p, n in crowds if n > 0]
+        if drawn:
+            most = max(n for _, n in drawn)
+            self.predator = rng.choice([p for p, n in drawn if n == most])
+        else:
+            self.predator = rng.choice(config.PREDATOR_PLACES)
 
     # ---- applying a decision ---------------------------------------------
     def _apply(self, agent: Agent, d: Decision, rng: random.Random) -> None:
@@ -144,7 +159,15 @@ class World:
         agent.bloom += gathered
         agent.memory.remember(self.tick, f"foraged {gathered:.1f} bloom at {agent.location}")
         self._bump("forage_trips")
-        if rng.random() < d["danger"] * (1 - 0.5 * skill):     # something went wrong
+        # the beast: deadly to the lone forager, survivable in a group
+        if agent.location == self.predator:
+            group = 1 + len(self.co_located(agent))
+            if group >= config.PREDATOR_DRIVEN_OFF:
+                agent.memory.remember(self.tick, "the beast circled, but we were enough to face it")
+            elif rng.random() < config.PREDATOR_LETHAL * (1 - 0.4 * skill) / group:
+                self._die(agent, "predator", f"was taken by the beast at {agent.location}")
+                return
+        if rng.random() < d["danger"] * (1 - 0.5 * skill):     # the terrain itself
             if rng.random() < config.FORAGE_LETHAL * d["danger"] * (1 - skill):
                 self._die(agent, "forage", f"was lost foraging in {agent.location}")
             else:
@@ -197,7 +220,6 @@ class World:
             target.memory.remember(self.tick, f"{giver.name} took bloom from me by force")
             self._log(f"{giver.name} seized bloom from {target.name}.")
             if target.vitality <= 0:
-                self._bump("deaths_violence")
                 self._die(target, "violence", f"was killed by {giver.name} over bloom")
         else:
             if giver.bloom <= 0.01:
@@ -325,7 +347,7 @@ class World:
         if not a.alive:
             return
         a.alive = False
-        self._bump(f"deaths_{cause}" if cause in ("hunger", "age") else "deaths")
+        self._bump(f"deaths_{cause}")
         self.fallen.append({"id": a.id, "name": a.name, "cause": cause, "tick": self.tick,
                             "age": a.age, "generation": a.generation})
         self._log(f"{a.name} {text} (age {a.age}, gen {a.generation}).")
@@ -366,7 +388,7 @@ class World:
             f"{a.name} ({a.id}) — at {a.location}, generation {a.generation}\n"
             f"  body: {a.condition} (vitality {a.vitality:.2f}), age {a.age}/{g.lifespan}, "
             f"holding {a.bloom:.1f} bloom{preg}\n"
-            f"  gifts: forage {g.forage_skill:.2f}, grow {g.grow_skill:.2f}\n"
+            f"  gifts: forage {g.forage_skill:.2f}, grow {g.grow_skill:.2f}, bravery {g.bravery:.2f}\n"
             f"  wants: {a.wants.describe()}\n"
             f"  thought: {a.last_thought or '(quiet)'}\n"
             f"  closest to: {bonds}\n"

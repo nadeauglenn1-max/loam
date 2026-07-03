@@ -49,7 +49,8 @@ def test_census_reports_population_and_tallies():
 def test_snapshot_shape():
     w = World.seeded(n_agents=4, seed=7)
     s = metrics.snapshot(w)
-    assert set(s) == {"tick", "coverage", "population", "generations", "births", "deaths"}
+    assert set(s) == {"tick", "coverage", "population", "generations",
+                      "avg_bravery", "births", "deaths"}
 
 
 def test_chronicle_reads_like_a_report():

@@ -54,7 +54,12 @@ python -m loam.cli run --ticks 40 --real
   same finite, regrowing land, so crowding starves a place — and the world finds
   a carrying capacity on its own.
 - **Life**: beings age and die of hunger, the wild, violence, or old age. Skills
-  (foraging, growing), appetites, and lifespan are **heritable**.
+  (foraging, growing), appetites, lifespan, and **courage** are all **heritable**.
+- **The beast**: a predator roams every place that holds food, deadly to a lone
+  forager but survivable by a group. It prunes the reckless; hunger prunes the
+  timid. With no free refuge, **courage evolves to a calibrated middle** — brave
+  enough to eat, wary enough to live (a run of ~1800 free ticks shows bravery
+  settling and holding its variance instead of collapsing).
 - **Procreation**: two thriving, bonded, co-located beings conceive; after
   gestation a child is born, inheriting a blend of its parents — which it *may or
   may not* follow — and a **drifted copy of a parent's tongue**. So lineages

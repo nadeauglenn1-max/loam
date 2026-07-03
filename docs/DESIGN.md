@@ -89,6 +89,17 @@ We instrument for these (census, lineages, tallies of gifts/seizures/deaths,
 faction clustering by tongue) and we *read the run* — we do not hardcode the
 answers.
 
+## The beast, and the evolution of courage (v0.4)
+
+A predator roams the food-bearing places, deadly to a lone forager, survivable
+by a group. Courage is a heritable gene. The point is not death — it is a
+*selective pressure with a twin*: the beast prunes the reckless, hunger prunes
+the timid. If there is a free safe refuge, timidity is never punished and
+courage collapses to cowardice (the population huddles and dwindles). Remove the
+free refuge, and the two pressures balance: **courage evolves to a calibrated
+middle and holds its variance** — brave enough to eat, wary enough to live. This
+was run and confirmed; see the README.
+
 ## Roadmap
 
 - **v0.3 (in progress)** — ecology (bloom, forage-risk, grow-uncertainty, big
