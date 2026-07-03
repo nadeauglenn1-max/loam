@@ -1,13 +1,13 @@
 """Loam's command line — how you tend and inhabit the world.
 
-  loam run --ticks 20            # let it live 20 ticks (rule cognition, free)
-  loam run --ticks 5 --present   # you're here; pivotal moments think harder
-  loam run --ticks 5 --real      # live Claude cognition (needs a key)
+  loam run --ticks 50            # let it live (rule cognition, free)
+  loam run --ticks 20 --real     # live Claude cognition (needs a key)
+  loam chronicle                 # the report: births, deaths, tribes, tongue
+  loam census                    # the numbers at a glance
+  loam map                       # places, danger, bloom, who is where
   loam watch                     # what you'd have noticed lately
-  loam chronicle                 # the morning report: is a shared tongue forming?
-  loam map                       # where everyone is right now
-  loam visit a2                  # sit with one being
-  loam translate kalo a3         # help a3 understand the word "kalo"
+  loam visit a3                  # sit with one being
+  loam translate kalo a5         # help a5 understand the word "kalo"
   loam reset --agents 6          # begin a new world
 """
 from __future__ import annotations
@@ -53,11 +53,14 @@ def cmd_run(args: argparse.Namespace) -> int:
     new = w.feed[before:]
     tail = new if new else w.feed[-12:]
     mind = "live Claude" if args.real else "rule"
-    print(f"— {args.ticks} ticks lived ({mind} cognition; now t{w.tick}, {len(w.agents)} beings) —")
-    for line in tail[-16:]:
+    c = metrics.census(w)
+    print(f"— {args.ticks} ticks lived ({mind} cognition; now t{w.tick}) —")
+    for line in tail[-18:]:
         print(line)
     frac, edges, total = metrics.coverage(w)
-    print(f"— shared tongue: {frac * 100:.0f}% ({edges}/{total} links) —")
+    print(f"— {c['population']} alive, gen {c['generations']}, "
+          f"{c['births']} born, {c['deaths_hunger'] + c['deaths_age'] + c['deaths_forage'] + c['deaths_violence']} dead"
+          f"; shared tongue {frac * 100:.0f}% —")
     return 0
 
 
@@ -78,14 +81,26 @@ def cmd_chronicle(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_census(args: argparse.Namespace) -> int:
+    w = _require_world()
+    if w is None:
+        return 1
+    c = metrics.census(w)
+    for k, v in c.items():
+        print(f"  {k:16} {v}")
+    return 0
+
+
 def cmd_map(args: argparse.Namespace) -> int:
     w = _require_world()
     if w is None:
         return 1
-    for place, affords in PLACES.items():
-        here = [a.name for a in w.agents.values() if a.location == place]
-        who = ", ".join(sorted(here)) if here else "—"
-        print(f"{place:14} (for {', '.join(affords)}): {who}")
+    for place, d in PLACES.items():
+        here = sorted(a.name for a in w.agents.values() if a.location == place)
+        danger = ("safe" if d["danger"] < 0.1 else "risky" if d["danger"] < 0.45 else "deadly")
+        stock = w.bloom.get(place, 0.0)
+        who = ", ".join(here) if here else "—"
+        print(f"{place:14} {danger:6} bloom {stock:5.1f}  | {who}")
     return 0
 
 
@@ -119,8 +134,8 @@ def build_parser() -> argparse.ArgumentParser:
     sub = p.add_subparsers(dest="cmd", required=True)
 
     r = sub.add_parser("run", help="let the world live N ticks")
-    r.add_argument("--ticks", type=int, default=10)
-    r.add_argument("--agents", type=int, default=5, help="only used for a fresh world")
+    r.add_argument("--ticks", type=int, default=20)
+    r.add_argument("--agents", type=int, default=6, help="only used for a fresh world")
     r.add_argument("--seed", type=int, default=7)
     r.add_argument("--present", action="store_true", help="you're here; think harder")
     r.add_argument("--real", action="store_true", help="live Claude cognition")
@@ -130,11 +145,9 @@ def build_parser() -> argparse.ArgumentParser:
     w.add_argument("--lines", type=int, default=20)
     w.set_defaults(func=cmd_watch)
 
-    c = sub.add_parser("chronicle", help="the morning report")
-    c.set_defaults(func=cmd_chronicle)
-
-    m = sub.add_parser("map", help="where everyone is right now")
-    m.set_defaults(func=cmd_map)
+    sub.add_parser("chronicle", help="the report").set_defaults(func=cmd_chronicle)
+    sub.add_parser("census", help="the numbers").set_defaults(func=cmd_census)
+    sub.add_parser("map", help="places, danger, bloom, who is where").set_defaults(func=cmd_map)
 
     v = sub.add_parser("visit", help="sit with one being")
     v.add_argument("agent")
@@ -146,7 +159,7 @@ def build_parser() -> argparse.ArgumentParser:
     t.set_defaults(func=cmd_translate)
 
     x = sub.add_parser("reset", help="begin a new world")
-    x.add_argument("--agents", type=int, default=5)
+    x.add_argument("--agents", type=int, default=6)
     x.add_argument("--seed", type=int, default=7)
     x.set_defaults(func=cmd_reset)
     return p
@@ -156,7 +169,7 @@ def main(argv: list[str] | None = None) -> int:
     for stream in (sys.stdout, sys.stderr):
         try:
             stream.reconfigure(encoding="utf-8")
-        except (AttributeError, ValueError):  # pragma: no cover - non-reconfigurable stream
+        except (AttributeError, ValueError):  # pragma: no cover
             pass
     args = build_parser().parse_args(argv)
     return args.func(args)

@@ -31,17 +31,20 @@ def test_run_creates_a_world_when_none_exists(capsys):
     assert w.tick == 3
 
 
-def test_chronicle_and_map(capsys):
-    main(["reset", "--agents", "4"])
-    main(["run", "--ticks", "20"])
+def test_chronicle_map_census(capsys):
+    main(["reset", "--agents", "5"])
+    main(["run", "--ticks", "25"])
     capsys.readouterr()
 
     assert main(["chronicle"]) == 0
-    assert "shared tongue" in capsys.readouterr().out
+    assert "tongue" in capsys.readouterr().out
 
     assert main(["map"]) == 0
     map_out = capsys.readouterr().out
-    assert "the commons" in map_out
+    assert "the commons" in map_out and "bloom" in map_out
+
+    assert main(["census"]) == 0
+    assert "population" in capsys.readouterr().out
 
 
 def test_visit_and_translate(capsys):

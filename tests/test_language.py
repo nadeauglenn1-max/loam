@@ -38,3 +38,25 @@ def test_translation_teaches_immediately():
     lex.teach("mizi", "company")
     assert lex.knows("mizi")
     assert lex.known["mizi"] == "company"
+
+
+def test_child_inherits_most_of_a_parents_tongue():
+    import random
+
+    from loam.config import LANGUAGE_DRIFT
+    parent = PrivateLanguage.for_agent("a0")
+    child = PrivateLanguage.inherit(parent, "a9", random.Random(0))
+    shared = sum(1 for c in CONCEPTS if child.word_of[c] == parent.word_of[c])
+    # most words inherited (drift only replaces a minority)
+    assert shared >= len(CONCEPTS) * (1 - LANGUAGE_DRIFT) - 1
+    # a fully inherited word is understood natively by both
+    for c in CONCEPTS:
+        if child.word_of[c] == parent.word_of[c]:
+            assert parent.understand(child.word_of[c]) == c
+
+
+def test_no_drift_yields_the_parent_tongue():
+    import random
+    parent = PrivateLanguage.for_agent("a0")
+    child = PrivateLanguage.inherit(parent, "a9", random.Random(0), drift=0.0)
+    assert child.word_of == parent.word_of

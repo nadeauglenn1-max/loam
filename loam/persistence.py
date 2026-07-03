@@ -1,8 +1,6 @@
-"""Save and load the world, so it accumulates.
-
-The whole point is that value lives in wall-clock time: you close the laptop,
-the world keeps its history, and you return to a society that changed. State is
-plain JSON — inspectable, diffable, yours.
+"""Save and load the world, so it accumulates across sessions — its history, its
+dead, and every living body with its genome and holdings. Plain JSON: yours to
+read, diff, and keep.
 """
 from __future__ import annotations
 
@@ -11,6 +9,7 @@ from pathlib import Path
 
 from .agent import Agent
 from .config import STARTING_PLACE
+from .genome import Genome
 from .language import Lexicon, PrivateLanguage, Utterance
 from .memory import Memory
 from .wants import Wants
@@ -21,58 +20,65 @@ DEFAULT_PATH = Path("runtime") / "world.json"
 
 def _agent_to_dict(a: Agent) -> dict:
     return {
-        "id": a.id,
-        "name": a.name,
+        "id": a.id, "name": a.name,
+        "genome": {"appetites": a.genome.appetites, "forage_skill": a.genome.forage_skill,
+                   "grow_skill": a.genome.grow_skill, "lifespan": a.genome.lifespan},
         "language": {"word_of": a.language.word_of, "concept_of": a.language.concept_of},
         "lexicon": {"known": a.lexicon.known, "evidence": a.lexicon.evidence},
-        "wants": {"appetite": a.wants.appetite, "focus": a.wants.focus,
-                  "intensity": a.wants.intensity},
+        "wants": {"appetite": a.wants.appetite, "focus": a.wants.focus, "intensity": a.wants.intensity},
         "memory": {"capacity": a.memory.capacity, "events": list(a.memory.events)},
         "relationships": a.relationships,
         "location": a.location,
+        "vitality": a.vitality, "age": a.age, "bloom": a.bloom, "alive": a.alive,
+        "generation": a.generation, "parents": list(a.parents),
+        "gestation": a.gestation, "mate_id": a.mate_id,
         "last_thought": a.last_thought,
     }
 
 
 def _agent_from_dict(d: dict) -> Agent:
     aid = d["id"]
+    gd = d["genome"]
     return Agent(
-        id=aid,
-        name=d["name"],
-        language=PrivateLanguage(aid, dict(d["language"]["word_of"]),
-                                 dict(d["language"]["concept_of"])),
+        id=aid, name=d["name"],
+        genome=Genome(dict(gd["appetites"]), gd["forage_skill"], gd["grow_skill"], gd["lifespan"]),
+        language=PrivateLanguage(aid, dict(d["language"]["word_of"]), dict(d["language"]["concept_of"])),
         lexicon=Lexicon(dict(d["lexicon"]["known"]), dict(d["lexicon"]["evidence"])),
-        wants=Wants(aid, dict(d["wants"]["appetite"]), d["wants"]["focus"],
-                    d["wants"]["intensity"]),
+        wants=Wants(aid, dict(d["wants"]["appetite"]), d["wants"]["focus"], d["wants"]["intensity"]),
         memory=Memory(aid, d["memory"]["capacity"], d["memory"]["events"]),
         relationships=dict(d["relationships"]),
         location=d.get("location", STARTING_PLACE),
+        vitality=d["vitality"], age=d["age"], bloom=d["bloom"], alive=d["alive"],
+        generation=d["generation"], parents=tuple(d.get("parents", [])),
+        gestation=d.get("gestation", 0), mate_id=d.get("mate_id", ""),
         last_thought=d["last_thought"],
     )
 
 
 def to_dict(w: World) -> dict:
     return {
-        "seed": w.seed,
-        "tick": w.tick,
-        "present": w.present,
+        "seed": w.seed, "tick": w.tick, "present": w.present, "next_index": w.next_index,
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
-        "feed": w.feed,
+        "bloom": w.bloom, "feed": w.feed,
         "utterances": [vars(u) for u in w.utterances],
-        "history": w.history,
+        "history": w.history, "fallen": w.fallen, "tally": w.tally,
     }
 
 
 def from_dict(d: dict, model=None) -> World:
-    w = World(seed=d["seed"], tick=d["tick"], present=d.get("present", False))
+    w = World(seed=d["seed"], tick=d["tick"], present=d.get("present", False),
+              next_index=d.get("next_index", 0))
     if model is not None:
-        w.model = model
+        w.cognition = model
     for ad in d["agents"]:
         a = _agent_from_dict(ad)
         w.agents[a.id] = a
+    w.bloom = dict(d.get("bloom", {}))
     w.feed = list(d.get("feed", []))
     w.utterances = [Utterance(**u) for u in d.get("utterances", [])]
     w.history = list(d.get("history", []))
+    w.fallen = list(d.get("fallen", []))
+    w.tally = dict(d.get("tally", {}))
     return w
 
 

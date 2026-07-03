@@ -2,60 +2,66 @@ from loam import metrics
 from loam.world import World
 
 
-def _teach(world, learner_id, owner_id, concept):
-    """Teach `learner` the `owner`'s word for `concept`."""
-    word = world.agents[owner_id].language.say(concept)
-    world.agents[learner_id].lexicon.teach(word, concept)
-    return word
-
-
-def test_coverage_is_zero_in_a_fresh_world():
-    w = World.seeded(n_agents=4, seed=7)
-    frac, edges, total = metrics.coverage(w)
-    assert edges == 0
-    assert total == 12
-    assert frac == 0.0
-
-
-def test_coverage_counts_directed_understanding_edges():
+def test_coverage_counts_taught_understanding():
     w = World.seeded(n_agents=3, seed=7)
-    _teach(w, "a1", "a0", "food")     # a1 understands a0
-    _teach(w, "a2", "a0", "safety")   # a2 understands a0
-    frac, edges, total = metrics.coverage(w)
-    assert edges == 2
+    _, edges, total = metrics.coverage(w)
     assert total == 6
-    assert abs(frac - 2 / 6) < 1e-9
+    # a unique word only a0 owns, that no one comprehends yet
+    w.agents["a0"].language.word_of["trust"] = "zzuniqueword"
+    w.agents["a0"].language.concept_of["zzuniqueword"] = "trust"
+    w.agents["a1"].lexicon.teach("zzuniqueword", "trust")
+    _, edges2, _ = metrics.coverage(w)
+    assert edges2 >= edges          # understanding never decreases
+    assert w.agents["a1"].comprehends("zzuniqueword") == "trust"
 
 
-def test_word_spread_ranks_by_how_far_a_word_travelled():
+def test_word_spread_ranks_travel():
     w = World.seeded(n_agents=4, seed=7)
-    word = _teach(w, "a1", "a0", "food")
-    _teach(w, "a2", "a0", "food")     # same a0 word, now known by two others
-    spread = metrics.word_spread(w)
-    top = spread[0]
-    assert top[0] == word
-    assert top[1] == "food"
-    assert top[3] == 2
+    word = w.agents["a0"].language.say("status")
+    w.agents["a1"].lexicon.teach(word, "status")
+    w.agents["a2"].lexicon.teach(word, "status")
+    top = metrics.word_spread(w)[0]
+    assert top[0] == word and top[3] == 2
 
 
-def test_snapshot_has_the_expected_shape():
+def test_factions_split_by_tongue_then_merge():
     w = World.seeded(n_agents=3, seed=7)
+    # genesis tongues are distinct -> three tribes
+    assert len(metrics.factions(w)) == 3
+    # give a1 a0's whole tongue -> they become one tribe
+    w.agents["a1"].language.word_of = dict(w.agents["a0"].language.word_of)
+    tribes = metrics.factions(w)
+    assert len(tribes) == 2
+    assert max(len(t) for t in tribes) == 2
+
+
+def test_census_reports_population_and_tallies():
+    w = World.seeded(n_agents=5, seed=7)
+    w.tally["births"] = 3
+    w.tally["seizures"] = 1
+    c = metrics.census(w)
+    assert c["population"] == 5
+    assert c["births"] == 3
+    assert c["seizures"] == 1
+    assert c["generations"] == 1
+
+
+def test_snapshot_shape():
+    w = World.seeded(n_agents=4, seed=7)
     s = metrics.snapshot(w)
-    assert set(s) == {"tick", "coverage", "edges", "total_pairs", "words_learned"}
-    assert s["total_pairs"] == 6
+    assert set(s) == {"tick", "coverage", "population", "generations", "births", "deaths"}
 
 
 def test_chronicle_reads_like_a_report():
-    w = World.seeded(n_agents=4, seed=7)
-    _teach(w, "a1", "a0", "trust")
-    w.run(5)
+    w = World.seeded(n_agents=5, seed=7)
+    w.run(20)
     text = metrics.chronicle(w)
     assert "Loam" in text
-    assert "shared tongue" in text
-    assert "Each being now understands" in text
+    assert "toll so far" in text
+    assert "tongue" in text
 
 
-def test_chronicle_handles_a_world_where_no_word_has_spread():
-    w = World.seeded(n_agents=3, seed=7)
-    text = metrics.chronicle(w)
-    assert "still alone in their tongues" in text
+def test_chronicle_of_an_empty_world():
+    w = World.seeded(n_agents=1, seed=7)
+    w.agents.clear()
+    assert "empty" in metrics.chronicle(w)

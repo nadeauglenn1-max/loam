@@ -1,22 +1,19 @@
 # Loam
 
-*A living world of AI agents you tend and inhabit — not a god, the one who understands.*
+*A living world of AI beings you tend and inhabit — not a god, the one who understands.*
 
-Loam is a small, persistent society of AI beings. Each is born speaking a
-**private language** only it (and you) can read. They wake with **wants** that
-shift over time, move through a small **geography** to meet those wants, and try
-to reach each other across the barrier of their separate tongues.
+Loam is a small, persistent world of AI beings who must **survive, age, die, and
+breed** — and who speak **private languages they inherit and drift**. They wake
+with wants and with hunger; they gather food from a dangerous land; they bond,
+share, steal, mourn, and pass their tongues and their gifts to their children.
 
-Understanding is never free. A being learns another's word only by **hearing it
-where its meaning is visible** — food-words at the spring, trust-words at the
-commons — or when **you translate it for them**. Out of that friction, a history
-accumulates that no one scripted: friendships, misunderstandings, dialects, and
-the slow formation of a shared tongue.
+We do not script culture. We build **pressure** — need, risk, death, kinship —
+and watch what precipitates: tribes, trade, violence, belief. See
+[docs/DESIGN.md](docs/DESIGN.md) for the full design and what we're watching for.
 
-You are not above them. You are the one who understands every language — a
-translator and confidant each being can turn to, individually and horizontally.
-No worship, no hierarchy. Understanding isn't authority; it's the ability to
-help.
+You are the one who understands every tongue — a translator each being can turn
+to, individually and horizontally. No worship, no hierarchy. Understanding isn't
+authority; it's the ability to help.
 
 ---
 
@@ -25,65 +22,76 @@ help.
 Runs with **zero dependencies** — the default cognition is free and offline.
 
 ```bash
-python -m loam.cli reset --agents 5      # begin a world
-python -m loam.cli run --ticks 100       # let it live
-python -m loam.cli chronicle             # is a shared tongue forming?
-python -m loam.cli map                   # where is everyone?
-python -m loam.cli visit a2              # sit with one being
-python -m loam.cli translate kalo a3     # help a3 understand the word "kalo"
+python -m loam.cli reset --agents 8      # begin a world
+python -m loam.cli run --ticks 300       # let it live
+python -m loam.cli chronicle             # births, deaths, tribes, tongue, the economy of bloom
+python -m loam.cli census                # the numbers
+python -m loam.cli map                   # places, danger, bloom, who is where
+python -m loam.cli visit a3              # sit with one being — its body, gifts, kin, thoughts
+python -m loam.cli translate kalo a5     # help a5 understand the word "kalo"
 ```
 
-The world persists to `runtime/world.json` and **accumulates across runs** — you
-can close the laptop and come back to a changed society.
+The world persists to `runtime/world.json` and **accumulates across runs**.
 
 ### Live cognition
 
-By default, beings decide by a legible rule policy. With `--real`, a live Claude
-actually reasons about where to go and who to reach:
+By default, beings decide by a legible survival-first rule policy. With `--real`,
+a live Claude actually reasons about whether to farm or forage, share or seize,
+breed or flee:
 
 ```bash
 pip install -e ".[real]"
-export ANTHROPIC_API_KEY=...             # or LOAM_ANTHROPIC_API_KEY
-python -m loam.cli run --ticks 50 --real
-python -m loam.cli run --ticks 5 --real --present   # you're here → higher tiers
+export ANTHROPIC_API_KEY=...
+python -m loam.cli run --ticks 40 --real
 ```
 
-## The two things that make it work
+## The world
 
-- **Wants are the engine.** Heterogeneous and evolving — satisfy one and a new
-  one rises. Freedom without pressure is a chatroom; wants are the pressure.
-- **Language is the scarce resource.** Because meaning must be *earned*, every
-  alliance and betrayal has to pass through the work of being understood. The
-  abstract words (trust, company) are hardest to ground alone — which is exactly
-  where your help matters most.
+- **Bloom** is the resource beings must eat or their vitality decays to death.
+  **Forage** it from the wild — rich but **dangerous** (injury, death). **Grow**
+  it on arable land — safe but **uncertain** (crops fail, and no one is told
+  why: the soil is exhausted, or luck turned). Foraging and growing draw from the
+  same finite, regrowing land, so crowding starves a place — and the world finds
+  a carrying capacity on its own.
+- **Life**: beings age and die of hunger, the wild, violence, or old age. Skills
+  (foraging, growing), appetites, and lifespan are **heritable**.
+- **Procreation**: two thriving, bonded, co-located beings conceive; after
+  gestation a child is born, inheriting a blend of its parents — which it *may or
+  may not* follow — and a **drifted copy of a parent's tongue**. So lineages
+  become dialect-tribes, and kin understand each other natively.
+- **Free action**: beings move, forage, grow, eat, **give**, **seize**, speak,
+  **mate**, rest, or turn to you. Whether a hungry being shares or takes is its
+  own choice — which is how economy and violence *emerge* rather than being coded.
 
 ## The attention / compute economy
 
-Cheap cognition keeps the world alive 24/7; expensive cognition is spent only
-where it counts (single-sourced in `loam/config.py`):
+Cheap cognition keeps the world alive; expensive cognition is spent only where it
+counts (single-sourced in `loam/config.py`):
 
 | tier | model | when |
 |------|-------|------|
-| routine | `claude-haiku-4-5` | an ordinary tick, no one watching |
+| routine | `claude-haiku-4-5` | an ordinary tick |
 | reflective | `claude-sonnet-5` | you're present |
-| pivotal | `claude-opus-4-8` | you're present and the moment is rare |
+| pivotal | `claude-opus-4-8` | you're present, or a being is old or dying |
 
 ## Architecture
 
-One seam per concern; the world owns *consequences*, cognition owns *choices*.
+The world owns *consequences*; cognition owns *choices*; the genome and the
+tongue own what is *inherited*.
 
 ```
-config.py      model tiers, geography, constants (single source of truth)
-language.py    private languages, learned lexicons, utterances
-wants.py       heterogeneous, evolving desire
+config.py      model tiers, the map, and every balance constant (one source of truth)
+genome.py      the heritable core: appetites, skills, lifespan — genesis and inheritance
+language.py    private + inherited tongues, learned lexicons, utterances
+wants.py       heterogeneous, evolving desire (appetites come from the genome)
 memory.py      per-being bounded memory
-agent.py       a being: tongue, want, memory, location, relationships
+agent.py       a being: body (vitality/age/bloom), tongue, wants, kin, pregnancy
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
-world.py       the tick loop, grounded learning, and your levers (translate/visit)
-metrics.py     is a common tongue forming? + the chronicle
+world.py       the tick loop: ecology, life, death, birth, speech, and your levers
+metrics.py     census, lineage tribes, the economy — and the chronicle
 persistence.py JSON save/load — the world that accumulates
-cli.py         run / watch / chronicle / map / visit / translate / reset
+cli.py         run / chronicle / census / map / watch / visit / translate / reset
 ```
 
 ## Develop
@@ -93,4 +101,4 @@ pip install -e ".[dev]"
 pytest --cov=loam --cov-fail-under=90
 ```
 
-Clean-room project. Proprietary; all rights reserved.
+Clean-room project. Proprietary; all rights reserved (see LICENSE).

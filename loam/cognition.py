@@ -1,17 +1,14 @@
-"""Cognition — how an agent decides what to do with its tick.
+"""Cognition — how a being decides what to do with its tick, now under the
+pressure of hunger, danger, and mortality.
 
-Two implementations behind one seam:
+* `RuleCognition` — a legible survival-first policy: eat when you can, secure
+  bloom the way your gifts favour (grow or forage), flee or fight when
+  desperate, breed when well, and otherwise reach for the social life that makes
+  survival worth it. Free, deterministic, the default and the safe fallback.
+* `ClaudeCognition` — a live Claude weighs the same situation and chooses freely
+  across the whole action space. Falls back to the rules on any error.
 
-* `RuleCognition` — deterministic, free, dependency-free. The default, the
-  CI-safe engine, and the fallback when live cognition fails. It is not a
-  placeholder: it is a real, legible policy.
-* `ClaudeCognition` — a live Claude actually reasons about where to go and who
-  to reach, at whatever model tier the world's attention economy has chosen. On
-  any error or unparseable reply it defers to a wrapped `RuleCognition`, so a
-  flaky network can never crash the world — it only makes it think more simply.
-
-The world (world.py) owns the *consequences* of a decision; cognition owns only
-the choice.
+The world (world.py) owns consequences; cognition owns only the choice.
 """
 from __future__ import annotations
 
@@ -20,7 +17,7 @@ from dataclasses import dataclass
 from typing import TYPE_CHECKING, Protocol
 
 from . import config
-from .config import PHYSICAL, PLACE_FOR, PLACES
+from .config import PLACE_FOR, PLACES, SOCIAL_WANTS
 
 if TYPE_CHECKING:  # pragma: no cover
     import random
@@ -29,19 +26,17 @@ if TYPE_CHECKING:  # pragma: no cover
     from .llm import LiveLLM
     from .world import World
 
-# Terse interior lines, drawn deterministically so a mock world still has a
-# voice and reloads replay identically.
 _MOODS = (
     "I want this more than I can say.",
+    "The hunger is always at the edge of me.",
     "Does anyone here hear me?",
-    "The words come out wrong every time.",
+    "I will not go quietly.",
     "Maybe they'll understand if I try again.",
-    "I am tired of being alone in my own tongue.",
-    "There is something I almost recognized just now.",
-    "If I could only make myself plain.",
+    "There is never quite enough.",
     "I keep circling the same need.",
     "Someone looked at me like they knew.",
-    "I'll go where the thing I want lives.",
+    "I feel the years in me now.",
+    "I'll reach for what keeps me alive.",
 )
 
 
@@ -52,13 +47,6 @@ def _mood(situation: str) -> str:
 
 @dataclass
 class Decision:
-    """What an agent chooses this tick.
-
-    kind:   "move" | "speak" | "seek" | "rest"
-    place:  destination (for "move")
-    target: another agent's id (for "speak")
-    thought: one line of interior voice
-    """
     kind: str
     place: str | None = None
     target: str | None = None
@@ -70,51 +58,110 @@ class Cognition(Protocol):
         ...
 
 
-class RuleCognition:
-    """A legible policy: go where your want lives; speak to those beside you."""
+# Skill-stratified wild grounds: the bolder the forager, the deeper it dares.
+def _forage_ground(skill: float) -> str:
+    if skill < 0.45:
+        return "the meadow"
+    if skill < 0.62:
+        return "the mire"
+    if skill < 0.78:
+        return "the thornwood"
+    return "the deepwood"
 
-    SEEK_CHANCE = 0.10   # sometimes turn to the one who understands everyone
-    SPEAK_CHANCE = 0.5   # once where your need lives, reach out or rest
+
+_FARM = "the meadow"   # a low-danger arable place growers head for
+
+
+class RuleCognition:
+    HUNGRY = 0.6
+    STARVING = 0.25
+    SEEK_CHANCE = 0.08
 
     def decide(self, agent: "Agent", world: "World", rng: "random.Random") -> Decision:
-        focus = agent.wants.focus
-        situation = f"{agent.id}:{world.tick}:{agent.location}:{focus}"
-        thought = _mood(situation)
+        a = agent
+        thought = _mood(f"{a.id}:{world.tick}:{a.location}:{a.condition}:{a.wants.focus}")
 
+        # 1. eat what you carry when you're not thriving
+        if a.vitality < 0.7 and a.bloom > 0.2:
+            return Decision("eat", thought=thought)
+
+        need_food = a.vitality < self.HUNGRY or a.bloom < 1.0
+        if need_food:
+            # desperation can turn to force
+            if a.vitality < self.STARVING and a.bloom < 0.2:
+                prey = [o for o in world.co_located(a) if o.bloom > 0.6 and a.affinity(o.id) <= 0]
+                if prey and rng.random() < 0.5:
+                    prey.sort(key=lambda o: o.bloom, reverse=True)
+                    return Decision("seize", target=prey[0].id, thought=thought)
+            here = PLACES[a.location]
+            soil_here = world.bloom.get(a.location, 0.0)
+            grower = a.genome.grow_skill >= a.genome.forage_skill
+            if grower:
+                if here["arable"] and soil_here >= config.GROW_SOIL_MIN:
+                    return Decision("grow", thought=thought)
+                # the soil here is dead — seek living farmland, or turn forager
+                best = max((p for p, d in PLACES.items() if d["arable"]),
+                           key=lambda p: world.bloom.get(p, 0.0))
+                if world.bloom.get(best, 0.0) >= config.GROW_SOIL_MIN and best != a.location:
+                    return Decision("move", place=best, thought=thought)
+                if here["wild"] > 0 and soil_here > 0.5:
+                    return Decision("forage", thought=thought)
+                return Decision("move", place=_forage_ground(a.genome.forage_skill), thought=thought)
+            if here["wild"] > 0 and soil_here > 0.5:
+                return Decision("forage", thought=thought)
+            return Decision("move", place=_forage_ground(a.genome.forage_skill), thought=thought)
+
+        # 2. thriving and bonded: sometimes breed
+        if a.vitality > 0.8 and world._fertile(a):
+            partners = [o for o in world.co_located(a)
+                        if world._fertile(o) and a.affinity(o.id) > 0]
+            if partners and rng.random() < 0.12:
+                partners.sort(key=lambda o: a.affinity(o.id), reverse=True)
+                return Decision("mate", target=partners[0].id, thought=thought)
+
+        # 3. surplus: sometimes feed a struggling friend
+        if a.bloom > 3.0:
+            needy = [o for o in world.co_located(a)
+                     if a.affinity(o.id) > 0 and o.vitality < 0.5]
+            if needy and rng.random() < 0.35:
+                return Decision("give", target=needy[0].id, thought=thought)
+
+        # 4. turn to you now and then
         if rng.random() < self.SEEK_CHANCE:
             return Decision("seek", thought=thought)
 
-        dest = PLACE_FOR[focus]
-        if agent.location != dest:
+        # 5. pursue the social want that gives life meaning
+        focus = a.wants.focus
+        dest = "the commons" if focus in SOCIAL_WANTS else PLACE_FOR.get(focus)
+        if dest and a.location != dest:
             return Decision("move", place=dest, thought=thought)
-
-        # At the place this want lives. Reach for a neighbour, or settle.
-        neighbours = world.co_located(agent)
-        if neighbours and rng.random() < self.SPEAK_CHANCE:
-            neighbours.sort(key=lambda a: agent.affinity(a.id), reverse=True)
+        neighbours = world.co_located(a)
+        if neighbours and rng.random() < 0.6:
+            neighbours.sort(key=lambda o: a.affinity(o.id), reverse=True)
             best = neighbours[0]
-            target = best if agent.affinity(best.id) > 0 else rng.choice(neighbours)
+            target = best if a.affinity(best.id) > 0 else rng.choice(neighbours)
             return Decision("speak", target=target.id, thought=thought)
         return Decision("rest", thought=thought)
 
 
 _SYSTEM = (
-    "You are a being in a small world, speaking a private language no one else "
-    "was born knowing. You move between places, reach for what you want, and try "
-    "to be understood. You are not performing for anyone. Decide your next move "
-    "and reply in exactly this form, nothing else:\n"
-    "ACTION: move|speak|seek|rest\n"
+    "You are a living being in a small, dangerous world. You must eat bloom or "
+    "weaken and die; you age; you can bear children. You speak a private tongue. "
+    "Weigh your situation and choose ONE action, replying in exactly this form:\n"
+    "ACTION: move|forage|grow|eat|give|seize|mate|speak|seek|rest\n"
     "PLACE: <a place name, or ->\n"
     "TO: <a being's name, or ->\n"
     "THOUGHT: <one short first-person sentence>\n"
-    "'seek' means turning to the one who understands every tongue. Only 'speak' "
-    "to a being that is here beside you."
+    "forage = gather wild bloom (dangerous). grow = cultivate bloom (safe, can "
+    "fail). eat = eat what you carry. give/seize/mate/speak act on a being beside "
+    "you. seek = turn to the one who understands every tongue. Only act on a "
+    "being that is here with you."
 )
+
+_ACTIONS_WITH_TARGET = {"give", "seize", "mate", "speak"}
 
 
 class ClaudeCognition:
-    """Live cognition. A real Claude chooses; the rules catch it if it falls."""
-
     def __init__(self, llm: "LiveLLM", fallback: Cognition | None = None) -> None:
         self._llm = llm
         self._fallback = fallback or RuleCognition()
@@ -122,42 +169,51 @@ class ClaudeCognition:
     def decide(self, agent: "Agent", world: "World", rng: "random.Random") -> Decision:
         try:
             reply = self._llm.complete(
-                tier=world.tier_now(),
+                tier=world.tier_now(pivotal=agent.is_old or agent.vitality < 0.25),
                 system=_SYSTEM,
                 user=self._situation(agent, world),
-                max_tokens=120,
+                max_tokens=130,
             )
             decision = self._parse(reply, agent, world)
-        except Exception:  # network / SDK / anything — the world must not stop
+        except Exception:
             return self._fallback.decide(agent, world, rng)
         if decision is None:
             fb = self._fallback.decide(agent, world, rng)
-            # keep the model's voice even when its choice was unusable
-            parsed_thought = self._field(reply, "THOUGHT")
-            if parsed_thought:
-                fb.thought = parsed_thought
+            voice = self._field(reply, "THOUGHT")
+            if voice:
+                fb.thought = voice
             return fb
         return decision
 
-    # -- prompt / parse -----------------------------------------------------
     def _situation(self, agent: "Agent", world: "World") -> str:
-        here = agent.location
-        affords = ", ".join(PLACES.get(here, ())) or "nothing in particular"
-        others = world.co_located(agent)
+        a = agent
+        here = PLACES[a.location]
+        affords = ", ".join(here["affords"]) or "nothing social"
+        stock = world.bloom.get(a.location, 0.0)
+        danger = ("safe" if here["danger"] < 0.1 else
+                  "risky" if here["danger"] < 0.45 else "deadly")
+        others = world.co_located(a)
         if others:
             def gloss(o: "Agent") -> str:
-                bond = agent.affinity(o.id)
-                tie = "a friend" if bond > 1 else ("familiar" if bond > 0 else "a stranger")
-                return f"{o.name} ({tie})"
-            here_who = "; ".join(gloss(o) for o in others)
+                bond = a.affinity(o.id)
+                tie = "kin/friend" if bond > 1 else ("an enemy" if bond < 0 else "a stranger")
+                return f"{o.name} ({tie}, {o.condition}, holds {o.bloom:.0f} bloom)"
+            beside = "; ".join(gloss(o) for o in others)
         else:
-            here_who = "no one"
-        places = "\n".join(f"  {p}: for {', '.join(c)}" for p, c in PLACES.items())
-        memory = " | ".join(agent.memory.recent(4)) or "nothing yet"
+            beside = "no one"
+        places = "\n".join(
+            f"  {p}: {'/'.join(d['affords']) or 'wild'}, "
+            f"{'arable' if d['arable'] else 'not arable'}, "
+            f"{'safe' if d['danger'] < 0.1 else 'risky' if d['danger'] < 0.45 else 'deadly'}"
+            for p, d in PLACES.items())
+        memory = " | ".join(a.memory.recent(4)) or "nothing yet"
         return (
-            f"You are {agent.name}. Right now you want: {agent.wants.focus}.\n"
-            f"You are at {here} (which offers: {affords}).\n"
-            f"Beside you: {here_who}.\n"
+            f"You are {a.name}. You are {a.condition} (vitality {a.vitality:.2f}), "
+            f"age {a.age} of about {a.genome.lifespan}, holding {a.bloom:.1f} bloom.\n"
+            f"You are gifted at {'growing' if a.genome.grow_skill > a.genome.forage_skill else 'foraging'}.\n"
+            f"You are at {a.location}: {affords}; {danger} to forage; wild bloom here ~{stock:.0f}.\n"
+            f"Beside you: {beside}.\n"
+            f"Right now you also want: {a.wants.focus}.\n"
             f"The places you know:\n{places}\n"
             f"Lately: {memory}\n"
             "What do you do?"
@@ -171,22 +227,21 @@ class ClaudeCognition:
         return ""
 
     def _parse(self, reply: str, agent: "Agent", world: "World") -> Decision | None:
-        action = self._field(reply, "ACTION").lower()
+        action = self._field(reply, "ACTION").lower().strip()
+        action = action.split()[0] if action else ""
         thought = self._field(reply, "THOUGHT") or _mood(reply)
-        if action == "rest":
-            return Decision("rest", thought=thought)
-        if action == "seek":
-            return Decision("seek", thought=thought)
+        if action in ("forage", "grow", "eat", "seek", "rest"):
+            return Decision(action, thought=thought)
         if action == "move":
             place = self._match_place(self._field(reply, "PLACE"))
             if place is None or place == agent.location:
                 return None
             return Decision("move", place=place, thought=thought)
-        if action == "speak":
+        if action in _ACTIONS_WITH_TARGET:
             target = self._match_neighbour(self._field(reply, "TO"), agent, world)
             if target is None:
                 return None
-            return Decision("speak", target=target, thought=thought)
+            return Decision(action, target=target, thought=thought)
         return None
 
     @staticmethod

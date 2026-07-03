@@ -1,20 +1,24 @@
-"""Measuring the thing worth watching: is a shared tongue forming?
+"""Instrumentation — how we see and learn from the world.
 
-A world of private languages could stay forever mutually unintelligible. What
-makes it a *civilization* is the slow spread of understanding — words that
-escape their inventor and become common ground. These functions measure that,
-and render the chronicle you read in the morning.
+We do not detect "religion" or "money" directly; we measure the substrate they
+would grow from — population and lineage, the toll of death, the economy of
+sharing versus taking, and the clustering of beings into dialect-tribes — and we
+read the run.
 """
 from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
+from .config import CONCEPTS
+
 if TYPE_CHECKING:  # pragma: no cover
+    from .agent import Agent
     from .world import World
+
+FACTION_SIMILARITY = 0.6   # share this fraction of words -> the same tongue
 
 
 def owners(world: "World") -> dict[str, tuple[str, str]]:
-    """Every private word in the world -> (owner_id, concept)."""
     out: dict[str, tuple[str, str]] = {}
     for a in world.agents.values():
         for concept, word in a.language.word_of.items():
@@ -23,34 +27,21 @@ def owners(world: "World") -> dict[str, tuple[str, str]]:
 
 
 def coverage(world: "World") -> tuple[float, int, int]:
-    """How connected the world is by understanding.
-
-    Returns (fraction, comprehension_edges, total_directed_pairs), where an edge
-    (listener -> speaker) exists when the listener knows at least one of the
-    speaker's words.
-    """
+    """Directed understanding-links between living beings / all possible pairs."""
     agents = list(world.agents.values())
     n = len(agents)
     total = n * (n - 1)
     if total == 0:
         return (0.0, 0, 0)
-    own = owners(world)
     edges = 0
     for listener in agents:
-        reaches: set[str] = set()
-        for word in listener.lexicon.known:
-            owner = own.get(word)
-            if owner and owner[0] != listener.id:
-                reaches.add(owner[0])
+        reaches = {o.id for o in agents if o.id != listener.id
+                   and any(listener.comprehends(o.language.word_of[c]) is not None for c in CONCEPTS)}
         edges += len(reaches)
     return (edges / total, edges, total)
 
 
 def word_spread(world: "World") -> list[tuple[str, str, str, int]]:
-    """Words that have escaped their inventor, most-spread first.
-
-    Each entry: (word, concept, owner_name, number_of_other_beings_who_know_it).
-    """
     own = owners(world)
     names = {a.id: a.name for a in world.agents.values()}
     counts: dict[str, int] = {}
@@ -67,54 +58,118 @@ def word_spread(world: "World") -> list[tuple[str, str, str, int]]:
     return rows
 
 
+def _tongue_similarity(a: "Agent", b: "Agent") -> float:
+    matches = sum(1 for c in CONCEPTS if a.language.word_of[c] == b.language.word_of[c])
+    return matches / len(CONCEPTS)
+
+
+def factions(world: "World") -> list[list[str]]:
+    """Cluster living beings into tribes that share a tongue (union-find)."""
+    agents = list(world.agents.values())
+    parent = {a.id: a.id for a in agents}
+
+    def find(x: str) -> str:
+        while parent[x] != x:
+            parent[x] = parent[parent[x]]
+            x = parent[x]
+        return x
+
+    for i, a in enumerate(agents):
+        for b in agents[i + 1:]:
+            if _tongue_similarity(a, b) >= FACTION_SIMILARITY:
+                parent[find(a.id)] = find(b.id)
+
+    groups: dict[str, list[str]] = {}
+    names = {a.id: a.name for a in agents}
+    for a in agents:
+        groups.setdefault(find(a.id), []).append(names[a.id])
+    return sorted((sorted(g) for g in groups.values()), key=len, reverse=True)
+
+
+def census(world: "World") -> dict:
+    living = world.agents
+    n = len(living)
+    gens = [a.generation for a in living.values()]
+    t = world.tally
+    return {
+        "population": n,
+        "generations": (max(gens) + 1) if gens else 0,
+        "avg_age": round(sum(a.age for a in living.values()) / n, 1) if n else 0,
+        "avg_vitality": round(sum(a.vitality for a in living.values()) / n, 2) if n else 0,
+        "births": t.get("births", 0),
+        "deaths_hunger": t.get("deaths_hunger", 0),
+        "deaths_age": t.get("deaths_age", 0),
+        "deaths_forage": t.get("deaths_forage", 0),
+        "deaths_violence": t.get("deaths_violence", 0),
+        "gifts": t.get("gifts", 0),
+        "seizures": t.get("seizures", 0),
+        "matings": t.get("matings", 0),
+        "harvests": t.get("harvests", 0),
+        "crop_failures": t.get("crop_failures", 0),
+    }
+
+
 def snapshot(world: "World") -> dict:
-    """A point-in-time record for the world's growth curve."""
     frac, edges, total = coverage(world)
-    total_known = sum(len(a.lexicon.known) for a in world.agents.values())
+    c = census(world)
     return {"tick": world.tick, "coverage": round(frac, 4),
-            "edges": edges, "total_pairs": total, "words_learned": total_known}
+            "population": c["population"], "generations": c["generations"],
+            "births": c["births"], "deaths": c["deaths_hunger"] + c["deaths_age"]
+            + c["deaths_forage"] + c["deaths_violence"]}
 
 
-def _notable(world: "World", limit: int = 12) -> list[str]:
-    keys = ("learned", "understood", "told", "means")
+def _notable(world: "World", limit: int = 14) -> list[str]:
+    keys = ("born", "died", "was lost", "was killed", "learned", "seized", "gave bloom", "expecting")
     hits = [line for line in world.feed if any(k in line for k in keys)]
     return hits[-limit:]
 
 
 def chronicle(world: "World") -> str:
-    """The morning report — what the night made of the world."""
+    c = census(world)
     frac, edges, total = coverage(world)
     lines: list[str] = []
     lines.append(f"═══ Loam — the world at tick {world.tick} ═══")
-    lines.append(f"{len(world.agents)} beings, {len(world.utterances)} things said.")
+    if c["population"] == 0:
+        lines.append("The world is empty. Every being has died.")
+        return "\n".join(lines)
+
+    lines.append(f"{c['population']} beings alive across {c['generations']} generation(s); "
+                 f"average age {c['avg_age']}, average vitality {c['avg_vitality']}.")
     lines.append("")
 
-    # growth of the common tongue
+    lines.append("The toll so far:")
+    lines.append(f"  born: {c['births']}   |   died — hunger {c['deaths_hunger']}, "
+                 f"age {c['deaths_age']}, the wild {c['deaths_forage']}, violence {c['deaths_violence']}")
+    lines.append(f"  matings {c['matings']}, harvests {c['harvests']}, "
+                 f"crop failures {c['crop_failures']}")
+    lines.append("")
+
+    give, take = c["gifts"], c["seizures"]
+    if give or take:
+        temper = ("mostly giving" if give > take * 2 else
+                  "mostly taking" if take > give * 2 else "torn between giving and taking")
+        lines.append(f"The economy of bloom is {temper} — {give} gifts, {take} seizures.")
+        lines.append("")
+
+    tribes = factions(world)
+    if len(tribes) == 1:
+        lines.append(f"They are one people by tongue ({len(tribes[0])} share a language).")
+    else:
+        sizes = ", ".join(str(len(t)) for t in tribes)
+        lines.append(f"They have split into {len(tribes)} tongues (sizes: {sizes}).")
+        for t in tribes[:4]:
+            lines.append(f"  · {', '.join(t)}")
+    lines.append("")
+
     lines.append(f"A shared tongue is {frac * 100:.0f}% formed "
                  f"({edges} of {total} understanding-links live).")
-    if world.history:
-        first = world.history[0]
-        lines.append(f"  (began at {first['coverage'] * 100:.0f}% on tick {first['tick']}.)")
-    lines.append("")
-
-    # words that escaped their inventor
     spread = word_spread(world)
     if spread:
         lines.append("Words that have spread:")
-        for word, concept, owner, count in spread[:6]:
-            others = "being" if count == 1 else "beings"
-            lines.append(f'  "{word}" (= {concept}, first {owner}\'s) — known by {count} other {others}')
-    else:
-        lines.append("No word has yet escaped its inventor. They are still alone in their tongues.")
+        for word, concept, owner, count in spread[:5]:
+            lines.append(f'  "{word}" (= {concept}, first {owner}\'s) — known by {count} other(s)')
     lines.append("")
 
-    # who reaches whom
-    lines.append("Each being now understands:")
-    for a in sorted(world.agents.values(), key=lambda x: x.id):
-        lines.append(f"  {a.name}: {a.understands_count()} foreign words — at {a.location}, wanting {a.wants.focus}")
-    lines.append("")
-
-    # moments
     moments = _notable(world)
     if moments:
         lines.append("Moments worth remembering:")

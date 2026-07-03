@@ -50,6 +50,20 @@ class PrivateLanguage:
         concept_of = {w: c for c, w in word_of.items()}
         return cls(agent_id=agent_id, word_of=word_of, concept_of=concept_of)
 
+    @classmethod
+    def inherit(cls, parent: "PrivateLanguage", child_id: str, rng, drift: float | None = None
+                ) -> "PrivateLanguage":
+        """A child's tongue: mostly a parent's words, some freshly coined. Kin
+        thus share most of their language and understand each other natively —
+        the seed of dialect-tribes."""
+        from .config import LANGUAGE_DRIFT
+        drift = LANGUAGE_DRIFT if drift is None else drift
+        word_of = {}
+        for c in CONCEPTS:
+            word_of[c] = coin_word(child_id, c) if rng.random() < drift else parent.word_of[c]
+        concept_of = {w: c for c, w in word_of.items()}
+        return cls(agent_id=child_id, word_of=word_of, concept_of=concept_of)
+
     def say(self, concept: str) -> str:
         return self.word_of[concept]
 
