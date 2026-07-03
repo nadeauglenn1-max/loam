@@ -1,0 +1,10 @@
+# Loam
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+# the living world's accumulated state — local, not committed
+runtime/
+!runtime/.gitkeep

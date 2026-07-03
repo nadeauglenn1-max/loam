@@ -1,0 +1,23 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loam"
+version = "0.1.0"
+description = "A living world of AI agents you tend and inhabit — not a god, the one who understands."
+requires-python = ">=3.10"
+dependencies = []              # runs with zero deps (mock cognition)
+
+[project.optional-dependencies]
+real = ["anthropic>=0.69,<1"]  # only needed for --real (live Claude cognition)
+dev = ["pytest>=8", "anthropic>=0.69,<1"]
+
+[project.scripts]
+loam = "loam.cli:main"
+
+[tool.setuptools.packages.find]
+include = ["loam*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
