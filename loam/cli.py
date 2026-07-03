@@ -2,6 +2,7 @@
 
   loam run --ticks 50            # let it live (rule cognition, free)
   loam run --ticks 20 --real     # live Claude cognition (needs a key)
+  loam serve                     # watch the world live in a browser
   loam chronicle                 # the report: births, deaths, tribes, tongue
   loam census                    # the numbers at a glance
   loam map                       # places, danger, bloom, who is where
@@ -128,6 +129,35 @@ def cmd_reset(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_serve(args: argparse.Namespace) -> int:  # pragma: no cover - network loop
+    from http.server import BaseHTTPRequestHandler, HTTPServer
+
+    from . import dashboard
+
+    class Handler(BaseHTTPRequestHandler):
+        def do_GET(self) -> None:
+            w = persistence.load()
+            body = (dashboard.render_page(w, refresh=args.refresh) if w is not None
+                    else "<h1>No world yet. Run: loam run</h1>")
+            data = body.encode("utf-8")
+            self.send_response(200)
+            self.send_header("Content-Type", "text/html; charset=utf-8")
+            self.send_header("Content-Length", str(len(data)))
+            self.end_headers()
+            self.wfile.write(data)
+
+        def log_message(self, *a) -> None:
+            pass
+
+    server = HTTPServer(("127.0.0.1", args.port), Handler)
+    print(f"Watching Loam at http://127.0.0.1:{args.port}  (refresh {args.refresh}s, Ctrl-C to stop)")
+    try:
+        server.serve_forever()
+    except KeyboardInterrupt:
+        print("\nstopped watching.")
+    return 0
+
+
 def build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="loam", description=__doc__,
                                 formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -162,6 +192,11 @@ def build_parser() -> argparse.ArgumentParser:
     x.add_argument("--agents", type=int, default=6)
     x.add_argument("--seed", type=int, default=7)
     x.set_defaults(func=cmd_reset)
+
+    s = sub.add_parser("serve", help="watch the world live in a browser")
+    s.add_argument("--port", type=int, default=8765)
+    s.add_argument("--refresh", type=int, default=3, help="seconds between auto-refreshes")
+    s.set_defaults(func=cmd_serve)
     return p
 
 
