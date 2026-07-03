@@ -15,9 +15,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass, field
 
-# The small set of things an agent can mean. Wants target these; utterances
-# carry these. Kept deliberately small for the first world.
-CONCEPTS = ("company", "food", "safety", "status", "novelty", "rest", "trust")
+from .config import CONCEPTS
 
 # Syllable stock used to invent each agent's private words. Deterministic per
 # agent, so a world reloads identically.

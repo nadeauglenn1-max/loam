@@ -9,7 +9,7 @@ from __future__ import annotations
 import hashlib
 from dataclasses import dataclass, field
 
-from .language import CONCEPTS
+from .config import CONCEPTS
 
 
 def _weight(agent_id: str, concept: str) -> float:

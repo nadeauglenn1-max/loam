@@ -5,6 +5,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass, field
 
+from .config import STARTING_PLACE
 from .language import Lexicon, PrivateLanguage
 from .memory import Memory
 from .wants import Wants
@@ -27,6 +28,7 @@ class Agent:
     wants: Wants = field(default_factory=lambda: Wants(agent_id="?"))
     memory: Memory = field(default_factory=lambda: Memory(agent_id="?"))
     relationships: dict[str, float] = field(default_factory=dict)
+    location: str = STARTING_PLACE
     last_thought: str = ""
 
     @classmethod
@@ -39,7 +41,11 @@ class Agent:
             lexicon=Lexicon(),
             wants=Wants.for_agent(aid),
             memory=Memory(agent_id=aid),
+            location=STARTING_PLACE,
         )
+
+    def understands_count(self) -> int:
+        return len(self.lexicon.known)
 
     def affinity(self, other_id: str) -> float:
         return self.relationships.get(other_id, 0.0)

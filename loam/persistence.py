@@ -10,6 +10,7 @@ import json
 from pathlib import Path
 
 from .agent import Agent
+from .config import STARTING_PLACE
 from .language import Lexicon, PrivateLanguage, Utterance
 from .memory import Memory
 from .wants import Wants
@@ -28,6 +29,7 @@ def _agent_to_dict(a: Agent) -> dict:
                   "intensity": a.wants.intensity},
         "memory": {"capacity": a.memory.capacity, "events": list(a.memory.events)},
         "relationships": a.relationships,
+        "location": a.location,
         "last_thought": a.last_thought,
     }
 
@@ -44,6 +46,7 @@ def _agent_from_dict(d: dict) -> Agent:
                     d["wants"]["intensity"]),
         memory=Memory(aid, d["memory"]["capacity"], d["memory"]["events"]),
         relationships=dict(d["relationships"]),
+        location=d.get("location", STARTING_PLACE),
         last_thought=d["last_thought"],
     )
 
@@ -56,6 +59,7 @@ def to_dict(w: World) -> dict:
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
         "feed": w.feed,
         "utterances": [vars(u) for u in w.utterances],
+        "history": w.history,
     }
 
 
@@ -68,6 +72,7 @@ def from_dict(d: dict, model=None) -> World:
         w.agents[a.id] = a
     w.feed = list(d.get("feed", []))
     w.utterances = [Utterance(**u) for u in d.get("utterances", [])]
+    w.history = list(d.get("history", []))
     return w
 
 
