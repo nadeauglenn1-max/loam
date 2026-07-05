@@ -58,6 +58,7 @@ class Agent:
     mate_id: str = ""            # the other parent of the child being carried
     last_thought: str = ""
     story: str = ""              # an authored backstory — who they were before tick one
+    home: str = ""               # the household they belong to (a family, for the village)
 
     # ---- birth ------------------------------------------------------------
     @classmethod

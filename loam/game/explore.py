@@ -13,6 +13,7 @@ future "converse" beat is where a model would plug in, on interaction only.
 from __future__ import annotations
 
 import math
+import random
 
 import pygame
 
@@ -61,6 +62,78 @@ def _sky(t):
     return (20, 24, 58, 110)         # night
 
 
+# how each sim place reads as a village anchor
+VILLAGE = {
+    "the hearth":    ("Homes", "home"),
+    "the commons":   ("The Square", "square"),
+    "the meadow":    ("The Fields", "field"),
+    "the mire":      ("The Marsh Wood", "wood"),
+    "the thornwood": ("The Thornwood", "wood"),
+    "the deepwood":  ("The Deep Wood", "wood"),
+}
+
+
+def _house_positions(home_rect, families):
+    x, y, w, h = home_rect
+    n = max(1, len(families))
+    cols = min(3, n)
+    rows = (n + cols - 1) // cols
+    cw, ch = w / cols, (h - 34) / max(1, rows)
+    out = {}
+    for i, fam in enumerate(families):
+        r, c = divmod(i, cols)
+        out[fam] = (x + cw * (c + 0.5), y + 44 + ch * (r + 0.5))
+    return out
+
+
+def _draw_house(surf, x, y, label, font):
+    x, y = int(x), int(y)
+    pygame.draw.rect(surf, (96, 76, 55), (x - 17, y - 4, 34, 22), border_radius=3)
+    pygame.draw.polygon(surf, (122, 62, 46), [(x - 22, y - 4), (x + 22, y - 4), (x, y - 22)])
+    pygame.draw.rect(surf, (50, 36, 24), (x - 4, y + 6, 8, 12))
+    tag = font.render(label, True, _MUTE)
+    surf.blit(tag, (x - tag.get_width() // 2, y + 20))
+
+
+def _draw_square(surf, rect):
+    x, y, w, h = rect
+    cx, cy = int(x + w * 0.34), int(y + h * 0.60)
+    pygame.draw.circle(surf, (78, 78, 86), (cx, cy), 15)         # the well
+    pygame.draw.circle(surf, (38, 38, 44), (cx, cy), 15, 2)
+    pygame.draw.circle(surf, (24, 34, 52), (cx, cy), 8)
+    sx, sy = int(x + w * 0.68), int(y + h * 0.44)               # a market stall
+    pygame.draw.rect(surf, (104, 82, 58), (sx - 24, sy, 48, 20))
+    pygame.draw.rect(surf, (152, 74, 60), (sx - 28, sy - 9, 56, 9))
+
+
+def _draw_field(surf, rect):
+    x, y, w, h = rect
+    for ry in range(int(y + 46), int(y + h - 14), 15):
+        for rx in range(int(x + 22), int(x + w - 14), 13):
+            pygame.draw.line(surf, (86, 122, 52), (rx, ry), (rx, ry - 8), 2)
+
+
+def _draw_wood(surf, rect, danger):
+    x, y, w, h = rect
+    rng = random.Random(f"{x}:{y}:wood")
+    for _ in range(int(9 + danger * 16)):
+        tx = rng.randint(int(x + 16), int(x + w - 16))
+        ty = rng.randint(int(y + 44), int(y + h - 14))
+        g = max(30, 74 - int(danger * 34))
+        pygame.draw.polygon(surf, (28, g, 34), [(tx - 7, ty), (tx + 7, ty), (tx, ty - 16)])
+        pygame.draw.rect(surf, (58, 42, 28), (tx - 1, ty, 2, 5))
+
+
+def _being_pos(a, rects, houses):
+    """Beings in the home quarter cluster at their family's house; elsewhere they
+    stand at a stable spot in the area."""
+    if a.location == "the hearth" and a.home in houses:
+        hx, hy = houses[a.home]
+        return (hx + (layout._unit(a.id + ":hx") - 0.5) * 26,
+                hy + layout._unit(a.id + ":hy") * 16 + 20)
+    return layout.being_home(a.id, a.location, rects)
+
+
 def _round(surf, rect, color, radius=12, width=0):
     pygame.draw.rect(surf, color, rect, width, border_radius=radius)
 
@@ -80,17 +153,28 @@ def _wrap(text, font, width):
     return lines
 
 
-def _background(w, h, rects, font):
+def _background(w, h, rects, houses, font):
     bg = pygame.Surface((w, h))
     bg.fill(_GROUND)
     tile = 34
     for ty in range(0, h, tile):
         for tx in range(0, w, tile):
             bg.fill(_GRASS[(tx // tile + ty // tile) % 2], (tx, ty, tile, tile))
-    for place, (x, y, rw, rh) in rects.items():
-        _round(bg, (x, y, rw, rh), _room_tint(place), 14)
-        _round(bg, (x, y, rw, rh), _LINE, 14, width=2)
-        bg.blit(font.render(place, True, _INK), (x + 12, y + 8))
+    for place, rect in rects.items():
+        x, y, rw, rh = rect
+        name, kind = VILLAGE.get(place, (place, "square"))
+        _round(bg, rect, _room_tint(place), 14)
+        _round(bg, rect, _LINE, 14, width=2)
+        if kind == "home":
+            for fam, (hx, hy) in houses.items():
+                _draw_house(bg, hx, hy, fam, font)
+        elif kind == "square":
+            _draw_square(bg, rect)
+        elif kind == "field":
+            _draw_field(bg, rect)
+        elif kind == "wood":
+            _draw_wood(bg, rect, PLACES[place]["danger"])
+        bg.blit(font.render(name, True, _INK), (x + 12, y + 8))
         bg.blit(font.render(_danger_word(place), True, _MUTE), (x + 12, y + 28))
     return bg
 
@@ -164,7 +248,9 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None, screenshot=N
 
     rects = layout.place_rects(W, H)
     colors = {n: c for n, c in dashboard._tribe_colors(world).items()}
-    bg = _background(W, H, rects, small)      # static ground — built once, not per frame
+    families = sorted({a.home for a in world.agents.values() if a.home})
+    houses = _house_positions(rects["the hearth"], families)
+    bg = _background(W, H, rects, houses, small)   # the static village — built once
     pos: dict[str, list[float]] = {}
     px, py = W / 2, H - 120
     reading = None
@@ -204,7 +290,7 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None, screenshot=N
                 accum = 0
 
         for a in world.living():
-            home = layout.being_home(a.id, a.location, rects)
+            home = _being_pos(a, rects, houses)
             if a.id not in pos:
                 pos[a.id] = list(home)
             else:

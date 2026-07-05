@@ -117,6 +117,12 @@ class RuleCognition:
                 return Decision("forage", thought=thought)
             return Decision("move", place=_forage_ground(_boldness(a)), thought=thought)
 
+        # at night the village goes home to rest (the well-fed, at least)
+        if world.phase() == "night":
+            if a.location != config.STARTING_PLACE:
+                return Decision("move", place=config.STARTING_PLACE, thought=thought)
+            return Decision("rest", thought=thought)
+
         # 2. thriving and bonded: sometimes breed
         if a.vitality > 0.8 and world._fertile(a):
             partners = [o for o in world.co_located(a)

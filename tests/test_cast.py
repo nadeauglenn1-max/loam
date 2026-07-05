@@ -53,3 +53,10 @@ def test_village_refuses_duplicate_without_force(capsys):
     capsys.readouterr()
     assert main(["village", "hollow"]) == 1
     assert "already exists" in capsys.readouterr().out
+
+
+def test_every_soul_has_a_household():
+    by = {a.name: a for a in cast.build_base().agents.values()}
+    assert all(a.home for a in by.values())
+    assert by["Doran"].home == "Vane" and by["Sela"].home == "Thorn"
+    assert by["Yara"].home == "Unbound"        # the family-less share a household

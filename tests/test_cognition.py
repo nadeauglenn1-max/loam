@@ -1,11 +1,14 @@
 from conftest import FakeLLM, RaisingLLM, ScriptedRandom
 
+from loam import config
 from loam.cognition import ClaudeCognition, Decision, RuleCognition
 from loam.world import World
 
 
 def _w(n=4):
-    return World.seeded(n_agents=n, seed=7)
+    w = World.seeded(n_agents=n, seed=7)
+    w.tick = config.TICKS_PER_DAY // 2      # midday — test the day policy, not the night routine
+    return w
 
 
 def _solo(w, aid="a0"):
@@ -193,3 +196,21 @@ def test_claude_situation_mentions_the_body():
     a = w.agents["a0"]
     text = ClaudeCognition(FakeLLM("x"))._situation(a, w)
     assert "vitality" in text and "bloom" in text and a.name in text
+
+
+def test_at_night_the_well_fed_head_home():
+    w = _w()
+    w.tick = 0                                  # midnight
+    a = _solo(w)
+    a.vitality, a.bloom = 0.9, 3.0              # well-fed, so no foraging pull
+    a.location = "the meadow"                   # out at work
+    d = RuleCognition().decide(a, w, ScriptedRandom([0.99]))
+    assert d.kind == "move" and d.place == config.STARTING_PLACE
+
+
+def test_at_night_at_home_they_rest():
+    w = _w()
+    w.tick = 0
+    a = _solo(w)                                # _solo puts them at the hearth (home)
+    a.vitality, a.bloom = 0.9, 3.0
+    assert RuleCognition().decide(a, w, ScriptedRandom([0.99])).kind == "rest"

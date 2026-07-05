@@ -162,10 +162,12 @@ model can author richer tensions behind the same seam.
 - **v0.15 (done)** — a **day-clock**: a day is a set 30-minute span paced in the
   explore client, with a day/night wash; a short session is a day or two, not
   generations. (Pure pacing/clock — the tuned survival balance is untouched.)
-- **next — the village re-architecture** — anchors (a medieval village of
-  buildings: homes, store, well, tavern, with fields and woods beyond),
-  Stardew-esque distinct/animated/moving people on daily routines, and switching
-  to a newborn you take a liking to.
+- **v0.16 (done)** — **anchors**: the areas render as a medieval village — a
+  Homes quarter with a house per family, a Square (well + market), worked Fields,
+  and wooded edges — with a `home` on every being and a night routine that sends
+  the well-fed home after dark (so the village breathes with the day-clock).
+- **next** — Stardew-esque distinct/animated/moving people on daily routines;
+  switching to a newborn you take a liking to.
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

@@ -142,7 +142,8 @@ def build_base(seed: int = 7) -> World:
         a = Agent(id=aid, name=name, genome=g, language=PrivateLanguage.for_agent(aid),
                   lexicon=Lexicon(), wants=Wants.of(aid, g.appetites),
                   memory=Memory(agent_id=aid), location=STARTING_PLACE,
-                  vitality=1.0, age=cls_initial_age(aid), story=story)
+                  vitality=1.0, age=cls_initial_age(aid), story=story,
+                  home=(family or "Unbound"))
         w.agents[aid] = a
         by_name[name] = a
         if family:
