@@ -5,6 +5,8 @@ __pycache__/
 .venv/
 venv/
 *.egg-info/
-# the living world's accumulated state — local, not committed
+.coverage
+# playthroughs: disposable local state, forked from a base — not committed
+# (bases live in worlds/ and ARE committed — they're shareable content)
 runtime/
 !runtime/.gitkeep
