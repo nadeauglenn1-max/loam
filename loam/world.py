@@ -46,7 +46,12 @@ class World:
         for place, d in PLACES.items():
             w.bloom[place] = d["wild"] * config.WILD_MAX_SCALE * 0.5   # half-stocked at genesis
         w.predator = config.PREDATOR_PLACES[0]
+        from . import genesis
+        bonds, frictions = genesis.weave_web(w.agents.values(), seed)
         w._log(f"A world wakes with {n_agents} beings at {config.STARTING_PLACE}.")
+        if bonds or frictions:
+            w._log(f"They are no strangers: {bonds} bonds and {frictions} old "
+                   f"frictions already run between them.")
         return w
 
     # ---- queries ----------------------------------------------------------

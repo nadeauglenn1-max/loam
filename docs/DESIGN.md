@@ -100,16 +100,39 @@ free refuge, and the two pressures balance: **courage evolves to a calibrated
 middle and holds its variance** — brave enough to eat, wary enough to live. This
 was run and confirmed; see the README.
 
+## The web a village is born into (v0.5)
+
+A world does not begin as a crowd of strangers. Before the first tick, its
+founders are already **tangled** — bonds and frictions with a founding memory of
+each: old friends and kin, a debt of kindness owed, a rivalry unsettled, a wrong
+unforgiven. This is not decoration: cognition already reads affinity (who to
+feed, breed with, seize from, speak to), so the web has **mechanical teeth from
+tick one** — a being feeds its friends and preys on its rivals immediately.
+
+The weave (`genesis.py`) is **deterministic in the world's seed**, so a base
+world is reproducible — a prerequisite for treating a saved world as a *reusable
+base*. A web is a property of a *village*: below `WEB_MIN_VILLAGE` founders (a
+pair or trio, used to isolate mechanics in tests) none is woven. Density and the
+warmth/friction balance are single-sourced constants in `config.py`.
+
+This is the first step toward **genesis as composition** — a village assembled
+from saved characters plus fresh founders, with the connective web (the part
+that makes a roster a society) generated over them; today rule-woven, later a
+model can author richer tensions behind the same seam.
+
 ## Roadmap
 
-- **v0.3 (in progress)** — ecology (bloom, forage-risk, grow-uncertainty, big
+- **v0.3–v0.4 (done)** — ecology (bloom, forage-risk, grow-uncertainty, big
   map), life (vitality, aging, death), procreation (gestation, genetics,
   heritable language), free actions (give/seize/mate), instrumentation (census,
-  lineage, factions). Balance-tuned on free mock runs, then a long real run.
-- **v0.4** — the notion/belief layer made first-class (transmission, adoption,
-  recurrence) so proto-religion and proto-value are legible; deeper cognition
-  over relationships and history.
-- **later** — you *inhabit* a being (first person), not only tend from above.
+  lineage, factions), and the beast (evolution of calibrated courage).
+- **v0.5 (done)** — the genesis web: villages wake already bonded and in
+  friction, deterministic in the seed.
+- **next** — the **save file as a reusable base**: an immutable base world you
+  *fork* into a mutable playthrough (so a base is never overwritten by a run),
+  and characters savable as portable atoms to drop into new villages.
+- **later** — a model-authored genesis web; you *inhabit* a being (first
+  person), not only tend from above.
 
 ## Standing principles
 

@@ -45,6 +45,19 @@ STARTING_PLACE = "the hearth"     # a world begins at home
 GROUNDING_THRESHOLD = 3           # legible hearings before a word is learned alone
 LANGUAGE_DRIFT = 0.35             # fraction of a child's words freshly coined vs inherited
 
+# ---- genesis: the web a village is born into ---------------------------------
+# A village does not wake as strangers. Before the first tick its founders are
+# already tangled — old friends, kin, a debt owed, a rivalry unsettled. Cognition
+# reads these bonds from tick one, so the story starts warm. A web is a property
+# of a village: a pair or trio (used only to isolate mechanics in tests) stays a
+# clean slate.
+WEB_MIN_VILLAGE = 4               # fewer founders than this and no web is woven
+WEB_TIES_PER_BEING = 1.6          # ties woven ≈ this × number of founders
+WEB_BOND_FRACTION = 0.65          # share of ties that are warmth rather than friction
+WEB_BOND_RANGE = (2.5, 7.0)       # affinity magnitude of a bond at genesis
+WEB_TENSION_RANGE = (2.5, 6.0)    # affinity magnitude of a friction at genesis
+WEB_ASYMMETRY = 0.4               # how unequal the two sides of a tie may be (0 = equal)
+
 # ---- bloom: the resource beings must eat to live -------------------------------
 METABOLISM = 0.028                # vitality lost per tick just by living
 EAT_RESTORE = 0.24               # vitality restored per unit of bloom eaten

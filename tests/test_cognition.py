@@ -9,11 +9,14 @@ def _w(n=4):
 
 
 def _solo(w, aid="a0"):
-    """Move everyone else far away so `aid` has no neighbours unless we add them."""
+    """Move everyone else far away and cut this being's inborn ties, so `aid` has
+    no neighbours and no relationships unless the test adds them."""
     for a in w.agents.values():
         a.location = "the mire"
-    w.agents[aid].location = "the hearth"
-    return w.agents[aid]
+    a = w.agents[aid]
+    a.location = "the hearth"
+    a.relationships.clear()          # a controlled social slate for the policy
+    return a
 
 
 # ---- RuleCognition survival policy ------------------------------------------
