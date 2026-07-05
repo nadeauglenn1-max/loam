@@ -44,6 +44,7 @@ the same pristine ground (and the same base is a thing you can share).
 python -m loam.cli genesis eden --agents 8   # mint a base → worlds/eden.base.json
 python -m loam.cli play eden --ticks 50      # fork & live a playthrough (base stays pristine)
 python -m loam.cli play eden --ticks 50      # resume it; --fresh restarts from the base
+python -m loam.cli play eden --as north      # fork a second, separate story from the same base
 python -m loam.cli worlds                    # the bases you can play
 ```
 

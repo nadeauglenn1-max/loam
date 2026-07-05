@@ -121,3 +121,29 @@ def test_worlds_lists_the_bases(capsys):
 def test_worlds_is_friendly_when_empty(capsys):
     assert main(["worlds"]) == 0
     assert "No bases yet" in capsys.readouterr().out
+
+
+# ---- one base, many named playthroughs (replay-throughs) ---------------------
+def test_fork_can_name_the_playthrough():
+    persistence.create_base("eden", World.seeded(n_agents=6, seed=7))
+    play = persistence.fork("eden", as_play="story")
+    assert play.name == "story" and play.forked_from == "eden"
+    persistence.save_play(play)
+    assert persistence.play_path("story").exists()
+
+
+def test_one_base_forks_into_many_side_by_side_stories(capsys):
+    assert main(["genesis", "eden", "--agents", "6", "--seed", "7"]) == 0
+    base_bytes = persistence.base_path("eden").read_text(encoding="utf-8")
+    capsys.readouterr()
+
+    assert main(["play", "eden", "--as", "north", "--ticks", "5"]) == 0
+    assert main(["play", "eden", "--as", "south", "--ticks", "9"]) == 0
+    north, south = persistence.load_play("north"), persistence.load_play("south")
+    assert north.tick == 5 and south.tick == 9                     # two separate stories
+    assert north.forked_from == "eden" and south.forked_from == "eden"
+    assert persistence.load_play("eden") is None                   # nothing under the base name
+    assert persistence.base_path("eden").read_text(encoding="utf-8") == base_bytes  # base pristine
+
+    assert main(["play", "eden", "--as", "north", "--ticks", "3"]) == 0   # resume one by name
+    assert persistence.load_play("north").tick == 8

@@ -140,15 +140,17 @@ def create_base(name: str, world: World, *, overwrite: bool = False) -> Path:
     return p
 
 
-def fork(name: str, model=None) -> World:
+def fork(name: str, model=None, as_play: str | None = None) -> World:
     """Fork a base into a fresh, mutable playthrough — in memory. The base file on
-    disk is never touched; you can only ever fork FROM it."""
+    disk is never touched; you can only ever fork FROM it. `as_play` names the
+    playthrough (so one base can be forked into many side-by-side stories);
+    defaults to the base's own name."""
     base = load(base_path(name), model=model)
     if base is None:
         raise FileNotFoundError(f"no base named '{name}' (looked in {base_path(name)})")
     base.role = "play"
     base.forked_from = name
-    base.name = name
+    base.name = as_play or name
     return base
 
 

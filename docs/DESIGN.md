@@ -142,8 +142,11 @@ model can author richer tensions behind the same seam.
   model author the ties behind the same `Weaver` seam the rule weaver fills; the
   engine consumes a *validated contract* (not raw text) and falls back to the
   rule weave on any failure — model-agnostic by construction.
-- **next** — multiple named playthroughs of one base; a model-authored
-  *character* (a soul richer than a rule genome).
+- **v0.9 (done)** — multiple named playthroughs of one base (`play <base> --as
+  <story>`): one base forks into many side-by-side stories, each its own file,
+  the base untouched — replay-throughs by construction.
+- **next** — a model-authored *character* (a soul richer than a rule genome);
+  surfacing the web on the live dashboard.
 - **later** — you *inhabit* a being (first person), not only tend from above; a
   pixel-art client over the same world state.
 

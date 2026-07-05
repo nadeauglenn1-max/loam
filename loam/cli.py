@@ -163,17 +163,18 @@ def cmd_genesis(args: argparse.Namespace) -> int:
 
 def cmd_play(args: argparse.Namespace) -> int:
     cognition = _make_cognition(args.real)
-    world = None if args.fresh else persistence.load_play(args.name, model=cognition)
+    play_name = args.as_ or args.name
+    world = None if args.fresh else persistence.load_play(play_name, model=cognition)
     if world is not None:
         origin = "resumed"
     else:
         try:
-            world = persistence.fork(args.name, model=cognition)
+            world = persistence.fork(args.name, model=cognition, as_play=play_name)
         except FileNotFoundError as e:
             print(str(e))
             print(f"Mint one first:  loam genesis {args.name}")
             return 1
-        origin = "forked fresh from the base"
+        origin = f"forked fresh from base '{args.name}'"
     world.present = args.present
     before = len(world.feed)
     world.run(args.ticks)
@@ -183,7 +184,7 @@ def cmd_play(args: argparse.Namespace) -> int:
     mind = "live Claude" if args.real else "rule"
     c = metrics.census(world)
     frac, _edges, _total = metrics.coverage(world)
-    print(f"— playthrough '{args.name}' {origin} ({mind} cognition; now t{world.tick}) —")
+    print(f"— playthrough '{play_name}' {origin} ({mind} cognition; now t{world.tick}) —")
     for line in tail[-18:]:
         print(line)
     print(f"— {c['population']} alive, gen {c['generations']}; shared tongue "
@@ -318,6 +319,8 @@ def build_parser() -> argparse.ArgumentParser:
     pl.add_argument("--ticks", type=int, default=20)
     pl.add_argument("--present", action="store_true", help="you're here; think harder")
     pl.add_argument("--real", action="store_true", help="live Claude cognition")
+    pl.add_argument("--as", dest="as_", metavar="STORY",
+                    help="name this playthrough (fork one base into many side-by-side stories)")
     pl.add_argument("--fresh", action="store_true",
                     help="restart from the base, discarding the current playthrough")
     pl.set_defaults(func=cmd_play)
