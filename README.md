@@ -114,6 +114,45 @@ contract with a rule fallback), single-sourced in `loam/config.py`:
 | reflective | `claude-sonnet-5` | you're present / interacting |
 | pivotal | `claude-opus-4-8` | a decisive moment, or a being is old or dying |
 
+### Using a live model (bring your own key)
+
+Loam runs **fully free and offline** by default — the rule cognition needs no
+key, no account, nothing. The optional `--real` features (a model authoring a
+world's web or a character, or live per-being cognition) call the Anthropic API,
+so **you bring your own key** — your key, your usage, your cost. Loam never
+ships, stores, or transmits a key; it only reads one from your environment.
+
+1. **Get a key** — sign up at [console.anthropic.com](https://console.anthropic.com),
+   then create one under **API Keys**. Usage is pay-as-you-go, and the `--real`
+   paths are small and infrequent by design (the world loops free; the model is
+   spent only on interaction and pivotal moments).
+2. **Install the extra:**
+   ```bash
+   pip install -e ".[real]"
+   ```
+3. **Put the key in your environment** — Loam reads `LOAM_ANTHROPIC_API_KEY`
+   (preferred) or `ANTHROPIC_API_KEY`:
+   ```bash
+   # macOS / Linux
+   export LOAM_ANTHROPIC_API_KEY="sk-ant-..."
+   ```
+   ```powershell
+   # Windows PowerShell — this session:
+   $env:LOAM_ANTHROPIC_API_KEY = "sk-ant-..."
+   # or persist it for future sessions:
+   setx LOAM_ANTHROPIC_API_KEY "sk-ant-..."
+   ```
+4. **Add `--real` to a command:**
+   ```bash
+   python -m loam.cli genesis eden --agents 8 --real    # a model authors the web
+   python -m loam.cli forge rook "a wary loner" --real  # a model authors the character
+   python -m loam.cli play eden --ticks 40 --real       # live per-being cognition
+   ```
+
+Keep your key in the environment — never commit it or paste it into a file.
+Without a key, just omit `--real`; everything else is free. (Live per-being
+cognition also falls back to the rule policy on any transient model error.)
+
 ## Backlog & current state
 
 **State:** the engine + content platform is complete and CI-green (143 tests).
