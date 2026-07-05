@@ -155,10 +155,14 @@ model can author richer tensions behind the same seam.
 - **v0.12 (done)** — an **authored founding village** (`loam village`): eight
   named souls with backstories and a hand-written web of bonds and grudges, plus
   a `story` on every being — the place you walk into first, with a past.
-- **next** — the **explore client** (pygame, in-process): walk the village, meet
-  its people, read them, watch it live around you.
-- **later** — you *inhabit* a being (first person); farming/combat surfaced in
-  the client; a player avatar and richer art.
+- **v0.14 (done)** — the **explore client** (`loam explore`, pygame, in-process):
+  walk the village with a player avatar, meet its people, read their story /
+  thought / bonds, and watch it live around you. Code-drawn graphics; the world
+  loops on free cognition, the model is untouched here (spent only on interaction).
+- **next** — farming / foraging / the beast surfaced in the client; a "converse"
+  beat where a model speaks *for* a being, on interaction only; richer art.
+- **later** — you *inhabit* a being (first person); a bigger overarching story as
+  the drive.
 
 ## Standing principles
 

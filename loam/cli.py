@@ -18,6 +18,7 @@
   loam genesis two --with fen    # compose a base that includes a saved character
   loam chars                     # the characters you've saved
   loam forge Rook "a wary loner" # author a character from a description
+  loam explore hollow            # walk the village in a window (needs the [game] extra)
 """
 from __future__ import annotations
 
@@ -279,6 +280,20 @@ def cmd_forge(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_explore(args: argparse.Namespace) -> int:  # pragma: no cover - interactive window
+    try:
+        from .game import explore
+    except ImportError:
+        print('The explore client needs pygame.  Install it:  pip install -e ".[game]"')
+        return 1
+    try:
+        return explore.run(args.name, fresh=args.fresh)
+    except FileNotFoundError as e:
+        print(str(e))
+        print(f"Mint one first:  loam village {args.name}")
+        return 1
+
+
 def cmd_serve(args: argparse.Namespace) -> int:  # pragma: no cover - network loop
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -386,6 +401,11 @@ def build_parser() -> argparse.ArgumentParser:
     fg.add_argument("description", nargs="?", default="", help="a prose description of who they are")
     fg.add_argument("--real", action="store_true", help="let a live model author the character")
     fg.set_defaults(func=cmd_forge)
+
+    ex = sub.add_parser("explore", help="walk the village in a window (needs the [game] extra)")
+    ex.add_argument("name")
+    ex.add_argument("--fresh", action="store_true", help="restart the playthrough from the base")
+    ex.set_defaults(func=cmd_explore)
 
     s = sub.add_parser("serve", help="watch the world live in a browser")
     s.add_argument("--port", type=int, default=8765)

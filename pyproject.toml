@@ -11,6 +11,7 @@ dependencies = []              # runs with zero deps (rule cognition); see LICEN
 
 [project.optional-dependencies]
 real = ["anthropic>=0.69,<1"]  # only needed for --real (live Claude cognition)
+game = ["pygame-ce>=2.4"]      # only needed for the explore client (loam explore)
 dev = ["pytest>=8", "pytest-cov>=5", "anthropic>=0.69,<1"]
 
 [project.scripts]
@@ -24,8 +25,9 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 source = ["loam"]
-# llm.py is the live-network boundary — exercised by --real runs, not unit tests.
-omit = ["loam/llm.py"]
+# boundaries exercised by real runs / a live window, not unit tests:
+# llm.py = the network; game/explore.py = the pygame render loop (smoke-tested only).
+omit = ["loam/llm.py", "loam/game/explore.py"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:", "\\.\\.\\."]

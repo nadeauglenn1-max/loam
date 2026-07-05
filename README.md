@@ -14,8 +14,8 @@ fork into as many separate stories as you want, and hand to someone else. A
 being you love is a *file* too — save it, and drop it into a different world as a
 stranger to be woven in anew. The mind that drives it all is a swappable seam:
 free rule cognition by default, any model behind a validated contract when you
-want one. The graphical client — walk the village in pixels — is coming next;
-the engine underneath it is done.
+want one. You can walk the village in pixels (`loam explore`), tend it from the
+terminal, or watch it live in the browser.
 
 You are the one who understands every tongue — a translator each being can turn
 to, individually and horizontally. No worship, no hierarchy. Understanding isn't
@@ -34,6 +34,7 @@ python -m loam.cli play hollow --ticks 200   # fork a playthrough and let it liv
 python -m loam.cli chronicle             # births, deaths, families, tongue, the ties that bind
 python -m loam.cli visit a3              # sit with one being — its story, gifts, kin, thoughts
 python -m loam.cli serve                 # watch it live in a browser (map, vitals, the web)
+python -m loam.cli explore hollow        # walk the village in a window (pip install -e ".[game]")
 ```
 
 ### Worlds you fork, never overwrite
@@ -166,15 +167,13 @@ The graphical explore client is in progress.
 - Named playthroughs — one base, many side-by-side stories (replay-throughs).
 - Surface the web — the ties that bind, in the chronicle and the live dashboard.
 - Authored founding village — 30 souls, families, groups, and pasts.
-- Explore client scaffolding — pure spatial layout (`game/layout.py`).
+- **Explore client** (`loam explore`, pygame) — walk the village with a player
+  avatar, meet its people, read their story/thought/bonds, watch it live. The
+  world loops on free cognition; the model is untouched here.
 
-**In progress**
-- The **explore client** (`game/explore.py`, pygame): walk the village, meet its
-  people, read their story/thought/bonds, watch it live around you. The world
-  loops on free cognition; the model is touched only on interaction.
-
-**Next**
-- Farming, foraging, and the beast surfaced in the client; a player avatar.
+**In progress / next**
+- Farming, foraging, and the beast surfaced in the client.
+- A "converse" beat — a model speaking *for* a being, on interaction only.
 - A bigger overarching story brought in as the drive, once exploring feels right.
 
 **Later**
