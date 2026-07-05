@@ -60,9 +60,14 @@ a fresh web: **same soul, new entanglements.**
 
 ```bash
 python -m loam.cli save-char Fen --from eden          # → chars/fen.char.json
-python -m loam.cli genesis two --with fen --agents 8  # compose a base that includes Fen
+python -m loam.cli forge rook "a wary loner, deadly in the wild"  # author one from a description
+python -m loam.cli genesis two --with fen --with rook --agents 8  # compose a base from them
 python -m loam.cli chars                               # the characters you've saved
 ```
+
+Or **forge** a character from words: the rule forge derives a nature from the
+name; with `--real` a model authors it from your description, behind a validated
+contract (never raw text), falling back to the rule forge on any failure.
 
 ### Live cognition
 
@@ -132,13 +137,13 @@ wants.py       heterogeneous, evolving desire (appetites come from the genome)
 memory.py      per-being bounded memory
 agent.py       a being: body (vitality/age/bloom), tongue, wants, kin, pregnancy
 genesis.py     the web a village is born into — bonds/frictions (rule or model weaver)
-character.py   a being's portable base self — saved to drop into another world
+character.py   a being's portable base self — saved, forged from a description, re-dropped
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
 metrics.py     census, lineage tribes, the economy — and the chronicle
 persistence.py JSON save/load; an immutable base forked into a mutable playthrough
-cli.py         run / chronicle / census / map / visit / genesis / play / save-char / chars
+cli.py         run / chronicle / census / map / visit / genesis / play / save-char / forge
 ```
 
 ## Develop

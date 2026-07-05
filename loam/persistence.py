@@ -181,12 +181,16 @@ def list_chars() -> list[str]:
     return sorted(p.name.removesuffix(".char.json") for p in CHAR_DIR.glob("*.char.json"))
 
 
-def save_char(name: str, agent) -> Path:
-    from . import character
+def write_char(name: str, atom: dict) -> Path:
     p = char_path(name)
     p.parent.mkdir(parents=True, exist_ok=True)
-    p.write_text(json.dumps(character.to_atom(agent), indent=2), encoding="utf-8")
+    p.write_text(json.dumps(atom, indent=2), encoding="utf-8")
     return p
+
+
+def save_char(name: str, agent) -> Path:
+    from . import character
+    return write_char(name, character.to_atom(agent))
 
 
 def load_char(name: str) -> dict | None:

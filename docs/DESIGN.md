@@ -145,8 +145,11 @@ model can author richer tensions behind the same seam.
 - **v0.9 (done)** — multiple named playthroughs of one base (`play <base> --as
   <story>`): one base forks into many side-by-side stories, each its own file,
   the base untouched — replay-throughs by construction.
-- **next** — a model-authored *character* (a soul richer than a rule genome);
-  surfacing the web on the live dashboard.
+- **v0.10 (done)** — a **model-authored character**: `forge <name> "<desc>"`
+  turns a prose description into a being's nature behind the same `Forge` seam
+  (RuleForge default/fallback, ClaudeForge with `--real`) — a *validated genome*,
+  never raw text.
+- **next** — surface the web on the live dashboard; a player avatar (content).
 - **later** — you *inhabit* a being (first person), not only tend from above; a
   pixel-art client over the same world state.
 

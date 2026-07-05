@@ -16,6 +16,7 @@
   loam save-char Fen --from eden # save a favourite being as a portable character
   loam genesis two --with fen    # compose a base that includes a saved character
   loam chars                     # the characters you've saved
+  loam forge Rook "a wary loner" # author a character from a description
 """
 from __future__ import annotations
 
@@ -240,6 +241,27 @@ def cmd_chars(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_forge(args: argparse.Namespace) -> int:
+    if args.real:
+        from .character import ClaudeForge
+        from .llm import LiveLLM
+        forge = ClaudeForge(LiveLLM())
+        mind = "a live model"
+    else:
+        from .character import RuleForge
+        forge = RuleForge()
+        mind = "the rule forge"
+    atom = forge.forge(args.name, args.description)
+    p = persistence.write_char(args.name, atom)
+    g = atom["genome"]
+    craves = ", ".join(sorted(g["appetites"], key=g["appetites"].get, reverse=True)[:2])
+    print(f"Forged '{args.name}' with {mind} → {p}")
+    print(f"  forage {g['forage_skill']:.2f}, grow {g['grow_skill']:.2f}, "
+          f"bravery {g['bravery']:.2f}, lifespan {g['lifespan']}; craves {craves}")
+    print(f"Drop into a world:  loam genesis <base> --with {args.name}")
+    return 0
+
+
 def cmd_serve(args: argparse.Namespace) -> int:  # pragma: no cover - network loop
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -335,6 +357,12 @@ def build_parser() -> argparse.ArgumentParser:
     sc.set_defaults(func=cmd_save_char)
 
     sub.add_parser("chars", help="list saved characters").set_defaults(func=cmd_chars)
+
+    fg = sub.add_parser("forge", help="author a character from a description (rule, or --real model)")
+    fg.add_argument("name")
+    fg.add_argument("description", nargs="?", default="", help="a prose description of who they are")
+    fg.add_argument("--real", action="store_true", help="let a live model author the character")
+    fg.set_defaults(func=cmd_forge)
 
     s = sub.add_parser("serve", help="watch the world live in a browser")
     s.add_argument("--port", type=int, default=8765)
