@@ -171,7 +171,8 @@ cognition also falls back to the rule policy on any transient model error.)
 
 **State:** playable and CI-green (149 tests). The engine + content platform is
 complete, and the medieval-village explore client — day/night, anchors, distinct
-moving people — is in and walkable. Next up: switching to a newborn.
+moving people — is in and walkable. (Saving a newborn you take a liking to is
+already covered by `save-char`.)
 
 **Done**
 - Genesis web — villages wake tangled, with mechanical teeth from tick one.
@@ -193,10 +194,10 @@ moving people — is in and walkable. Next up: switching to a newborn.
   (skin/hair/tunic, tunic hue shared by household) that walk between anchors with
   a leg-swinging gait and face where they go.
 
-**Next — the village re-architecture**
-- **Switch to a newborn** — take a liking to a child that's born, and play as them.
-- Farming / foraging / the beast surfaced in the client; a "converse" beat (a
-  model speaking *for* a being, on interaction only).
+**Next**
+- Make the village's work playable in the client — join the farming, foraging,
+  and the beast, rather than only walking among it.
+- A "converse" beat — a model speaking *for* a being, on interaction only.
 
 **Later**
 - A bigger overarching story as the drive; a common tongue (language may retire

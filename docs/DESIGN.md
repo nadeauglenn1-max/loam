@@ -169,7 +169,10 @@ model can author richer tensions behind the same seam.
 - **v0.17 (done)** — **distinct, moving people**: bigger, individually-recognizable
   villagers (deterministic skin/hair/tunic, tunic hue shared by household) that
   walk between anchors with a leg-swinging gait and face where they go.
-- **next** — switch to a newborn you take a liking to (play as your lineage).
+- **next** — the village's work made playable in the client (join the farming,
+  foraging, and the beast); a "converse" beat (a model speaking for a being, on
+  interaction only). Saving a newborn you take a liking to is already covered by
+  character-atoms / `save-char`.
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 
