@@ -66,3 +66,23 @@ def test_chronicle_of_an_empty_world():
     w = World.seeded(n_agents=1, seed=7)
     w.agents.clear()
     assert "empty" in metrics.chronicle(w)
+
+
+def test_ties_reports_strongest_pairs_both_signs():
+    w = World.seeded(n_agents=8, seed=7)
+    tied = metrics.ties(w)
+    assert tied                                             # a village has ties
+    assert any(s > 0 for *_, s in tied) and any(s < 0 for *_, s in tied)
+    mags = [abs(s) for *_, s in tied]
+    assert mags == sorted(mags, reverse=True)               # sharpest first
+
+
+def test_ties_count_each_pair_once():
+    w = World.seeded(n_agents=6, seed=7)
+    tied = metrics.ties(w, limit=99)
+    pairs = {frozenset((na, nb)) for na, nb, _ in tied}
+    assert len(pairs) == len(tied)
+
+
+def test_chronicle_surfaces_the_web():
+    assert "ties that bind" in metrics.chronicle(World.seeded(n_agents=8, seed=7))

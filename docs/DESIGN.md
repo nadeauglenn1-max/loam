@@ -149,7 +149,10 @@ model can author richer tensions behind the same seam.
   turns a prose description into a being's nature behind the same `Forge` seam
   (RuleForge default/fallback, ClaudeForge with `--real`) — a *validated genome*,
   never raw text.
-- **next** — surface the web on the live dashboard; a player avatar (content).
+- **v0.11 (done)** — **surface the web**: `metrics.ties()` powers a "ties that
+  bind" section in the chronicle and a panel on the live dashboard (one helper,
+  two surfaces — strongest bonds and sharpest frictions).
+- **next** — a player avatar (content); begin the pixel-art client.
 - **later** — you *inhabit* a being (first person), not only tend from above; a
   pixel-art client over the same world state.
 

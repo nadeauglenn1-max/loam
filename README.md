@@ -141,7 +141,7 @@ character.py   a being's portable base self — saved, forged from a description
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
-metrics.py     census, lineage tribes, the economy — and the chronicle
+metrics.py     census, lineage tribes, the economy, the ties that bind — the chronicle
 persistence.py JSON save/load; an immutable base forked into a mutable playthrough
 cli.py         run / chronicle / census / map / visit / genesis / play / save-char / forge
 ```

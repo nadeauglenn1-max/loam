@@ -86,6 +86,28 @@ def factions(world: "World") -> list[list[str]]:
     return sorted((sorted(g) for g in groups.values()), key=len, reverse=True)
 
 
+def ties(world: "World", limit: int = 8) -> list[tuple[str, str, float]]:
+    """The strongest ties in the world — (nameA, nameB, strength), each pair once,
+    bonds positive and frictions negative, sharpest by magnitude first. The
+    strength is the average of the two sides, so a one-sided tie reads weaker."""
+    names = {a.id: a.name for a in world.agents.values()}
+    seen: set[frozenset[str]] = set()
+    out: list[tuple[str, str, float]] = []
+    for a in world.agents.values():
+        for oid, v in a.relationships.items():
+            if oid not in world.agents:
+                continue
+            key = frozenset((a.id, oid))
+            if key in seen:
+                continue
+            seen.add(key)
+            strength = (v + world.agents[oid].affinity(a.id)) / 2
+            if strength != 0:
+                out.append((names[a.id], names[oid], strength))
+    out.sort(key=lambda t: abs(t[2]), reverse=True)
+    return out[:limit]
+
+
 def census(world: "World") -> dict:
     living = world.agents
     n = len(living)
@@ -166,6 +188,13 @@ def chronicle(world: "World") -> str:
         temper = ("mostly giving" if give > take * 2 else
                   "mostly taking" if take > give * 2 else "torn between giving and taking")
         lines.append(f"The economy of bloom is {temper} — {give} gifts, {take} seizures.")
+        lines.append("")
+
+    tied = ties(world, 6)
+    if tied:
+        lines.append("The ties that bind:")
+        for na, nb, s in tied:
+            lines.append(f"  {na} & {nb}: {s:+.0f} ({'bond' if s > 0 else 'friction'})")
         lines.append("")
 
     tribes = factions(world)

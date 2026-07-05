@@ -95,6 +95,14 @@ def render_page(world: "World", *, refresh: int = 0) -> str:
             f'<div class="econk">{give} gifts · {take} seizures · '
             f'{c["matings"]} matings · {c["deaths_violence"]} killed</div></div>')
 
+    tied = metrics.ties(world, 8)
+    tie_rows = "".join(
+        f'<div class="tie"><span>{_e(na)} <i>&amp;</i> {_e(nb)}</span>'
+        f'<span class="{"bond" if s > 0 else "fric"}">{s:+.0f}</span></div>'
+        for na, nb, s in tied) or '<span class="empty">no ties yet</span>'
+    ties_html = (f'<div class="ties"><div class="tieshead">the ties that bind</div>'
+                 f'{tie_rows}</div>')
+
     feed = "".join(f'<div class="line">{_e(line)}</div>' for line in world.feed[-16:])
 
     return f"""<!DOCTYPE html><html><head><meta charset="utf-8">{meta}
@@ -127,6 +135,11 @@ h1{{font-size:20px;font-weight:500;margin:0 0 14px}}
 .ebar{{display:flex;height:10px;border-radius:6px;overflow:hidden;background:{_LINE}}}
 .give{{background:#1D9E75}} .take{{background:#D85A30}}
 .econk{{font-size:12px;color:{_MUTE};margin-top:5px}}
+.ties{{background:{_CARD};border:1px solid {_LINE};border-radius:12px;padding:12px;margin-bottom:18px}}
+.tieshead{{font-size:12px;color:{_MUTE};margin-bottom:8px}}
+.tie{{display:flex;justify-content:space-between;font-size:13px;padding:2px 0}}
+.tie i{{color:{_MUTE};font-style:normal}}
+.bond{{color:#5DCAA5}} .fric{{color:#F0997B}}
 .feed{{background:{_CARD};border:1px solid {_LINE};border-radius:12px;padding:12px;font:13px/1.6 ui-monospace,Menlo,Consolas,monospace}}
 .feed .line{{color:{_MUTE};white-space:pre-wrap}}
 </style></head><body><div class="wrap">
@@ -134,5 +147,6 @@ h1{{font-size:20px;font-weight:500;margin:0 0 14px}}
 <div class="vitals">{vital_html}</div>
 <div class="map">{map_html}</div>
 {econ}
+{ties_html}
 <div class="feed">{feed}</div>
 </div></body></html>"""

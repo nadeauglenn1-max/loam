@@ -29,3 +29,9 @@ def test_tribe_members_share_a_colour():
     colors = dashboard._tribe_colors(w)
     assert colors[w.agents["a0"].name] == colors[w.agents["a1"].name]
     assert colors[w.agents["a0"].name] != dashboard._LONE
+
+
+def test_dashboard_surfaces_the_web():
+    page = dashboard.render_page(World.seeded(n_agents=8, seed=7))
+    assert "the ties that bind" in page
+    assert 'class="bond"' in page or 'class="fric"' in page
