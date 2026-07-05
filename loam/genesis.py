@@ -13,12 +13,13 @@ the same seed always wakes the same village into the same web.
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Protocol
 
 from . import config
 
 if TYPE_CHECKING:  # pragma: no cover
     from .agent import Agent
+    from .llm import LiveLLM
 
 # Each archetype is (what the first feels about the second, what the second feels
 # about the first). Bonds warm both ways; frictions chafe both ways. The two
@@ -85,3 +86,107 @@ def _tie(a: "Agent", b: "Agent", archetypes, mag_range, sign: int,
     b.warm_to(a.id, sign * other)
     a.memory.remember(0, line_a.format(name=b.name))
     b.memory.remember(0, line_b.format(name=a.name))
+
+
+# ---- weavers: who authors the web -------------------------------------------
+# The web can be woven two ways behind one seam (mirrors cognition.py): a free,
+# deterministic RULE weaver (the default and the safe fallback), or a MODEL
+# weaver where a chosen model authors the tensions. The engine consumes a
+# CONTRACT — a validated list of ties — never the model's raw text; anything
+# malformed falls back to the rule weave, so any model plugs in and the web
+# degrades gracefully instead of breaking.
+
+
+class Weaver(Protocol):
+    def weave(self, agents, seed: int) -> tuple[int, int]:
+        ...
+
+
+class RuleWeaver:
+    """The default: deterministic bonds and frictions from the seed."""
+
+    def weave(self, agents, seed: int) -> tuple[int, int]:
+        return weave_web(agents, seed)
+
+
+_WEAVE_SYSTEM = (
+    "You are the hidden history of a village. Given its founders, invent the ties "
+    "that already run between them before the story starts — a few warm bonds and "
+    "a few frictions, enough that the place feels lived-in (not every possible "
+    "pair). Reply with one tie per line and NOTHING else, each EXACTLY:\n"
+    "TIE: <NameA> | <NameB> | bond|friction | <strength 1-9> | <a short reason, from A's view>\n"
+    "Use only the given names; do not invent people."
+)
+
+
+class ClaudeWeaver:
+    """A model authors the web; the rule weaver catches every failure."""
+
+    def __init__(self, llm: "LiveLLM", fallback: Weaver | None = None) -> None:
+        self._llm = llm
+        self._fallback = fallback or RuleWeaver()
+
+    def weave(self, agents, seed: int) -> tuple[int, int]:
+        beings = list(agents)
+        if len(beings) < config.WEB_MIN_VILLAGE:
+            return (0, 0)
+        try:
+            reply = self._llm.complete(
+                tier=config.REFLECTIVE,
+                system=_WEAVE_SYSTEM,
+                user="The founders: " + ", ".join(b.name for b in beings) + ".",
+                max_tokens=40 * len(beings),
+            )
+            ties = _parse_ties(reply, beings)
+        except Exception:
+            return self._fallback.weave(beings, seed)
+        if not ties:                       # nothing usable came back — fall back
+            return self._fallback.weave(beings, seed)
+        return _apply_ties(ties)
+
+
+def _parse_ties(reply: str, beings) -> list[tuple]:
+    """Validate the model's reply into a list of ties the engine can apply.
+    Unknown names, bad kinds, self-ties, and duplicate pairs are dropped."""
+    names = {b.name.lower(): b for b in beings}
+    ties: list[tuple] = []
+    seen: set[frozenset[str]] = set()
+    for line in reply.splitlines():
+        line = line.strip()
+        if not line.upper().startswith("TIE:"):
+            continue
+        parts = [p.strip() for p in line[4:].split("|")]
+        if len(parts) < 4:
+            continue
+        a, b = names.get(parts[0].lower()), names.get(parts[1].lower())
+        kind = parts[2].lower()
+        if a is None or b is None or a is b or kind not in ("bond", "friction"):
+            continue
+        key = frozenset((a.id, b.id))
+        if key in seen:
+            continue
+        seen.add(key)
+        try:
+            strength = float(parts[3].split()[0])
+        except (ValueError, IndexError):
+            strength = 5.0
+        note = parts[4] if len(parts) >= 5 else ""
+        ties.append((a, b, kind == "bond", strength, note))
+    return ties
+
+
+def _apply_ties(ties) -> tuple[int, int]:
+    bonds = frictions = 0
+    for a, b, is_bond, strength, note in ties:
+        lo, hi = config.WEB_BOND_RANGE if is_bond else config.WEB_TENSION_RANGE
+        mag = max(lo, min(hi, strength / 9 * hi))
+        sign = 1 if is_bond else -1
+        a.warm_to(b.id, sign * mag)
+        b.warm_to(a.id, sign * mag)
+        a.memory.remember(0, note or (f"has a history with {b.name}" if is_bond
+                                      else f"is wary of {b.name}"))
+        b.memory.remember(0, f"a history with {a.name}" if is_bond
+                          else f"keeps a distance from {a.name}")
+        bonds += is_bond
+        frictions += not is_bond
+    return (bonds, frictions)

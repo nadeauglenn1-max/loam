@@ -41,10 +41,11 @@ class World:
     # ---- construction -----------------------------------------------------
     @classmethod
     def seeded(cls, n_agents: int = 6, seed: int = 7,
-               imported: list[dict] | None = None) -> "World":
+               imported: list[dict] | None = None, weaver=None) -> "World":
         """Wake a village. `imported` characters (saved atoms) take the first
         founder slots as strangers here; fresh beings fill the rest up to
-        `n_agents`. All of them are then woven into one web."""
+        `n_agents`. All of them are then woven into one web by `weaver`
+        (the deterministic rule weaver by default)."""
         w = cls(seed=seed)
         idx = 0
         if imported:
@@ -62,7 +63,8 @@ class World:
             w.bloom[place] = d["wild"] * config.WILD_MAX_SCALE * 0.5   # half-stocked at genesis
         w.predator = config.PREDATOR_PLACES[0]
         from . import genesis
-        bonds, frictions = genesis.weave_web(w.agents.values(), seed)
+        weave = weaver or genesis.RuleWeaver()
+        bonds, frictions = weave.weave(w.agents.values(), seed)
         w._log(f"A world wakes with {idx} beings at {config.STARTING_PLACE}.")
         if imported:
             w._log(f"{len(imported)} of them came from other worlds, strangers here.")

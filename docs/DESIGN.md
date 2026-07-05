@@ -138,9 +138,12 @@ model can author richer tensions behind the same seam.
   `chars/<name>.char.json`; `genesis --with <char>` composes a base from saved
   favourites + fresh founders, all woven into one fresh web. Same soul, new
   entanglements.
-- **next** — a **model-authored genesis web**: a weaver behind the same seam the
-  rule-weaver fills — richer, model-agnostic tensions from a chosen model,
-  falling back to the rule weave; and multiple named playthroughs of one base.
+- **v0.8 (done)** — a **model-authored genesis web**: `genesis --real` lets a
+  model author the ties behind the same `Weaver` seam the rule weaver fills; the
+  engine consumes a *validated contract* (not raw text) and falls back to the
+  rule weave on any failure — model-agnostic by construction.
+- **next** — multiple named playthroughs of one base; a model-authored
+  *character* (a soul richer than a rule genome).
 - **later** — you *inhabit* a being (first person), not only tend from above; a
   pixel-art client over the same world state.
 

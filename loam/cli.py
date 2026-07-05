@@ -143,7 +143,12 @@ def cmd_genesis(args: argparse.Namespace) -> int:
             print(f"No saved character '{cname}'. See:  loam chars")
             return 1
         imported.append(atom)
-    w = World.seeded(n_agents=args.agents, seed=args.seed, imported=imported)
+    weaver = None
+    if args.real:
+        from .genesis import ClaudeWeaver
+        from .llm import LiveLLM
+        weaver = ClaudeWeaver(LiveLLM())
+    w = World.seeded(n_agents=args.agents, seed=args.seed, imported=imported, weaver=weaver)
     try:
         p = persistence.create_base(args.name, w, overwrite=args.force)
     except FileExistsError as e:
@@ -305,6 +310,7 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--force", action="store_true", help="replace an existing base")
     g.add_argument("--with", dest="with_chars", action="append", default=[], metavar="CHAR",
                    help="include a saved character as a founder (repeatable)")
+    g.add_argument("--real", action="store_true", help="let a live model author the web")
     g.set_defaults(func=cmd_genesis)
 
     pl = sub.add_parser("play", help="fork a base into a playthrough (or resume one) and live it")

@@ -82,8 +82,10 @@ python -m loam.cli run --ticks 40 --real
   unsettled, a wrong unforgiven. These are real bonds and frictions (each with a
   founding memory), and cognition **reads them from the first tick**, so a being
   feeds its friends, breeds with those it trusts, and preys on those it resents
-  from the very start. The web is deterministic in the world's seed. (A web is a
-  property of a village; a pair or trio wakes a clean slate.)
+  from the very start. By default the web is **rule-woven and deterministic** in
+  the seed; a model can author a richer one behind the same seam (`genesis
+  --real`), falling back to the rule weave on any failure. (A web is a property
+  of a village; a pair or trio wakes a clean slate.)
 - **Bloom** is the resource beings must eat or their vitality decays to death.
   **Forage** it from the wild — rich but **dangerous** (injury, death). **Grow**
   it on arable land — safe but **uncertain** (crops fail, and no one is told
@@ -128,7 +130,7 @@ language.py    private + inherited tongues, learned lexicons, utterances
 wants.py       heterogeneous, evolving desire (appetites come from the genome)
 memory.py      per-being bounded memory
 agent.py       a being: body (vitality/age/bloom), tongue, wants, kin, pregnancy
-genesis.py     the web a village is born into — bonds and frictions before tick one
+genesis.py     the web a village is born into — bonds/frictions (rule or model weaver)
 character.py   a being's portable base self — saved to drop into another world
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
