@@ -166,8 +166,10 @@ model can author richer tensions behind the same seam.
   Homes quarter with a house per family, a Square (well + market), worked Fields,
   and wooded edges — with a `home` on every being and a night routine that sends
   the well-fed home after dark (so the village breathes with the day-clock).
-- **next** — Stardew-esque distinct/animated/moving people on daily routines;
-  switching to a newborn you take a liking to.
+- **v0.17 (done)** — **distinct, moving people**: bigger, individually-recognizable
+  villagers (deterministic skin/hair/tunic, tunic hue shared by household) that
+  walk between anchors with a leg-swinging gait and face where they go.
+- **next** — switch to a newborn you take a liking to (play as your lineage).
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

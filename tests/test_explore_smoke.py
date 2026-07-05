@@ -20,3 +20,12 @@ def test_explore_runs_headless_and_saves_a_playthrough(tmp_path, monkeypatch):
     saved = persistence.load_play("hollow")
     assert saved is not None
     assert saved.forked_from == "hollow"
+
+
+def test_appearances_are_stable_and_varied():
+    from loam.agent import Agent
+    from loam.game import explore
+    a0 = Agent.born(0)
+    assert explore._appearance(a0) == explore._appearance(a0)          # deterministic
+    looks = {explore._appearance(Agent.born(i)) for i in range(10)}
+    assert len(looks) > 3                                              # people look different

@@ -17,7 +17,7 @@ import random
 
 import pygame
 
-from .. import config, dashboard, persistence
+from .. import config, persistence
 from ..cognition import RuleCognition
 from ..config import PLACES
 from . import layout
@@ -179,24 +179,68 @@ def _background(w, h, rects, houses, font):
     return bg
 
 
-def _draw_being(surf, x, y, color, bob, label, font, highlight=False):
-    x, y = int(x), int(y + bob)
-    pygame.draw.ellipse(surf, (0, 0, 0), (x - 9, y + 12, 18, 6))          # shadow
-    pygame.draw.rect(surf, color, (x - 6, y - 2, 12, 14), border_radius=5)  # body
-    pygame.draw.circle(surf, color, (x, y - 7), 6)                        # head
-    pygame.draw.circle(surf, (12, 12, 10), (x, y - 7), 6, 1)
+# ---- people: distinct, code-drawn villagers who walk -----------------------
+_SKIN = [(242, 203, 165), (226, 182, 143), (198, 152, 112), (158, 114, 82), (120, 84, 60)]
+_HAIR = [(38, 30, 26), (92, 62, 38), (150, 110, 62), (206, 172, 96), (184, 186, 190), (122, 44, 32)]
+_TUNIC = [(70, 110, 150), (156, 82, 70), (90, 142, 92), (162, 132, 60),
+          (120, 92, 150), (80, 140, 148), (172, 110, 140), (110, 122, 72)]
+
+
+def _pick(palette, seed):
+    return palette[int(layout._unit(seed) * len(palette)) % len(palette)]
+
+
+def _appearance(a):
+    """A distinct look, deterministic from id — with the tunic hue shared by
+    household, so families read as kin while individuals stay recognizable."""
+    skin = _pick(_SKIN, a.id + ":skin")
+    hair = _pick(_HAIR, a.id + ":hair")
+    tunic = _pick(_TUNIC, (a.home or a.id) + ":fam")
+    style = int(layout._unit(a.id + ":style") * 3) % 3
+    return skin, hair, tunic, style
+
+
+def _legs(surf, x, y, step, moving, color=(58, 44, 32)):
+    off = int(math.sin(step) * 3) if moving else 0
+    pygame.draw.rect(surf, color, (x - 5, y - 7 + max(0, off), 3, 8))
+    pygame.draw.rect(surf, color, (x + 2, y - 7 + max(0, -off), 3, 8))
+
+
+def _draw_person(surf, x, y, appr, step, moving, facing, name, font, highlight=False):
+    skin, hair, tunic, style = appr
+    x, y = int(x), int(y)
+    pygame.draw.ellipse(surf, (10, 12, 8), (x - 9, y - 1, 18, 6))            # shadow
+    _legs(surf, x, y, step, moving)
+    pygame.draw.rect(surf, tunic, (x - 7, y - 20, 14, 15), border_radius=4)  # tunic
+    pygame.draw.rect(surf, tunic, (x - 9, y - 19, 3, 10), border_radius=2)   # arms
+    pygame.draw.rect(surf, tunic, (x + 6, y - 19, 3, 10), border_radius=2)
+    hy = y - 27
+    pygame.draw.circle(surf, skin, (x, hy), 7)                              # head
+    pygame.draw.circle(surf, hair, (x, hy - 3), 7)                          # hair
+    if style == 1:                                                          # long hair
+        pygame.draw.rect(surf, hair, (x - 8, hy - 1, 3, 11), border_radius=2)
+        pygame.draw.rect(surf, hair, (x + 5, hy - 1, 3, 11), border_radius=2)
+    pygame.draw.circle(surf, skin, (x, hy + (3 if style == 2 else 1)), 6)   # face
+    ex = 2 * facing
+    pygame.draw.circle(surf, (26, 22, 18), (x - 2 + ex, hy), 1)             # eyes
+    pygame.draw.circle(surf, (26, 22, 18), (x + 3 + ex, hy), 1)
     if highlight:
-        pygame.draw.circle(surf, _PLAYER, (x, y + 2), 20, 2)
-    tag = font.render(label, True, _INK if highlight else _MUTE)
-    surf.blit(tag, (x - tag.get_width() // 2, y + 16))
+        pygame.draw.circle(surf, _PLAYER, (x, y - 12), 24, 2)
+    tag = font.render(name, True, _INK if highlight else _MUTE)
+    surf.blit(tag, (x - tag.get_width() // 2, y + 4))
 
 
-def _draw_player(surf, x, y, bob):
-    x, y = int(x), int(y + bob)
-    pygame.draw.ellipse(surf, (0, 0, 0), (x - 10, y + 13, 20, 6))
-    pygame.draw.rect(surf, _PLAYER, (x - 7, y - 3, 14, 16), border_radius=5)
-    pygame.draw.circle(surf, _PLAYER, (x, y - 9), 7)
-    pygame.draw.circle(surf, (40, 34, 12), (x, y - 9), 7, 1)
+def _draw_player(surf, x, y, step, moving, facing):
+    x, y = int(x), int(y)
+    pygame.draw.ellipse(surf, (10, 12, 8), (x - 10, y - 1, 20, 6))
+    _legs(surf, x, y, step, moving, color=(120, 96, 34))
+    pygame.draw.rect(surf, _PLAYER, (x - 8, y - 21, 16, 16), border_radius=4)   # cloak
+    pygame.draw.circle(surf, (245, 222, 178), (x, y - 28), 8)                   # head
+    pygame.draw.circle(surf, (120, 90, 40), (x, y - 31), 8)                     # hair
+    pygame.draw.circle(surf, (245, 222, 178), (x, y - 26), 6)
+    ex = 2 * facing
+    pygame.draw.circle(surf, (26, 22, 18), (x - 2 + ex, y - 28), 1)
+    pygame.draw.circle(surf, (26, 22, 18), (x + 3 + ex, y - 28), 1)
 
 
 def _reading_panel(surf, being, world, font, big, w, h):
@@ -247,12 +291,14 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None, screenshot=N
     big = pygame.font.SysFont("segoeui,arial,sans-serif", 22, bold=True)
 
     rects = layout.place_rects(W, H)
-    colors = {n: c for n, c in dashboard._tribe_colors(world).items()}
     families = sorted({a.home for a in world.agents.values() if a.home})
     houses = _house_positions(rects["the hearth"], families)
     bg = _background(W, H, rects, houses, small)   # the static village — built once
     pos: dict[str, list[float]] = {}
-    px, py = W / 2, H - 120
+    apprs: dict[str, tuple] = {}
+    targets: dict[str, tuple] = {}
+    facing: dict[str, int] = {}
+    px, py, pfacing = W / 2, H - 120, 1
     reading = None
     accum, frame = 0.0, 0
     running = True
@@ -272,31 +318,39 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None, screenshot=N
                     reading = None if reading else _near_id(pos, px, py)
 
         keys = pygame.key.get_pressed()
+        pmoving = False
         if reading is None:
             speed = 230 * dt
-            if keys[pygame.K_LEFT] or keys[pygame.K_a]:
-                px -= speed
-            if keys[pygame.K_RIGHT] or keys[pygame.K_d]:
-                px += speed
-            if keys[pygame.K_UP] or keys[pygame.K_w]:
-                py -= speed
-            if keys[pygame.K_DOWN] or keys[pygame.K_s]:
-                py += speed
+            left = keys[pygame.K_LEFT] or keys[pygame.K_a]
+            right = keys[pygame.K_RIGHT] or keys[pygame.K_d]
+            up = keys[pygame.K_UP] or keys[pygame.K_w]
+            down = keys[pygame.K_DOWN] or keys[pygame.K_s]
+            px += speed * (right - left)
+            py += speed * (down - up)
+            pmoving = left or right or up or down
+            if left:
+                pfacing = -1
+            elif right:
+                pfacing = 1
             px = max(14, min(W - 14, px))
-            py = max(60, min(H - 14, py))
+            py = max(60, min(H - 20, py))
             accum += dt
             if accum >= 1 / world_tps and world.living():
                 world.step()
                 accum = 0
 
         for a in world.living():
-            home = _being_pos(a, rects, houses)
+            tgt = _being_pos(a, rects, houses)
+            targets[a.id] = tgt
             if a.id not in pos:
-                pos[a.id] = list(home)
+                pos[a.id] = list(tgt)
             else:
                 cur = pos[a.id]
-                cur[0] += (home[0] - cur[0]) * min(1, dt * 3)
-                cur[1] += (home[1] - cur[1]) * min(1, dt * 3)
+                dx, dy = tgt[0] - cur[0], tgt[1] - cur[1]
+                if abs(dx) > 0.6:
+                    facing[a.id] = 1 if dx > 0 else -1
+                cur[0] += dx * min(1, dt * 2.2)
+                cur[1] += dy * min(1, dt * 2.2)
         for gone in [i for i in pos if i not in world.agents]:
             pos.pop(gone, None)
 
@@ -307,10 +361,14 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None, screenshot=N
             a = world.agents.get(aid)
             if not a:
                 continue
-            bob = math.sin(frame * 0.12 + hash(aid) % 7) * 1.6
-            _draw_being(screen, x, y, colors.get(a.name, _LONE), bob, a.name, small,
-                        highlight=(aid == near or aid == reading))
-        _draw_player(screen, px, py, math.sin(frame * 0.15) * 1.2)
+            if aid not in apprs:
+                apprs[aid] = _appearance(a)
+            tx, ty = targets.get(aid, (x, y))
+            moving = (tx - x) ** 2 + (ty - y) ** 2 > 6
+            _draw_person(screen, x, y, apprs[aid], frame * 0.35, moving,
+                         facing.get(aid, 1), a.name, small,
+                         highlight=(aid == near or aid == reading))
+        _draw_player(screen, px, py, frame * 0.35, pmoving, pfacing)
 
         sky = _sky(world.time_of_day)        # day/night wash over the world
         if sky[3]:

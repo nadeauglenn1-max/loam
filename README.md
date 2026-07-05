@@ -175,10 +175,11 @@ The graphical explore client is in progress.
 - **Anchors** — the areas render as a medieval village: a Homes quarter with a
   house per family, a Square with a well and market, worked Fields, and wooded
   edges; a night routine sends the well-fed home after dark.
+- **Distinct, moving people** — bigger, individually-recognizable villagers
+  (skin/hair/tunic, tunic hue shared by household) that walk between anchors with
+  a leg-swinging gait and face where they go.
 
 **Next — the village re-architecture**
-- **Distinct, moving people** — bigger, individually-recognizable Stardew-style
-  characters that walk between anchors on a daily routine.
 - **Switch to a newborn** — take a liking to a child that's born, and play as them.
 - Farming / foraging / the beast surfaced in the client; a "converse" beat (a
   model speaking *for* a being, on interaction only).
