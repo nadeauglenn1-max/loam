@@ -33,6 +33,9 @@ class World:
     predator: str = ""                                      # where the beast prowls
     next_index: int = 0
     present: bool = False
+    name: str = ""            # a named base/playthrough ("" = the scratch world)
+    role: str = "play"        # "base" (immutable template) or "play" (mutable run)
+    forked_from: str = ""     # the base a playthrough was forked from
     cognition: Cognition = field(default_factory=RuleCognition, repr=False)
 
     # ---- construction -----------------------------------------------------

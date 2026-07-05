@@ -61,6 +61,7 @@ def _agent_from_dict(d: dict) -> Agent:
 def to_dict(w: World) -> dict:
     return {
         "seed": w.seed, "tick": w.tick, "present": w.present, "next_index": w.next_index,
+        "name": w.name, "role": w.role, "forked_from": w.forked_from,
         "predator": w.predator,
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
         "bloom": w.bloom, "feed": w.feed,
@@ -71,7 +72,9 @@ def to_dict(w: World) -> dict:
 
 def from_dict(d: dict, model=None) -> World:
     w = World(seed=d["seed"], tick=d["tick"], present=d.get("present", False),
-              next_index=d.get("next_index", 0), predator=d.get("predator", ""))
+              next_index=d.get("next_index", 0), predator=d.get("predator", ""),
+              name=d.get("name", ""), role=d.get("role", "play"),
+              forked_from=d.get("forked_from", ""))
     if model is not None:
         w.cognition = model
     for ad in d["agents"]:
@@ -87,6 +90,10 @@ def from_dict(d: dict, model=None) -> World:
 
 
 def save(w: World, path: Path = DEFAULT_PATH) -> None:
+    # a base is a template; only a base may be written to a base file. This is the
+    # guard that keeps a run from ever overwriting the ground it started from.
+    if str(path).endswith(".base.json") and w.role != "base":
+        raise ValueError(f"refusing to write a {w.role!r} world over the base file {path}")
     path.parent.mkdir(parents=True, exist_ok=True)
     path.write_text(json.dumps(to_dict(w), indent=2), encoding="utf-8")
 
@@ -95,3 +102,64 @@ def load(path: Path = DEFAULT_PATH, model=None) -> World | None:
     if not path.exists():
         return None
     return from_dict(json.loads(path.read_text(encoding="utf-8")), model=model)
+
+
+# ---- named worlds: an immutable base you fork into a mutable playthrough ------
+# A base is a reusable template — mint it once, and every play forks a fresh copy
+# from it. A run only ever writes the playthrough; the base is never overwritten,
+# so "it worked last time" can always begin again from the same pristine ground.
+BASE_DIR = Path("worlds")      # bases are shareable content — committed
+PLAY_DIR = Path("runtime")     # playthroughs are disposable local state — gitignored
+
+
+def base_path(name: str) -> Path:
+    return BASE_DIR / f"{name}.base.json"
+
+
+def play_path(name: str) -> Path:
+    return PLAY_DIR / f"{name}.play.json"
+
+
+def list_bases() -> list[str]:
+    if not BASE_DIR.exists():
+        return []
+    return sorted(p.name.removesuffix(".base.json") for p in BASE_DIR.glob("*.base.json"))
+
+
+def create_base(name: str, world: World, *, overwrite: bool = False) -> Path:
+    """Mint an immutable base template from a world. Refuses to clobber an
+    existing base unless overwrite=True — a base is something you may have grown
+    attached to."""
+    p = base_path(name)
+    if p.exists() and not overwrite:
+        raise FileExistsError(f"base '{name}' already exists — pass --force to replace it")
+    world.name = name
+    world.role = "base"
+    world.forked_from = ""
+    save(world, p)
+    return p
+
+
+def fork(name: str, model=None) -> World:
+    """Fork a base into a fresh, mutable playthrough — in memory. The base file on
+    disk is never touched; you can only ever fork FROM it."""
+    base = load(base_path(name), model=model)
+    if base is None:
+        raise FileNotFoundError(f"no base named '{name}' (looked in {base_path(name)})")
+    base.role = "play"
+    base.forked_from = name
+    base.name = name
+    return base
+
+
+def save_play(world: World) -> Path:
+    """Persist a playthrough to its own file. Never writes a base."""
+    if world.role != "play":
+        raise ValueError("refusing to save a non-playthrough as a playthrough")
+    p = play_path(world.name)
+    save(world, p)
+    return p
+
+
+def load_play(name: str, model=None) -> World | None:
+    return load(play_path(name), model=model)

@@ -128,9 +128,15 @@ model can author richer tensions behind the same seam.
   lineage, factions), and the beast (evolution of calibrated courage).
 - **v0.5 (done)** — the genesis web: villages wake already bonded and in
   friction, deterministic in the seed.
-- **next** — the **save file as a reusable base**: an immutable base world you
-  *fork* into a mutable playthrough (so a base is never overwritten by a run),
-  and characters savable as portable atoms to drop into new villages.
+- **v0.6 (done)** — the **save file as a reusable base**: `genesis` mints an
+  immutable base template (`worlds/<name>.base.json`); `play` *forks* it into a
+  mutable playthrough (`runtime/<name>.play.json`); a run only ever writes the
+  playthrough, so the base is never overwritten — replay always begins from the
+  same pristine ground. Bases are shareable content; playthroughs are disposable.
+- **next** — **characters as portable atoms**: save a being from one world and
+  drop it into another (its *base* self, not its playthrough state), so genesis
+  becomes *composition* — saved favourites + fresh founders, with the connective
+  web woven over them.
 - **later** — a model-authored genesis web; you *inhabit* a being (first
   person), not only tend from above.
 

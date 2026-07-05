@@ -9,7 +9,10 @@
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
-  loam reset --agents 6          # begin a new world
+  loam reset --agents 6          # begin a new scratch world
+  loam genesis eden --agents 8   # mint a reusable base world (an immutable template)
+  loam play eden --ticks 50      # fork a playthrough from it — the base stays pristine
+  loam worlds                    # the bases you can play
 """
 from __future__ import annotations
 
@@ -129,6 +132,62 @@ def cmd_reset(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_genesis(args: argparse.Namespace) -> int:
+    w = World.seeded(n_agents=args.agents, seed=args.seed)
+    try:
+        p = persistence.create_base(args.name, w, overwrite=args.force)
+    except FileExistsError as e:
+        print(str(e))
+        return 1
+    print(f"Base '{args.name}' minted — {args.agents} beings, seed {args.seed} → {p}")
+    for line in w.feed:
+        print(f"  {line}")
+    print(f"Fork a playthrough from it:  loam play {args.name}")
+    return 0
+
+
+def cmd_play(args: argparse.Namespace) -> int:
+    cognition = _make_cognition(args.real)
+    world = None if args.fresh else persistence.load_play(args.name, model=cognition)
+    if world is not None:
+        origin = "resumed"
+    else:
+        try:
+            world = persistence.fork(args.name, model=cognition)
+        except FileNotFoundError as e:
+            print(str(e))
+            print(f"Mint one first:  loam genesis {args.name}")
+            return 1
+        origin = "forked fresh from the base"
+    world.present = args.present
+    before = len(world.feed)
+    world.run(args.ticks)
+    persistence.save_play(world)
+    new = world.feed[before:]
+    tail = new if new else world.feed[-12:]
+    mind = "live Claude" if args.real else "rule"
+    c = metrics.census(world)
+    frac, _edges, _total = metrics.coverage(world)
+    print(f"— playthrough '{args.name}' {origin} ({mind} cognition; now t{world.tick}) —")
+    for line in tail[-18:]:
+        print(line)
+    print(f"— {c['population']} alive, gen {c['generations']}; shared tongue "
+          f"{frac * 100:.0f}% — the base '{args.name}' is untouched —")
+    return 0
+
+
+def cmd_worlds(args: argparse.Namespace) -> int:
+    bases = persistence.list_bases()
+    if not bases:
+        print("No bases yet. Mint one:  loam genesis <name>")
+        return 0
+    print("Bases you can play:")
+    for name in bases:
+        note = "  (playthrough in progress)" if persistence.play_path(name).exists() else ""
+        print(f"  {name}{note}")
+    return 0
+
+
 def cmd_serve(args: argparse.Namespace) -> int:  # pragma: no cover - network loop
     from http.server import BaseHTTPRequestHandler, HTTPServer
 
@@ -188,10 +247,28 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("agent")
     t.set_defaults(func=cmd_translate)
 
-    x = sub.add_parser("reset", help="begin a new world")
+    x = sub.add_parser("reset", help="begin a new scratch world")
     x.add_argument("--agents", type=int, default=6)
     x.add_argument("--seed", type=int, default=7)
     x.set_defaults(func=cmd_reset)
+
+    g = sub.add_parser("genesis", help="mint an immutable base world (a reusable template)")
+    g.add_argument("name")
+    g.add_argument("--agents", type=int, default=6)
+    g.add_argument("--seed", type=int, default=7)
+    g.add_argument("--force", action="store_true", help="replace an existing base")
+    g.set_defaults(func=cmd_genesis)
+
+    pl = sub.add_parser("play", help="fork a base into a playthrough (or resume one) and live it")
+    pl.add_argument("name")
+    pl.add_argument("--ticks", type=int, default=20)
+    pl.add_argument("--present", action="store_true", help="you're here; think harder")
+    pl.add_argument("--real", action="store_true", help="live Claude cognition")
+    pl.add_argument("--fresh", action="store_true",
+                    help="restart from the base, discarding the current playthrough")
+    pl.set_defaults(func=cmd_play)
+
+    sub.add_parser("worlds", help="list the bases you can play").set_defaults(func=cmd_worlds)
 
     s = sub.add_parser("serve", help="watch the world live in a browser")
     s.add_argument("--port", type=int, default=8765)

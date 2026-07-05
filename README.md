@@ -33,6 +33,23 @@ python -m loam.cli translate kalo a5     # help a5 understand the word "kalo"
 
 The world persists to `runtime/world.json` and **accumulates across runs**.
 
+### Bases & playthroughs
+
+A world can be minted as an **immutable base** — a reusable template — and every
+play **forks** a fresh copy from it. A run only ever writes the playthrough; the
+base is *never* overwritten, so "it worked last time" can always begin again from
+the same pristine ground (and the same base is a thing you can share).
+
+```bash
+python -m loam.cli genesis eden --agents 8   # mint a base → worlds/eden.base.json
+python -m loam.cli play eden --ticks 50      # fork & live a playthrough (base stays pristine)
+python -m loam.cli play eden --ticks 50      # resume it; --fresh restarts from the base
+python -m loam.cli worlds                    # the bases you can play
+```
+
+Bases live in `worlds/` (committed — they're shareable content); playthroughs
+live in `runtime/` (local, disposable).
+
 ### Live cognition
 
 By default, beings decide by a legible survival-first rule policy. With `--real`,
@@ -103,8 +120,8 @@ cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognitio
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
 metrics.py     census, lineage tribes, the economy — and the chronicle
-persistence.py JSON save/load — the world that accumulates
-cli.py         run / chronicle / census / map / watch / visit / translate / reset
+persistence.py JSON save/load; an immutable base forked into a mutable playthrough
+cli.py         run / chronicle / census / map / visit / translate / genesis / play / worlds
 ```
 
 ## Develop
