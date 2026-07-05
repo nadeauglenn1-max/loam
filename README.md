@@ -50,6 +50,19 @@ python -m loam.cli worlds                    # the bases you can play
 Bases live in `worlds/` (committed — they're shareable content); playthroughs
 live in `runtime/` (local, disposable).
 
+### Characters
+
+Save a being you love out of any world and drop it into another. A saved
+character keeps its **self** — its genome and its private tongue — but *not* its
+playthrough state, so it arrives in the new village a stranger and is woven into
+a fresh web: **same soul, new entanglements.**
+
+```bash
+python -m loam.cli save-char Fen --from eden          # → chars/fen.char.json
+python -m loam.cli genesis two --with fen --agents 8  # compose a base that includes Fen
+python -m loam.cli chars                               # the characters you've saved
+```
+
 ### Live cognition
 
 By default, beings decide by a legible survival-first rule policy. With `--real`,
@@ -116,12 +129,13 @@ wants.py       heterogeneous, evolving desire (appetites come from the genome)
 memory.py      per-being bounded memory
 agent.py       a being: body (vitality/age/bloom), tongue, wants, kin, pregnancy
 genesis.py     the web a village is born into — bonds and frictions before tick one
+character.py   a being's portable base self — saved to drop into another world
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
 metrics.py     census, lineage tribes, the economy — and the chronicle
 persistence.py JSON save/load; an immutable base forked into a mutable playthrough
-cli.py         run / chronicle / census / map / visit / translate / genesis / play / worlds
+cli.py         run / chronicle / census / map / visit / genesis / play / save-char / chars
 ```
 
 ## Develop

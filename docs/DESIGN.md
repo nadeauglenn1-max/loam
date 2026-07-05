@@ -133,12 +133,16 @@ model can author richer tensions behind the same seam.
   mutable playthrough (`runtime/<name>.play.json`); a run only ever writes the
   playthrough, so the base is never overwritten — replay always begins from the
   same pristine ground. Bases are shareable content; playthroughs are disposable.
-- **next** — **characters as portable atoms**: save a being from one world and
-  drop it into another (its *base* self, not its playthrough state), so genesis
-  becomes *composition* — saved favourites + fresh founders, with the connective
-  web woven over them.
-- **later** — a model-authored genesis web; you *inhabit* a being (first
-  person), not only tend from above.
+- **v0.7 (done)** — **characters as portable atoms**: `save-char` writes a
+  being's *self* (genome + private tongue, not its playthrough state) to
+  `chars/<name>.char.json`; `genesis --with <char>` composes a base from saved
+  favourites + fresh founders, all woven into one fresh web. Same soul, new
+  entanglements.
+- **next** — a **model-authored genesis web**: a weaver behind the same seam the
+  rule-weaver fills — richer, model-agnostic tensions from a chosen model,
+  falling back to the rule weave; and multiple named playthroughs of one base.
+- **later** — you *inhabit* a being (first person), not only tend from above; a
+  pixel-art client over the same world state.
 
 ## Standing principles
 

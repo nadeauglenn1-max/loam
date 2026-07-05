@@ -163,3 +163,32 @@ def save_play(world: World) -> Path:
 
 def load_play(name: str, model=None) -> World | None:
     return load(play_path(name), model=model)
+
+
+# ---- characters: a being's portable base self, saved to drop into new worlds --
+CHAR_DIR = Path("chars")       # saved characters are shareable atoms — committed
+
+
+def char_path(name: str) -> Path:
+    return CHAR_DIR / f"{name}.char.json"
+
+
+def list_chars() -> list[str]:
+    if not CHAR_DIR.exists():
+        return []
+    return sorted(p.name.removesuffix(".char.json") for p in CHAR_DIR.glob("*.char.json"))
+
+
+def save_char(name: str, agent) -> Path:
+    from . import character
+    p = char_path(name)
+    p.parent.mkdir(parents=True, exist_ok=True)
+    p.write_text(json.dumps(character.to_atom(agent), indent=2), encoding="utf-8")
+    return p
+
+
+def load_char(name: str) -> dict | None:
+    p = char_path(name)
+    if not p.exists():
+        return None
+    return json.loads(p.read_text(encoding="utf-8"))

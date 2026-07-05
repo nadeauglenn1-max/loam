@@ -13,6 +13,9 @@
   loam genesis eden --agents 8   # mint a reusable base world (an immutable template)
   loam play eden --ticks 50      # fork a playthrough from it — the base stays pristine
   loam worlds                    # the bases you can play
+  loam save-char Fen --from eden # save a favourite being as a portable character
+  loam genesis two --with fen    # compose a base that includes a saved character
+  loam chars                     # the characters you've saved
 """
 from __future__ import annotations
 
@@ -133,13 +136,20 @@ def cmd_reset(args: argparse.Namespace) -> int:
 
 
 def cmd_genesis(args: argparse.Namespace) -> int:
-    w = World.seeded(n_agents=args.agents, seed=args.seed)
+    imported = []
+    for cname in args.with_chars:
+        atom = persistence.load_char(cname)
+        if atom is None:
+            print(f"No saved character '{cname}'. See:  loam chars")
+            return 1
+        imported.append(atom)
+    w = World.seeded(n_agents=args.agents, seed=args.seed, imported=imported)
     try:
         p = persistence.create_base(args.name, w, overwrite=args.force)
     except FileExistsError as e:
         print(str(e))
         return 1
-    print(f"Base '{args.name}' minted — {args.agents} beings, seed {args.seed} → {p}")
+    print(f"Base '{args.name}' minted — {len(w.agents)} beings, seed {args.seed} → {p}")
     for line in w.feed:
         print(f"  {line}")
     print(f"Fork a playthrough from it:  loam play {args.name}")
@@ -185,6 +195,42 @@ def cmd_worlds(args: argparse.Namespace) -> int:
     for name in bases:
         note = "  (playthrough in progress)" if persistence.play_path(name).exists() else ""
         print(f"  {name}{note}")
+    return 0
+
+
+def _find_being(w: World, key: str):
+    if key in w.agents:
+        return w.agents[key]
+    for a in w.agents.values():
+        if a.name.lower() == key.lower():
+            return a
+    return None
+
+
+def cmd_save_char(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.frm) if args.frm else persistence.load()
+    if w is None:
+        where = f"playthrough '{args.frm}'" if args.frm else "scratch world"
+        print(f"No {where} to save from.")
+        return 1
+    being = _find_being(w, args.being)
+    if being is None:
+        print(f"No being '{args.being}' there. Try:  loam visit <id>")
+        return 1
+    name = args.as_ or being.name.lower()
+    p = persistence.save_char(name, being)
+    print(f"Saved {being.name} as character '{name}' → {p}")
+    return 0
+
+
+def cmd_chars(args: argparse.Namespace) -> int:
+    names = persistence.list_chars()
+    if not names:
+        print("No saved characters yet. Save one:  loam save-char <being> [--from <play>]")
+        return 0
+    print("Saved characters:")
+    for n in names:
+        print(f"  {n}")
     return 0
 
 
@@ -257,6 +303,8 @@ def build_parser() -> argparse.ArgumentParser:
     g.add_argument("--agents", type=int, default=6)
     g.add_argument("--seed", type=int, default=7)
     g.add_argument("--force", action="store_true", help="replace an existing base")
+    g.add_argument("--with", dest="with_chars", action="append", default=[], metavar="CHAR",
+                   help="include a saved character as a founder (repeatable)")
     g.set_defaults(func=cmd_genesis)
 
     pl = sub.add_parser("play", help="fork a base into a playthrough (or resume one) and live it")
@@ -269,6 +317,15 @@ def build_parser() -> argparse.ArgumentParser:
     pl.set_defaults(func=cmd_play)
 
     sub.add_parser("worlds", help="list the bases you can play").set_defaults(func=cmd_worlds)
+
+    sc = sub.add_parser("save-char", help="save a being as a portable character")
+    sc.add_argument("being", help="a being's id or name")
+    sc.add_argument("--from", dest="frm", metavar="PLAY",
+                    help="the playthrough to take it from (default: the scratch world)")
+    sc.add_argument("--as", dest="as_", metavar="NAME", help="the character name to save under")
+    sc.set_defaults(func=cmd_save_char)
+
+    sub.add_parser("chars", help="list saved characters").set_defaults(func=cmd_chars)
 
     s = sub.add_parser("serve", help="watch the world live in a browser")
     s.add_argument("--port", type=int, default=8765)

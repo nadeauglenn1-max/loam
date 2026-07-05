@@ -40,18 +40,32 @@ class World:
 
     # ---- construction -----------------------------------------------------
     @classmethod
-    def seeded(cls, n_agents: int = 6, seed: int = 7) -> "World":
+    def seeded(cls, n_agents: int = 6, seed: int = 7,
+               imported: list[dict] | None = None) -> "World":
+        """Wake a village. `imported` characters (saved atoms) take the first
+        founder slots as strangers here; fresh beings fill the rest up to
+        `n_agents`. All of them are then woven into one web."""
         w = cls(seed=seed)
-        for i in range(n_agents):
-            a = Agent.born(i)
+        idx = 0
+        if imported:
+            from . import character
+            for atom in imported:
+                a = character.from_atom(atom, f"a{idx}")
+                w.agents[a.id] = a
+                idx += 1
+        while idx < n_agents:
+            a = Agent.born(idx)
             w.agents[a.id] = a
-        w.next_index = n_agents
+            idx += 1
+        w.next_index = idx
         for place, d in PLACES.items():
             w.bloom[place] = d["wild"] * config.WILD_MAX_SCALE * 0.5   # half-stocked at genesis
         w.predator = config.PREDATOR_PLACES[0]
         from . import genesis
         bonds, frictions = genesis.weave_web(w.agents.values(), seed)
-        w._log(f"A world wakes with {n_agents} beings at {config.STARTING_PLACE}.")
+        w._log(f"A world wakes with {idx} beings at {config.STARTING_PLACE}.")
+        if imported:
+            w._log(f"{len(imported)} of them came from other worlds, strangers here.")
         if bonds or frictions:
             w._log(f"They are no strangers: {bonds} bonds and {frictions} old "
                    f"frictions already run between them.")
