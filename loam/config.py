@@ -120,3 +120,14 @@ LIFESPAN_MUTATION = 90           # ± drift of lifespan from parent blend
 PREDATOR_PLACES = ("the meadow", "the mire", "the thornwood", "the deepwood")
 PREDATOR_LETHAL = 0.5            # base kill chance when it catches a lone forager
 PREDATOR_DRIVEN_OFF = 3          # this many foragers together drive it off (no kill)
+
+# ---- combat & leveling -------------------------------------------------------
+# Health is a being's vitality (one bar). Attack/defense are heritable genome
+# aptitudes; level and earned xp raise a fighter's effective power. Resolution is
+# deterministic given the rng, so the engine is free, testable, and shared by
+# villagers, monsters, and the player alike.
+ATTACK_DAMAGE = 0.34            # vitality an even-matched clean hit takes
+COMBAT_VARIANCE = 0.30         # ± swing on a hit
+LEVEL_POWER_GAIN = 0.12        # each level past 1 adds this fraction to attack/defense
+XP_PER_LEVEL = 3              # xp to reach the next level = this × current level
+XP_PER_KILL = 2              # xp for a defeat = this × the foe's level

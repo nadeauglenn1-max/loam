@@ -169,10 +169,16 @@ model can author richer tensions behind the same seam.
 - **v0.17 (done)** — **distinct, moving people**: bigger, individually-recognizable
   villagers (deterministic skin/hair/tunic, tunic hue shared by household) that
   walk between anchors with a leg-swinging gait and face where they go.
-- **next** — the village's work made playable in the client (join the farming,
-  foraging, and the beast); a "converse" beat (a model speaking for a being, on
-  interaction only). Saving a newborn you take a liking to is already covered by
-  character-atoms / `save-char`.
+- **v0.18 (done)** — the **combat & leveling engine**: health is vitality (one
+  bar); attack/defense are heritable genome aptitudes; level and earned xp raise
+  effective power; `world.attack` resolves a blow (deterministic, free) and a
+  slain foe dies and levels its slayer. Shared by villagers, monsters, and the
+  player alike.
+- **next — the combat pillar** — monsters as data-driven entities (a registry,
+  replacing the hardcoded beast); data-driven zones (a cave/dungeon = content
+  with its own spawns); player combat in the client (where the action-vs-turn
+  feel is chosen). Also: the village's everyday work made playable; a "converse"
+  beat. (Saving a newborn you like is already covered by `save-char`.)
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

@@ -283,6 +283,32 @@ class World:
             target.memory.remember(self.tick, f"{giver.name} gave me bloom")
             self._log(f"{giver.name} gave bloom to {target.name}.")
 
+    # ---- combat -----------------------------------------------------------
+    def attack(self, attacker_id: str, target_id: str, rng: random.Random) -> dict:
+        """One being strikes another beside it. Damage comes off vitality; a
+        slain foe dies and its slayer earns xp (and may level up)."""
+        a = self.agents.get(attacker_id)
+        t = self.agents.get(target_id)
+        if a is None or t is None or not a.alive or not t.alive or t.location != a.location:
+            return {"ok": False}
+        from . import combat
+        dmg = combat.hit_damage(a, t, rng)
+        t.vitality -= dmg
+        a.warm_to(t.id, -3.0)
+        t.warm_to(a.id, -4.0)
+        self._bump("attacks")
+        a.memory.remember(self.tick, f"struck {t.name}")
+        t.memory.remember(self.tick, f"was struck by {a.name}")
+        slain = t.vitality <= 0
+        levels = 0
+        if slain:
+            self._die(t, "violence", f"was slain by {a.name}")
+            levels = combat.award_xp(a, config.XP_PER_KILL * t.level)
+            if levels:
+                a.memory.remember(self.tick, f"grew stronger — level {a.level}")
+                self._log(f"{a.name} reached level {a.level}.")
+        return {"ok": True, "damage": dmg, "slain": slain, "levels": levels}
+
     # ---- procreation ------------------------------------------------------
     def _mate(self, agent: Agent, target_id: str | None, rng: random.Random) -> None:
         target = self.agents.get(target_id or "")

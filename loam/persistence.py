@@ -23,7 +23,9 @@ def _agent_to_dict(a: Agent) -> dict:
         "id": a.id, "name": a.name,
         "genome": {"appetites": a.genome.appetites, "forage_skill": a.genome.forage_skill,
                    "grow_skill": a.genome.grow_skill, "bravery": a.genome.bravery,
+                   "attack": a.genome.attack, "defense": a.genome.defense,
                    "lifespan": a.genome.lifespan},
+        "level": a.level, "xp": a.xp,
         "language": {"word_of": a.language.word_of, "concept_of": a.language.concept_of},
         "lexicon": {"known": a.lexicon.known, "evidence": a.lexicon.evidence},
         "wants": {"appetite": a.wants.appetite, "focus": a.wants.focus, "intensity": a.wants.intensity},
@@ -44,6 +46,7 @@ def _agent_from_dict(d: dict) -> Agent:
         id=aid, name=d["name"],
         genome=Genome(appetites=dict(gd["appetites"]), forage_skill=gd["forage_skill"],
                       grow_skill=gd["grow_skill"], bravery=gd.get("bravery", 0.5),
+                      attack=gd.get("attack", 0.5), defense=gd.get("defense", 0.5),
                       lifespan=gd["lifespan"]),
         language=PrivateLanguage(aid, dict(d["language"]["word_of"]), dict(d["language"]["concept_of"])),
         lexicon=Lexicon(dict(d["lexicon"]["known"]), dict(d["lexicon"]["evidence"])),
@@ -55,7 +58,7 @@ def _agent_from_dict(d: dict) -> Agent:
         generation=d["generation"], parents=tuple(d.get("parents", [])),
         gestation=d.get("gestation", 0), mate_id=d.get("mate_id", ""),
         last_thought=d["last_thought"], story=d.get("story", ""),
-        home=d.get("home", ""),
+        home=d.get("home", ""), level=d.get("level", 1), xp=d.get("xp", 0),
     )
 
 

@@ -193,11 +193,19 @@ already covered by `save-char`.)
 - **Distinct, moving people** — bigger, individually-recognizable villagers
   (skin/hair/tunic, tunic hue shared by household) that walk between anchors with
   a leg-swinging gait and face where they go.
+- **Combat & leveling engine** — stats-resolved (heritable attack vs defense,
+  damage off vitality, xp and levels earned by fighting), deterministic and free,
+  shared by villagers, monsters, and the player alike (`world.attack`).
 
-**Next**
-- Make the village's work playable in the client — join the farming, foraging,
-  and the beast, rather than only walking among it.
-- A "converse" beat — a model speaking *for* a being, on interaction only.
+**Next — the combat pillar**
+- **Monsters** as data-driven entities (a registry — a new monster is data),
+  replacing the single hardcoded beast.
+- **Data-driven zones** — a new area (a cave, a dungeon) is content, with its own
+  monster spawns; "build a zone" becomes adding data.
+- **Player combat in the client** — enter a zone, fight, level, loot (this is
+  where the action-vs-turn *feel* is chosen).
+- Also: make the village's everyday work playable; a "converse" beat (a model
+  speaking *for* a being, on interaction only).
 
 **Later**
 - A bigger overarching story as the drive; a common tongue (language may retire

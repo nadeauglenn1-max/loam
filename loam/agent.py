@@ -59,6 +59,8 @@ class Agent:
     last_thought: str = ""
     story: str = ""              # an authored backstory — who they were before tick one
     home: str = ""               # the household they belong to (a family, for the village)
+    level: int = 1               # combat level, earned by fighting
+    xp: int = 0                  # progress toward the next level
 
     # ---- birth ------------------------------------------------------------
     @classmethod
