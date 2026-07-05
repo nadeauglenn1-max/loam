@@ -86,6 +86,30 @@ class World:
             return config.PIVOTAL if pivotal else config.REFLECTIVE
         return config.ROUTINE
 
+    # ---- time -------------------------------------------------------------
+    @property
+    def day(self) -> int:
+        return self.tick // config.TICKS_PER_DAY + 1
+
+    @property
+    def time_of_day(self) -> float:
+        """0.0 at midnight through to 1.0 — the fraction of the day elapsed."""
+        return (self.tick % config.TICKS_PER_DAY) / config.TICKS_PER_DAY
+
+    def phase(self) -> str:
+        t = self.time_of_day
+        if t < 0.15:
+            return "night"
+        if t < 0.28:
+            return "dawn"
+        if t < 0.50:
+            return "morning"
+        if t < 0.72:
+            return "afternoon"
+        if t < 0.85:
+            return "dusk"
+        return "night"
+
     def _bump(self, key: str, n: int = 1) -> None:
         self.tally[key] = self.tally.get(key, 0) + n
 
@@ -412,7 +436,8 @@ class World:
         return (
             f"{a.name} ({a.id}) — at {a.location}, generation {a.generation}\n"
             f"{story_line}"
-            f"  body: {a.condition} (vitality {a.vitality:.2f}), age {a.age}/{g.lifespan}, "
+            f"  body: {a.condition} (vitality {a.vitality:.2f}), "
+            f"age {a.age // config.TICKS_PER_DAY}d of ~{g.lifespan // config.TICKS_PER_DAY}d, "
             f"holding {a.bloom:.1f} bloom{preg}\n"
             f"  gifts: forage {g.forage_skill:.2f}, grow {g.grow_skill:.2f}, bravery {g.bravery:.2f}\n"
             f"  wants: {a.wants.describe()}\n"

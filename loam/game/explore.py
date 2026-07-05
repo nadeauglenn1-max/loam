@@ -16,7 +16,7 @@ import math
 
 import pygame
 
-from .. import dashboard, persistence
+from .. import config, dashboard, persistence
 from ..cognition import RuleCognition
 from ..config import PLACES
 from . import layout
@@ -46,6 +46,19 @@ def _room_tint(place: str) -> tuple[int, int, int]:
 def _danger_word(place: str) -> str:
     d = PLACES[place]["danger"]
     return "safe" if d < 0.1 else "risky" if d < 0.45 else "deadly"
+
+
+def _sky(t):
+    """A translucent day/night tint (r, g, b, a) for the fraction-of-day t."""
+    if t < 0.18:
+        return (28, 38, 82, 95)      # deep night
+    if t < 0.28:
+        return (70, 60, 85, 45)      # dawn
+    if t < 0.68:
+        return (0, 0, 0, 0)          # day — clear
+    if t < 0.82:
+        return (150, 80, 30, 55)     # dusk
+    return (20, 24, 58, 110)         # night
 
 
 def _round(surf, rect, color, radius=12, width=0):
@@ -128,9 +141,11 @@ def _reading_panel(surf, being, world, font, big, w, h):
               (panel.right - 150, panel.bottom - 24))
 
 
-def run(base_name, *, fresh=False, world_tps=1.5, max_frames=None, screenshot=None):
+def run(base_name, *, fresh=False, world_tps=None, max_frames=None, screenshot=None):
     """Open the window on a playthrough forked from `base_name` (or resumed).
     `screenshot` saves the final frame to a PNG (used to preview headless)."""
+    if world_tps is None:                    # pace a full day to SECONDS_PER_DAY
+        world_tps = config.TICKS_PER_DAY / config.SECONDS_PER_DAY
     world = None if fresh else persistence.load_play(base_name)
     if world is None:
         world = persistence.fork(base_name)
@@ -211,10 +226,16 @@ def run(base_name, *, fresh=False, world_tps=1.5, max_frames=None, screenshot=No
                         highlight=(aid == near or aid == reading))
         _draw_player(screen, px, py, math.sin(frame * 0.15) * 1.2)
 
+        sky = _sky(world.time_of_day)        # day/night wash over the world
+        if sky[3]:
+            wash = pygame.Surface((W, H), pygame.SRCALPHA)
+            wash.fill(sky)
+            screen.blit(wash, (0, 0))
+
         pygame.draw.rect(screen, _PANEL, (0, 0, W, 44))
         pygame.draw.line(screen, _LINE, (0, 44), (W, 44))
         screen.blit(big.render("Loam", True, _INK), (16, 8))
-        hud = (f"tick {world.tick} · {len(world.living())} alive · "
+        hud = (f"Day {world.day} · {world.phase()} · {len(world.living())} alive · "
                "arrows/WASD to walk · E to meet · Esc to leave")
         screen.blit(font.render(hud, True, _MUTE), (96, 15))
 

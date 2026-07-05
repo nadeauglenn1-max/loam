@@ -79,6 +79,15 @@ GROW_SKILL_BONUS = 0.4
 GROW_YIELD = 1.2                 # harvest = min(soil left, this * (0.5 + skill))
 GROW_SOIL_MIN = 0.3              # below this the land gives nothing — a crop "fails"
 
+# ---- time: a day is a set span; the explore client paces it in real time ------
+# The sim's atomic step is a decision-tick; TICKS_PER_DAY of them make one day.
+# In the terminal the world runs as fast as it can; the explore client paces a
+# full day to SECONDS_PER_DAY of real time, so a short session is a day or two,
+# not generations. (This is a pacing/clock layer — it does not touch the tuned
+# survival balance below.)
+TICKS_PER_DAY = 24            # decision-ticks in a day (a tick ≈ an hour)
+SECONDS_PER_DAY = 1800        # a day = 30 real minutes in the explore client
+
 # ---- life & death ------------------------------------------------------------
 NEWBORN_VITALITY = 0.6
 ADULT_AGE = 60                   # fertile only after this age (in ticks)

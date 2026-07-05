@@ -159,10 +159,15 @@ model can author richer tensions behind the same seam.
   walk the village with a player avatar, meet its people, read their story /
   thought / bonds, and watch it live around you. Code-drawn graphics; the world
   loops on free cognition, the model is untouched here (spent only on interaction).
-- **next** — farming / foraging / the beast surfaced in the client; a "converse"
-  beat where a model speaks *for* a being, on interaction only; richer art.
-- **later** — you *inhabit* a being (first person); a bigger overarching story as
-  the drive.
+- **v0.15 (done)** — a **day-clock**: a day is a set 30-minute span paced in the
+  explore client, with a day/night wash; a short session is a day or two, not
+  generations. (Pure pacing/clock — the tuned survival balance is untouched.)
+- **next — the village re-architecture** — anchors (a medieval village of
+  buildings: homes, store, well, tavern, with fields and woods beyond),
+  Stardew-esque distinct/animated/moving people on daily routines, and switching
+  to a newborn you take a liking to.
+- **later** — a bigger overarching story as the drive; language may retire from
+  the engine (a common tongue); you *inhabit* a being (first person).
 
 ## Standing principles
 

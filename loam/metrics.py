@@ -158,7 +158,7 @@ def chronicle(world: "World") -> str:
     c = census(world)
     frac, edges, total = coverage(world)
     lines: list[str] = []
-    lines.append(f"═══ Loam — the world at tick {world.tick} ═══")
+    lines.append(f"═══ Loam — day {world.day}, {world.phase()} (tick {world.tick}) ═══")
     if c["population"] == 0:
         lines.append("The world is empty. Every being has died.")
         return "\n".join(lines)

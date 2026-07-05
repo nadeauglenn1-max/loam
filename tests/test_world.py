@@ -319,3 +319,13 @@ def test_persistence_round_trip_preserves_the_living_state(tmp_path):
     assert w2.agents[a].genome == w.agents[a].genome
     assert w2.agents[a].vitality == w.agents[a].vitality
     assert w2.agents[a].parents == w.agents[a].parents
+
+
+def test_the_day_clock():
+    w = _w(4)
+    assert w.day == 1 and w.time_of_day == 0.0
+    w.tick = config.TICKS_PER_DAY
+    assert w.day == 2 and w.time_of_day == 0.0
+    w.tick = config.TICKS_PER_DAY + config.TICKS_PER_DAY // 2
+    assert w.day == 2 and abs(w.time_of_day - 0.5) < 1e-9
+    assert w.phase() in ("dawn", "morning", "afternoon", "dusk", "night")
