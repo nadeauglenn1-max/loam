@@ -408,8 +408,10 @@ class World:
         bonds = ", ".join(f"{self.agents[i].name}({v:+.0f})"
                           for i, v in friends[:3] if i in self.agents) or "no one yet"
         preg = f", carrying a child ({a.gestation} ticks left)" if a.gestation else ""
+        story_line = f"  story: {a.story}\n" if a.story else ""
         return (
             f"{a.name} ({a.id}) — at {a.location}, generation {a.generation}\n"
+            f"{story_line}"
             f"  body: {a.condition} (vitality {a.vitality:.2f}), age {a.age}/{g.lifespan}, "
             f"holding {a.bloom:.1f} bloom{preg}\n"
             f"  gifts: forage {g.forage_skill:.2f}, grow {g.grow_skill:.2f}, bravery {g.bravery:.2f}\n"

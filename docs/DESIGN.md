@@ -152,9 +152,13 @@ model can author richer tensions behind the same seam.
 - **v0.11 (done)** — **surface the web**: `metrics.ties()` powers a "ties that
   bind" section in the chronicle and a panel on the live dashboard (one helper,
   two surfaces — strongest bonds and sharpest frictions).
-- **next** — a player avatar (content); begin the pixel-art client.
-- **later** — you *inhabit* a being (first person), not only tend from above; a
-  pixel-art client over the same world state.
+- **v0.12 (done)** — an **authored founding village** (`loam village`): eight
+  named souls with backstories and a hand-written web of bonds and grudges, plus
+  a `story` on every being — the place you walk into first, with a past.
+- **next** — the **explore client** (pygame, in-process): walk the village, meet
+  its people, read them, watch it live around you.
+- **later** — you *inhabit* a being (first person); farming/combat surfaced in
+  the client; a player avatar and richer art.
 
 ## Standing principles
 

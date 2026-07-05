@@ -33,7 +33,7 @@ def _agent_to_dict(a: Agent) -> dict:
         "vitality": a.vitality, "age": a.age, "bloom": a.bloom, "alive": a.alive,
         "generation": a.generation, "parents": list(a.parents),
         "gestation": a.gestation, "mate_id": a.mate_id,
-        "last_thought": a.last_thought,
+        "last_thought": a.last_thought, "story": a.story,
     }
 
 
@@ -54,7 +54,7 @@ def _agent_from_dict(d: dict) -> Agent:
         vitality=d["vitality"], age=d["age"], bloom=d["bloom"], alive=d["alive"],
         generation=d["generation"], parents=tuple(d.get("parents", [])),
         gestation=d.get("gestation", 0), mate_id=d.get("mate_id", ""),
-        last_thought=d["last_thought"],
+        last_thought=d["last_thought"], story=d.get("story", ""),
     )
 
 

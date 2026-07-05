@@ -41,7 +41,8 @@ base is *never* overwritten, so "it worked last time" can always begin again fro
 the same pristine ground (and the same base is a thing you can share).
 
 ```bash
-python -m loam.cli genesis eden --agents 8   # mint a base → worlds/eden.base.json
+python -m loam.cli village hollow            # mint the authored founding village (people with pasts)
+python -m loam.cli genesis eden --agents 8   # or a fresh procedural base → worlds/eden.base.json
 python -m loam.cli play eden --ticks 50      # fork & live a playthrough (base stays pristine)
 python -m loam.cli play eden --ticks 50      # resume it; --fresh restarts from the base
 python -m loam.cli play eden --as north      # fork a second, separate story from the same base
@@ -138,6 +139,7 @@ memory.py      per-being bounded memory
 agent.py       a being: body (vitality/age/bloom), tongue, wants, kin, pregnancy
 genesis.py     the web a village is born into — bonds/frictions (rule or model weaver)
 character.py   a being's portable base self — saved, forged from a description, re-dropped
+cast.py        the authored founding village — named souls with natures and pasts
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers

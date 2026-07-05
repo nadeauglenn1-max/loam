@@ -10,6 +10,7 @@
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
   loam reset --agents 6          # begin a new scratch world
+  loam village hollow            # mint the authored founding village (people with pasts)
   loam genesis eden --agents 8   # mint a reusable base world (an immutable template)
   loam play eden --ticks 50      # fork a playthrough from it — the base stays pristine
   loam worlds                    # the bases you can play
@@ -241,6 +242,22 @@ def cmd_chars(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_village(args: argparse.Namespace) -> int:
+    from . import cast
+    w = cast.build_base(seed=args.seed)
+    try:
+        p = persistence.create_base(args.name, w, overwrite=args.force)
+    except FileExistsError as e:
+        print(str(e))
+        return 1
+    print(f"The founding village '{args.name}' is set — {len(w.agents)} souls "
+          f"with histories → {p}")
+    for a in w.agents.values():
+        print(f"  {a.name} — {a.story}")
+    print(f"Fork a playthrough and live it:  loam play {args.name}")
+    return 0
+
+
 def cmd_forge(args: argparse.Namespace) -> int:
     if args.real:
         from .character import ClaudeForge
@@ -325,6 +342,12 @@ def build_parser() -> argparse.ArgumentParser:
     x.add_argument("--agents", type=int, default=6)
     x.add_argument("--seed", type=int, default=7)
     x.set_defaults(func=cmd_reset)
+
+    vl = sub.add_parser("village", help="mint the authored founding village (people with pasts)")
+    vl.add_argument("name")
+    vl.add_argument("--seed", type=int, default=7)
+    vl.add_argument("--force", action="store_true", help="replace an existing base")
+    vl.set_defaults(func=cmd_village)
 
     g = sub.add_parser("genesis", help="mint an immutable base world (a reusable template)")
     g.add_argument("name")
