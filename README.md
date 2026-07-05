@@ -3,24 +3,20 @@
 *A living world of AI beings you explore, tend, and build your own stories in — a
 moddable engine where worlds and characters are files you can fork and share.*
 
-Loam is a small, persistent world of AI beings who **survive, age, die, and
-breed**, who speak **private languages they inherit and drift**, and who wake
-already **tangled in one another** — kin, friends, debts, and grudges written
-before the first tick. You walk into a village with a past, watch it live, and
-step in where you like.
+Loam is a small **medieval village** of AI beings who **survive, age, die, and
+breed**, and who wake already **tangled in one another** — kin, friends, debts,
+and grudges written before the first tick. You walk in through a day-and-night
+cycle, meet its people, read who they are, and step in where you like, while the
+village lives around you on its own.
 
 It is built as a **platform, not just a sim**. A world is a *file* you can mint,
-fork into as many separate stories as you want, and hand to someone else. A
-being you love is a *file* too — save it, and drop it into a different world as a
-stranger to be woven in anew. The mind that drives it all is a swappable seam:
-free rule cognition by default, any model behind a validated contract when you
-want one. You can walk the village in pixels (`loam explore`), tend it from the
-terminal, or watch it live in the browser.
+fork into as many separate stories as you want, and hand to someone else. A being
+you love is a *file* too — save it and drop it into another world as a stranger
+to be woven in anew. The mind that drives it all is a swappable seam: free rule
+cognition by default, any model behind a validated contract when you want one.
 
-You are the one who understands every tongue — a translator each being can turn
-to, individually and horizontally. No worship, no hierarchy. Understanding isn't
-authority; it's the ability to help. See [docs/DESIGN.md](docs/DESIGN.md) for the
-full design.
+Walk the village in pixels (`loam explore`), tend it from the terminal, or watch
+it live in the browser. See [docs/DESIGN.md](docs/DESIGN.md) for the full design.
 
 ---
 
@@ -36,6 +32,20 @@ python -m loam.cli visit a3              # sit with one being — its story, gif
 python -m loam.cli serve                 # watch it live in a browser (map, vitals, the web)
 python -m loam.cli explore hollow        # walk the village in a window (pip install -e ".[game]")
 ```
+
+## Walk the village
+
+`loam explore hollow` opens a window and drops you into the village as a
+gold-cloaked wanderer. Walk with the arrows or WASD; press **E** beside anyone to
+meet them and read their story, their current thought, and who they're bonded to
+or at odds with. The village lives around you: a **30-minute day** turns dawn →
+dusk → night (the world washed with the changing light), people head out to the
+**fields**, the **woods**, and the **square** by day, and drift **home** to their
+family's house by night. Everyone is individually recognizable — skin, hair, and
+a tunic in their household's colour. It runs entirely on the free rule cognition;
+the model is never touched here.
+
+Needs the game extra: `pip install -e ".[game]"`.
 
 ### Worlds you fork, never overwrite
 
@@ -86,6 +96,9 @@ falling back to the rule forge on any failure.
 - **The web has teeth from tick one.** Cognition reads affinity, so a being
   feeds its friends, breeds with those it trusts, and preys on those it resents
   from the very start.
+- **Village life on a day-clock.** In the explore client a day is a set span:
+  people work the fields and woods and gather in the square by day, then go home
+  to their family's house at night — the village breathes with the light.
 - **Bloom** is the resource beings must eat or their vitality decays to death.
   **Forage** it from the wild — rich but **dangerous**. **Grow** it on arable
   land — safe but **uncertain**. Both draw from the same finite, regrowing land,
@@ -156,8 +169,9 @@ cognition also falls back to the rule policy on any transient model error.)
 
 ## Backlog & current state
 
-**State:** the engine + content platform is complete and CI-green (143 tests).
-The graphical explore client is in progress.
+**State:** playable and CI-green (149 tests). The engine + content platform is
+complete, and the medieval-village explore client — day/night, anchors, distinct
+moving people — is in and walkable. Next up: switching to a newborn.
 
 **Done**
 - Genesis web — villages wake tangled, with mechanical teeth from tick one.
