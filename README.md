@@ -200,12 +200,16 @@ already covered by `save-char`.)
   cave troll): each kind is a row of stats, they carry beings' combat interface,
   and `world.strike` resolves any fight (being↔being, being↔monster). A new
   monster is a new row.
+- **Zones** — a dangerous area is content too (`zones.py`): a named place, a
+  danger, and a spawn table. Overlay zones cover the wild map and inherit its
+  danger; standalone caves and dungeons carry their own. `world.populate_zone`
+  rolls a table into live monsters. **Building a cave or dungeon is adding a
+  row** — see `loam zones`.
 
 **Next — the combat pillar**
-- **Data-driven zones** — a new area (a cave, a dungeon) is content, with its own
-  monster spawns; "build a zone" becomes adding data.
 - **Player combat in the client** — enter a zone, fight, level, loot (this is
-  where the action-vs-turn *feel* is chosen).
+  where the action-vs-turn *feel* is chosen, and where the beast that haunts the
+  forage becomes a foe you actually face).
 - Also: make the village's everyday work playable; a "converse" beat (a model
   speaking *for* a being, on interaction only).
 
@@ -232,6 +236,7 @@ character.py   a being's portable base self — saved, forged from a description
 cast.py        the authored founding village — thirty souls, families, groups, pasts
 combat.py      combat & leveling — attack/defense, damage off vitality, xp/levels
 bestiary.py    monsters as data-driven entities — a registry of kinds
+zones.py       dangerous areas as data — named area, danger, monster spawn table
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers

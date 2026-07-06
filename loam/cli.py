@@ -6,6 +6,7 @@
   loam chronicle                 # the report: births, deaths, tribes, tongue
   loam census                    # the numbers at a glance
   loam map                       # places, danger, bloom, who is where
+  loam zones                     # the dangerous areas and the monsters they spawn
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -111,6 +112,18 @@ def cmd_map(args: argparse.Namespace) -> int:
         stock = w.bloom.get(place, 0.0)
         who = ", ".join(here) if here else "—"
         print(f"{place:14} {danger:6} bloom {stock:5.1f}  | {who}")
+    return 0
+
+
+def cmd_zones(args: argparse.Namespace) -> int:
+    from . import zones
+    print("Zones — the dangerous places (build one by adding a row to zones.py):")
+    for name in zones.list_zones():
+        d = zones.danger_of(name)
+        band = "safe" if d < 0.1 else "risky" if d < 0.45 else "deadly"
+        table = ", ".join(f"{k} L{lo}-{hi}" for k, _w, lo, hi in zones.spawn_table(name))
+        print(f"  {name:18} {zones.ZONES[name]['kind']:8} {band:6} "
+              f"(danger {d:.2f})  | {table}")
     return 0
 
 
@@ -343,6 +356,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("chronicle", help="the report").set_defaults(func=cmd_chronicle)
     sub.add_parser("census", help="the numbers").set_defaults(func=cmd_census)
     sub.add_parser("map", help="places, danger, bloom, who is where").set_defaults(func=cmd_map)
+    sub.add_parser("zones", help="the dangerous areas and what they spawn").set_defaults(func=cmd_zones)
 
     v = sub.add_parser("visit", help="sit with one being")
     v.add_argument("agent")

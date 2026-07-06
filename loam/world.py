@@ -337,6 +337,15 @@ class World:
     def monsters_at(self, location: str) -> list:
         return [m for m in self.monsters if m.alive and m.location == location]
 
+    def populate_zone(self, name: str, rng: random.Random, count: int | None = None) -> list:
+        """Roll a zone's spawn table into live monsters here (empty if unknown)."""
+        from . import zones
+        if name not in zones.ZONES:
+            return []
+        spawned = zones.populate(name, rng, count)
+        self.monsters.extend(spawned)
+        return spawned
+
     # ---- procreation ------------------------------------------------------
     def _mate(self, agent: Agent, target_id: str | None, rng: random.Random) -> None:
         target = self.agents.get(target_id or "")

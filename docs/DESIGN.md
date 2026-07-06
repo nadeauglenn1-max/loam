@@ -178,11 +178,21 @@ model can author richer tensions behind the same seam.
   registry of kinds (cave rat → cave troll), each carrying beings' combat
   interface; `world.strike` resolves any fight and `world.spawn_monster` places
   them. A new monster is a data row.
-- **next — the combat pillar** — data-driven zones (a cave/dungeon = content with
-  its own spawns; "build a zone" = add data); player combat in the client (where
-  the action-vs-turn feel is chosen). Also: the village's everyday work made
-  playable; a "converse" beat. (Saving a newborn you like is already covered by
-  `save-char`.)
+- **v0.20 (done)** — **data-driven zones** (`zones.py`): a zone is a named area, a
+  danger, and a spawn table. Overlay zones cover the wild map and inherit its
+  danger (one source of truth); standalone caves and dungeons carry their own.
+  `world.populate_zone` rolls a table into live monsters; the moddable contract
+  is that a zone may only spawn kinds the bestiary knows. "Build a cave or a
+  dungeon" is adding a data row — see `loam zones`. (Note: the ecology predator in
+  `_forage` — the tuned pressure that evolves courage — is left intact; "the
+  beast" appears in the deepwood zone's spawn table as the same creature seen as a
+  combat entity. The two are unified when the player can *enter* a zone and the
+  abstract forage-roll is replaced by a real fight — the next brick.)
+- **next — the combat pillar** — player combat in the client (enter a zone, fight,
+  level, loot; where the action-vs-turn feel is chosen, and where the ecology
+  beast and the combat beast finally merge). Also: the village's everyday work
+  made playable; a "converse" beat. (Saving a newborn you like is already covered
+  by `save-char`.)
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 
