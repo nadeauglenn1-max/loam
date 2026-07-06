@@ -174,11 +174,15 @@ model can author richer tensions behind the same seam.
   effective power; `world.attack` resolves a blow (deterministic, free) and a
   slain foe dies and levels its slayer. Shared by villagers, monsters, and the
   player alike.
-- **next — the combat pillar** — monsters as data-driven entities (a registry,
-  replacing the hardcoded beast); data-driven zones (a cave/dungeon = content
-  with its own spawns); player combat in the client (where the action-vs-turn
-  feel is chosen). Also: the village's everyday work made playable; a "converse"
-  beat. (Saving a newborn you like is already covered by `save-char`.)
+- **v0.19 (done)** — **monsters** as data-driven entities (`bestiary.py`): a
+  registry of kinds (cave rat → cave troll), each carrying beings' combat
+  interface; `world.strike` resolves any fight and `world.spawn_monster` places
+  them. A new monster is a data row.
+- **next — the combat pillar** — data-driven zones (a cave/dungeon = content with
+  its own spawns; "build a zone" = add data); player combat in the client (where
+  the action-vs-turn feel is chosen). Also: the village's everyday work made
+  playable; a "converse" beat. (Saving a newborn you like is already covered by
+  `save-char`.)
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

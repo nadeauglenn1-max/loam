@@ -22,12 +22,12 @@ def _level_scale(level: int) -> float:
     return 1 + config.LEVEL_POWER_GAIN * (level - 1)
 
 
-def attack_power(f: "Agent") -> float:
-    return f.genome.attack * _level_scale(f.level)
+def attack_power(f) -> float:
+    return f.combat_attack * _level_scale(f.level)
 
 
-def defense_power(f: "Agent") -> float:
-    return f.genome.defense * _level_scale(f.level)
+def defense_power(f) -> float:
+    return f.combat_defense * _level_scale(f.level)
 
 
 def hit_damage(attacker: "Agent", defender: "Agent", rng: "random.Random") -> float:

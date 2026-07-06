@@ -107,6 +107,15 @@ class Agent:
     def understands_count(self) -> int:
         return len(self.lexicon.known)
 
+    # ---- combat interface (shared with monsters) --------------------------
+    @property
+    def combat_attack(self) -> float:
+        return self.genome.attack
+
+    @property
+    def combat_defense(self) -> float:
+        return self.genome.defense
+
     # ---- body states (read by cognition and the chronicle) ----------------
     @property
     def is_adult(self) -> bool:

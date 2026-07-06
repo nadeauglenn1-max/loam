@@ -24,6 +24,7 @@ class World:
     seed: int = 7
     tick: int = 0
     agents: dict[str, Agent] = field(default_factory=dict)
+    monsters: list = field(default_factory=list)            # live monster entities
     bloom: dict[str, float] = field(default_factory=dict)   # wild stock per place
     feed: list[str] = field(default_factory=list)
     utterances: list[Utterance] = field(default_factory=list)
@@ -284,30 +285,57 @@ class World:
             self._log(f"{giver.name} gave bloom to {target.name}.")
 
     # ---- combat -----------------------------------------------------------
+    def strike(self, attacker, defender, rng: random.Random) -> dict:
+        """Resolve one blow between any two fighters — being or monster. Damage
+        comes off the defender's vitality; a felled being dies and a felled monster
+        is cleared, and the attacker earns xp (and may level up)."""
+        from . import bestiary, combat
+        dmg = combat.hit_damage(attacker, defender, rng)
+        defender.vitality -= dmg
+        slain = defender.vitality <= 0
+        levels = 0
+        if slain:
+            if isinstance(defender, bestiary.Monster):
+                defender.alive = False
+                if defender in self.monsters:
+                    self.monsters.remove(defender)
+                reward = defender.xp_reward
+                self._bump("monsters_felled")
+                self._log(f"{getattr(attacker, 'name', 'a fighter')} felled a {defender.kind}.")
+            else:
+                self._die(defender, "violence", f"was slain by {getattr(attacker, 'name', 'a foe')}")
+                reward = config.XP_PER_KILL * defender.level
+            if hasattr(attacker, "xp"):
+                levels = combat.award_xp(attacker, reward)
+                if levels and hasattr(attacker, "memory"):
+                    attacker.memory.remember(self.tick, f"grew stronger — level {attacker.level}")
+                    self._log(f"{attacker.name} reached level {attacker.level}.")
+        return {"ok": True, "damage": dmg, "slain": slain, "levels": levels}
+
     def attack(self, attacker_id: str, target_id: str, rng: random.Random) -> dict:
-        """One being strikes another beside it. Damage comes off vitality; a
-        slain foe dies and its slayer earns xp (and may level up)."""
+        """One being strikes another beside it — with the ill will it earns."""
         a = self.agents.get(attacker_id)
         t = self.agents.get(target_id)
         if a is None or t is None or not a.alive or not t.alive or t.location != a.location:
             return {"ok": False}
-        from . import combat
-        dmg = combat.hit_damage(a, t, rng)
-        t.vitality -= dmg
         a.warm_to(t.id, -3.0)
         t.warm_to(a.id, -4.0)
         self._bump("attacks")
         a.memory.remember(self.tick, f"struck {t.name}")
         t.memory.remember(self.tick, f"was struck by {a.name}")
-        slain = t.vitality <= 0
-        levels = 0
-        if slain:
-            self._die(t, "violence", f"was slain by {a.name}")
-            levels = combat.award_xp(a, config.XP_PER_KILL * t.level)
-            if levels:
-                a.memory.remember(self.tick, f"grew stronger — level {a.level}")
-                self._log(f"{a.name} reached level {a.level}.")
-        return {"ok": True, "damage": dmg, "slain": slain, "levels": levels}
+        return self.strike(a, t, rng)
+
+    def spawn_monster(self, kind: str, location: str, level: int = 1):
+        """Add a monster of `kind` at a place (None if the kind is unknown)."""
+        from . import bestiary
+        if kind not in bestiary.BESTIARY:
+            return None
+        m = bestiary.spawn(kind, location, level)
+        self.monsters.append(m)
+        return m
+
+    def monsters_at(self, location: str) -> list:
+        return [m for m in self.monsters if m.alive and m.location == location]
 
     # ---- procreation ------------------------------------------------------
     def _mate(self, agent: Agent, target_id: str | None, rng: random.Random) -> None:

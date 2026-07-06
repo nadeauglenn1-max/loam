@@ -8,6 +8,7 @@ import json
 from pathlib import Path
 
 from .agent import Agent
+from .bestiary import Monster
 from .config import STARTING_PLACE
 from .genome import Genome
 from .language import Lexicon, PrivateLanguage, Utterance
@@ -68,6 +69,7 @@ def to_dict(w: World) -> dict:
         "name": w.name, "role": w.role, "forked_from": w.forked_from,
         "predator": w.predator,
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
+        "monsters": [vars(m) for m in w.monsters],
         "bloom": w.bloom, "feed": w.feed,
         "utterances": [vars(u) for u in w.utterances],
         "history": w.history, "fallen": w.fallen, "tally": w.tally,
@@ -84,6 +86,7 @@ def from_dict(d: dict, model=None) -> World:
     for ad in d["agents"]:
         a = _agent_from_dict(ad)
         w.agents[a.id] = a
+    w.monsters = [Monster(**md) for md in d.get("monsters", [])]
     w.bloom = dict(d.get("bloom", {}))
     w.feed = list(d.get("feed", []))
     w.utterances = [Utterance(**u) for u in d.get("utterances", [])]

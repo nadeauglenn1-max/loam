@@ -196,10 +196,12 @@ already covered by `save-char`.)
 - **Combat & leveling engine** — stats-resolved (heritable attack vs defense,
   damage off vitality, xp and levels earned by fighting), deterministic and free,
   shared by villagers, monsters, and the player alike (`world.attack`).
+- **Monsters** — data-driven entities from a registry (`bestiary.py`, cave rat →
+  cave troll): each kind is a row of stats, they carry beings' combat interface,
+  and `world.strike` resolves any fight (being↔being, being↔monster). A new
+  monster is a new row.
 
 **Next — the combat pillar**
-- **Monsters** as data-driven entities (a registry — a new monster is data),
-  replacing the single hardcoded beast.
 - **Data-driven zones** — a new area (a cave, a dungeon) is content, with its own
   monster spawns; "build a zone" becomes adding data.
 - **Player combat in the client** — enter a zone, fight, level, loot (this is
@@ -228,6 +230,8 @@ agent.py       a being: body, tongue, wants, kin, pregnancy, and an authored sto
 genesis.py     the web a village is born into — bonds/frictions (rule or model weaver)
 character.py   a being's portable base self — saved, forged from a description, re-dropped
 cast.py        the authored founding village — thirty souls, families, groups, pasts
+combat.py      combat & leveling — attack/defense, damage off vitality, xp/levels
+bestiary.py    monsters as data-driven entities — a registry of kinds
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
