@@ -132,6 +132,17 @@ LEVEL_POWER_GAIN = 0.12        # each level past 1 adds this fraction to attack/
 XP_PER_LEVEL = 3              # xp to reach the next level = this × current level
 XP_PER_KILL = 2              # xp for a defeat = this × the foe's level
 
+# ---- the player in a fight (see arena.py) ------------------------------------
+# You are no warrior at the start; your power comes from your combat skill, which
+# grows only by fighting. A novice barely bests a rat; mastery is many fights away.
+FIGHT_BASE_ATTACK = 0.24     # a novice's attack…
+FIGHT_SKILL_ATTACK = 0.62    # …plus this much at full combat skill
+FIGHT_BASE_DEFENSE = 0.20
+FIGHT_SKILL_DEFENSE = 0.55
+FIGHT_BASE_VIGOR = 1.0       # combat health at zero skill…
+FIGHT_SKILL_VIGOR = 0.7      # …plus this at full skill
+FIGHT_BRACE = 0.35           # fraction of a blow you take while bracing
+
 # ---- understanding: the story spine ------------------------------------------
 # You begin understanding no one, and no family trusts a stranger. Understanding
 # is won SLOWLY, against that distrust — a word of theirs is a prize, not a gift.

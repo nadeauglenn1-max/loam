@@ -264,6 +264,18 @@ model can author richer tensions behind the same seam.
   mechanic, the voice only colours it. Shown in the reading panel and verified:
   the same "grilo" is a strange sound to a stranger and reads as *status* once the
   Thorn's words are yours.
+- **v0.33 (playable slice — feel to be tuned by Glenn) — COMBAT**: the first
+  mini-game, its own scene you *enter*. `arena.py` is the pure model — you become a
+  `Fighter` whose attack, defense, and vigor come from your **combat skill**, which
+  is low at the start and grows only by fighting (rats first; a troll is far off).
+  `game/combat.py` is the fight's *timing* — your strike cooldown, the foe's
+  telegraphed blows, bracing — and `game/explore.py` drives and draws it: stand in
+  a dangerous place, press **F** to engage a monster from that zone, then **SPACE**
+  to strike, **hold B** to brace the telegraphed blow, **Esc** to flee. Win and
+  your combat skill grows; lose and you're beaten back (no death). Reuses the
+  combat engine, the bestiary, and the zone spawn tables. **The cadences are the
+  feel — meant to be tuned by playing.** Verified by unit tests (arena + fight
+  timing) and headless screenshots; the *feel* is Glenn's to shape at the keyboard.
 - **the story spine (in progress)** — understanding is the goal, the verbs are the
   means. You start a novice and a stranger; you grow your trades by doing them,
   and a family's trust — and their words — are won slowly through the trade that is
