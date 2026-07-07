@@ -482,7 +482,7 @@ class Theme:
         screen.blit(self.small.render(focus, True, MUTE), (x + 12, y + 40))
 
     def draw_reading_panel(self, screen, being, world, W, H):
-        ph = 200
+        ph = 224
         panel = pygame.Rect(16, H - ph - 16, W - 32, ph)
         self._round(screen, panel, PANEL, 14)
         self._round(screen, panel, LINE, 14, width=2)
@@ -497,6 +497,17 @@ class Theme:
             y += 20
         screen.blit(self.font.render(f"thinks: {being.last_thought or '(quiet)'}",
                                      True, (200, 210, 190)), (x, y))
+        y += 22
+        # they speak in their own tongue — clear if you've earned their words, else strange
+        from .. import converse
+        heard = converse.overheard(world.player, being)
+        if heard["legible"]:
+            says = f'says "{heard["word"]}" — {heard["concept"]}'
+            colour = (212, 224, 200)
+        else:
+            says = f'says "{heard["word"]}" — a word still strange to you'
+            colour = (150, 176, 150)
+        screen.blit(self.font.render(says, True, colour), (x, y))
         y += 22
         goods = ", ".join(f"{amt:g} {g}" for g, amt in being.goods.items() if amt >= 0.5) or "nothing"
         screen.blit(self.font.render(f"carries: {goods}", True, MUTE), (x, y))

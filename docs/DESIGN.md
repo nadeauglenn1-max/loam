@@ -253,6 +253,17 @@ model can author richer tensions behind the same seam.
   trade it is — come to trust you, faster as your hand grows surer. Verified: ~22
   fishing sessions to understand the Fen, their six words earned as prizes along
   the way. `loam practice <trade>`; `loam rifts` shows your trades.
+- **v0.32 (done) — converse** (`converse.py`): when you meet a being, they
+  *speak*, in their own private tongue — and whether you can read it depends on the
+  words you've earned from their family. A stranger is opaque (you hear the word
+  but not its meaning, only their bearing); once you've earned that word (or come
+  to understand the family whole), the same word comes clear. The founding "language
+  is the barrier" conceit, felt in the moment you stand before someone. The line
+  comes from a model-agnostic `Voice` (free `RuleVoice` default and fallback,
+  `ClaudeVoice` for a living line via `--real`, `loam listen`); legibility is the
+  mechanic, the voice only colours it. Shown in the reading panel and verified:
+  the same "grilo" is a strange sound to a stranger and reads as *status* once the
+  Thorn's words are yours.
 - **the story spine (in progress)** — understanding is the goal, the verbs are the
   means. You start a novice and a stranger; you grow your trades by doing them,
   and a family's trust — and their words — are won slowly through the trade that is

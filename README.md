@@ -234,7 +234,11 @@ family. (Saving a newborn you take a liking to is already covered by `save-char`
   deepens slowly, harder the deeper it runs, a little faster for someone you're
   drawn to, climbing from a familiar face to a friend to a sweetheart to
   betrothed — and, grown that far, you may marry them and have a child of your own.
-  The portrait shows how drawn you are and how close you've grown.
+  The portrait shows how drawn you are and how close you've grown. You choose who
+  you are — a woman or a man (looks only, no mechanical difference).
+- **Converse** (`converse.py`) — meet a being and they *speak*, in their own
+  tongue; you can read it only once you've earned their family's words. A stranger
+  is a strange sound; understanding turns it clear. `loam listen`.
 
 **Next — the mini-games (a community project)**
 - **Each trade is a player-controlled mini-game, and each is a module.** Combat
@@ -282,6 +286,7 @@ crafts.py      professions & goods as data — a trade is a recipe (skill×place
 player.py      you — skills grown by doing, understanding won against distrust
 rifts.py       the story spine — families you have yet to understand, the tiers
 bonds.py       ties with people — attraction, the tiers from friend to wed
+converse.py    a being's speech, legible only once you've earned their words
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 game/explore.py the explore client — the loop, input, and stepping the sim
