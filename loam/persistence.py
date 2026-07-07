@@ -73,7 +73,9 @@ def to_dict(w: World) -> dict:
         "name": w.name, "role": w.role, "forked_from": w.forked_from,
         "predator": w.predator,
         "player": {"understanding": w.player.understanding,
-                   "skills": w.player.skills, "words": w.player.words},
+                   "skills": w.player.skills, "words": w.player.words,
+                   "bonds": w.player.bonds, "spouse": w.player.spouse,
+                   "children": w.player.children},
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
         "monsters": [vars(m) for m in w.monsters],
         "bloom": w.bloom, "feed": w.feed,
@@ -102,7 +104,10 @@ def from_dict(d: dict, model=None) -> World:
     pd = d.get("player", {})
     w.player = Player(understanding=dict(pd.get("understanding", {})),
                       skills=dict(pd.get("skills", {})),
-                      words={k: list(v) for k, v in pd.get("words", {}).items()})
+                      words={k: list(v) for k, v in pd.get("words", {}).items()},
+                      bonds=dict(pd.get("bonds", {})),
+                      spouse=pd.get("spouse", ""),
+                      children=list(pd.get("children", [])))
     return w
 
 

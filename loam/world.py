@@ -534,6 +534,7 @@ class World:
         a = self.agents.get(agent_id)
         if a is None or not a.alive:
             return {"ok": False, "reason": "no one there to help"}
+        from . import bonds
         fam = rifts.family_of(a)
         a.vitality = min(self._vcap(a), a.vitality + config.AID_BOON)
         a.memory.remember(self.tick, "the one who listens sat with me")
@@ -542,14 +543,20 @@ class World:
         prize = self.player.deepen(fam, config.UNDERSTAND_STEP)
         level = self.player.of(fam)
         closed = level >= 1.0 and before < 1.0
+        # helping this person also deepens your bond with them
+        b_before = bonds.tier(self.player.bond(a.id))
+        bond = self.player.deepen_bond(a.id, bonds.growth(self.player.bond(a.id), bonds.attraction(a)))
+        b_now = bonds.tier(bond)
         self._log(f"You sat with {a.name} of {fam} — you understand them "
                   f"better ({int(level * 100)}%).")
         if prize:
             self._log(f'You earned the {fam}\'s word for "{prize}" — trust, hard-won.')
+        if b_now != b_before:
+            self._log(f"You and {a.name} are {b_now} now.")
         if closed:
             self._log(f"You have come to understand the {fam} family completely.")
         return {"ok": True, "family": fam, "level": level, "closed": closed,
-                "prize": prize, "brokered": brokered}
+                "prize": prize, "brokered": brokered, "bond": bond, "bond_tier": b_now}
 
     def practice_trade(self, trade: str) -> dict:
         """Ply a trade yourself (the resolved stand-in for its mini-game): your
@@ -572,6 +579,55 @@ class World:
                 self._log(f'The {adv["family"]}, whose trade this is, warm to you: '
                           f'you earned their word for "{adv["prize"]}".')
         return {"ok": True, "trade": trade, "skill": skill, "advanced": advanced}
+
+    def marry(self, being_id: str) -> dict:
+        """Wed a being you have come to love. Only when the bond has grown to
+        betrothal, and only if you are not already wed."""
+        from . import bonds
+        a = self.agents.get(being_id)
+        if a is None or not a.alive:
+            return {"ok": False, "reason": "there is no one here by that name"}
+        if self.player.spouse:
+            spouse = self.agents.get(self.player.spouse)
+            return {"ok": False, "reason": f"you are already wed to "
+                    f"{spouse.name if spouse else 'someone'}"}
+        if not a.is_adult:
+            return {"ok": False, "reason": f"{a.name} is too young"}
+        if not bonds.can_marry(self.player.bond(being_id)):
+            return {"ok": False, "reason": f"you and {a.name} are only "
+                    f"{bonds.tier(self.player.bond(being_id))} — a marriage must be grown to"}
+        self.player.spouse = being_id
+        self.player.bonds[being_id] = 1.0
+        a.memory.remember(self.tick, "was wed to the one who understands")
+        self._bump("marriages")
+        self._log(f"You and {a.name} are wed.")
+        return {"ok": True, "spouse": being_id, "name": a.name}
+
+    def bear_child(self, rng: random.Random) -> dict:
+        """A child of you and the one you wed. Kept apart from the village's own
+        procreation — this line runs through you."""
+        if not self.player.spouse:
+            return {"ok": False, "reason": "you have no one to bear a child with"}
+        spouse = self.agents.get(self.player.spouse)
+        if spouse is None or not spouse.alive:
+            return {"ok": False, "reason": "the one you wed is gone"}
+        from .agent import Agent
+        from .genome import Genome
+        from .language import PrivateLanguage
+        you = Agent(id="you", name="You",
+                    genome=Genome.genesis(f"you:{self.name or 'scratch'}"),
+                    language=PrivateLanguage.for_agent("you"), generation=0)
+        child_id = f"a{self.next_index}"
+        self.next_index += 1
+        child = Agent.child(child_id, spouse, you, rng)
+        child.parents = (spouse.id, "you")
+        child.story = f"your child with {spouse.name}"
+        self.agents[child_id] = child
+        self.player.children.append(child_id)
+        self._bump("player_children")
+        spouse.memory.remember(self.tick, f"had a child, {child.name}, with the one who understands")
+        self._log(f"{child.name} is born to you and {spouse.name} (generation {child.generation}).")
+        return {"ok": True, "child": child_id, "name": child.name, "generation": child.generation}
 
     def _broker_among_kin(self, a: Agent, fam: str) -> dict | None:
         """Teach a family member one word a kinmate beside them already speaks —

@@ -11,6 +11,8 @@
   loam rifts                     # the families you have yet to understand — your progress
   loam help Sela                 # sit with a being — help them, and understand their family
   loam practice fishing          # ply a trade — grow the skill, advance with its family
+  loam bonds                     # the people you have grown close to
+  loam marry Sela                # wed a being you have come to love (once betrothed)
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -234,6 +236,64 @@ def cmd_help_being(args: argparse.Namespace) -> int:
         persistence.save_play(w)
     else:
         persistence.save(w)
+    return 0
+
+
+def cmd_bonds(args: argparse.Namespace) -> int:
+    from . import bonds
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    if w.player.spouse:
+        sp = w.agents.get(w.player.spouse)
+        print(f"Wed to {sp.name if sp else w.player.spouse}."
+              + (f" Children: {', '.join(w.agents[c].name for c in w.player.children if c in w.agents)}"
+                 if w.player.children else ""))
+    ranked = sorted(((bid, lvl) for bid, lvl in w.player.bonds.items() if lvl > 0),
+                    key=lambda kv: -kv[1])
+    if not ranked:
+        print("You have grown no bonds yet. Sit with someone:  loam help <being>")
+        return 0
+    print("The people you have grown close to:")
+    for bid, lvl in ranked[:12]:
+        a = w.agents.get(bid)
+        if a is None:
+            continue
+        drawn = bonds.attraction_word(bonds.attraction(a))
+        print(f"  {a.name:10} {bonds.tier(lvl, wed=(bid == w.player.spouse)):16} "
+              f"({int(lvl * 100)}%)  ·  you find them {drawn}")
+    return 0
+
+
+def cmd_marry(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    being = _find_being(w, args.being)
+    if being is None:
+        print(f"No being '{args.being}' there. Try:  loam bonds")
+        return 1
+    r = w.marry(being.id)
+    print(f"You and {being.name} are wed." if r["ok"] else r["reason"])
+    if r["ok"]:
+        (persistence.save_play if args.play else persistence.save)(w)
+    return 0 if r["ok"] else 1
+
+
+def cmd_child(args: argparse.Namespace) -> int:
+    import random
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    r = w.bear_child(random.Random(w.tick))
+    if not r["ok"]:
+        print(r["reason"])
+        return 1
+    print(f"{r['name']} is born to you (generation {r['generation']}).")
+    (persistence.save_play if args.play else persistence.save)(w)
     return 0
 
 
@@ -478,6 +538,19 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("trade", help="fishing, mining, smithing, … (see loam crafts)")
     pr.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
     pr.set_defaults(func=cmd_practice)
+
+    bd = sub.add_parser("bonds", help="the people you have grown close to")
+    bd.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    bd.set_defaults(func=cmd_bonds)
+
+    mr = sub.add_parser("marry", help="wed a being you have come to love (once betrothed)")
+    mr.add_argument("being", help="a being's id or name")
+    mr.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    mr.set_defaults(func=cmd_marry)
+
+    ch = sub.add_parser("child", help="have a child with the one you wed")
+    ch.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    ch.set_defaults(func=cmd_child)
 
     t = sub.add_parser("translate", help="help a being understand a word")
     t.add_argument("symbol")

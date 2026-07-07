@@ -227,9 +227,14 @@ family. (Saving a newborn you take a liking to is already covered by `save-char`
   how you advance with them**: fish, and the Fen come to trust you, slowly, a word
   at a time (words are prizes, not handouts). In the client, a meter tracks your
   understanding and **H** helps the being you're meeting.
-- **A prettier world** — a richer default `Theme`: a dithered meadow with tufts
-  and wildflowers, layered forests, a marsh with pools and reeds, planted fields,
-  roofed houses, a covered well, cleaner sprites.
+- **A prettier world** — a richer default `Theme`: a warm, cohesive village with
+  terrain that reads as terrain, dirt lanes, lamplit cottages that glow at dusk,
+  and detailed anchors (a well, a stall, a scarecrow, cattails, mushrooms).
+- **Bonds** (`bonds.py`) — helping a being builds a tie with *that person*. It
+  deepens slowly, harder the deeper it runs, a little faster for someone you're
+  drawn to, climbing from a familiar face to a friend to a sweetheart to
+  betrothed — and, grown that far, you may marry them and have a child of your own.
+  The portrait shows how drawn you are and how close you've grown.
 
 **Next — the mini-games (a community project)**
 - **Each trade is a player-controlled mini-game, and each is a module.** Combat
@@ -237,8 +242,6 @@ family. (Saving a newborn you take a liking to is already covered by `save-char`
   where getting better is what grows the skill and earns the faction. Fishing,
   mining, smithing follow. The seam is a clean plug-in: **someone builds a new
   fishing module and opens a PR — you look, and take it or leave it.**
-- **Bonds** — meeting a being opens a fuller portrait, and helping builds a bond
-  that can grow (with real effort, over tiers) toward love, marriage, children.
 
 **Later**
 - Inhabit a being (first person); a community library of worlds, characters, and
@@ -278,6 +281,7 @@ zones.py       dangerous areas as data — named area, danger, monster spawn tab
 crafts.py      professions & goods as data — a trade is a recipe (skill×place→goods)
 player.py      you — skills grown by doing, understanding won against distrust
 rifts.py       the story spine — families you have yet to understand, the tiers
+bonds.py       ties with people — attraction, the tiers from friend to wed
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 game/explore.py the explore client — the loop, input, and stepping the sim

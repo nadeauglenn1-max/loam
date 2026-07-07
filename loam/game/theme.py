@@ -481,7 +481,7 @@ class Theme:
         screen.blit(self.small.render(focus, True, MUTE), (x + 12, y + 40))
 
     def draw_reading_panel(self, screen, being, world, W, H):
-        ph = 176
+        ph = 200
         panel = pygame.Rect(16, H - ph - 16, W - 32, ph)
         self._round(screen, panel, PANEL, 14)
         self._round(screen, panel, LINE, 14, width=2)
@@ -500,10 +500,18 @@ class Theme:
         goods = ", ".join(f"{amt:g} {g}" for g, amt in being.goods.items() if amt >= 0.5) or "nothing"
         screen.blit(self.font.render(f"carries: {goods}", True, MUTE), (x, y))
         y += 22
-        bonds = sorted(being.relationships.items(), key=lambda kv: abs(kv[1]), reverse=True)
+        rels = sorted(being.relationships.items(), key=lambda kv: abs(kv[1]), reverse=True)
         parts = [f"{world.agents[oid].name} {'+' if v > 0 else ''}{v:.0f}"
-                 for oid, v in bonds[:4] if oid in world.agents]
+                 for oid, v in rels[:4] if oid in world.agents]
         screen.blit(self.font.render("ties: " + (", ".join(parts) or "none yet"), True, MUTE), (x, y))
+        y += 22
+        # you and them: how drawn you are, and how close you've grown
+        from .. import bonds as bondlib
+        lvl = world.player.bond(being.id)
+        wed = world.player.spouse == being.id
+        drawn = bondlib.attraction_word(bondlib.attraction(being))
+        you_line = (f"you and {being.name}: {bondlib.tier(lvl, wed=wed)} — you find them {drawn}")
+        screen.blit(self.font.render(you_line, True, (224, 196, 176)), (x, y))
         # the story line: their family, and how far you've come to understand it
         from .. import rifts
         fam = rifts.family_of(being)
