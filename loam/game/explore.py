@@ -147,7 +147,7 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
             theme.draw_person(screen, x, y, apprs[aid], frame * 0.35, moving,
                               facing.get(aid, 1), a.name,
                               highlight=(aid == near or aid == reading))
-        theme.draw_player(screen, px, py, frame * 0.35, pmoving, pfacing)
+        theme.draw_player(screen, px, py, frame * 0.35, pmoving, pfacing, world.player.gender)
 
         theme.apply_sky(screen, W, H, world.time_of_day)
         theme.apply_vignette(screen, W, H)

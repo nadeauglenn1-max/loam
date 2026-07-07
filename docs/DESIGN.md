@@ -293,7 +293,11 @@ model can author richer tensions behind the same seam.
   reading panel shows how drawn you are and how close you've grown. Verified: ~26
   sittings from stranger to betrothed, then a wedding and a child. (Client keys for
   the deliberate romance beats can follow; for now they're gardener levers:
-  `loam bonds` / `loam marry` / `loam child`.)
+  `loam bonds` / `loam marry` / `loam child`.) **You choose who you are — a woman
+  or a man (`loam identity`, `player.gender`): looks only, no mechanical
+  difference, so it isn't a boys' game. And bonding is wholesome — a bond is
+  affection and family, nothing sexual; a child simply *comes to you and your
+  spouse* (no biology modelled, gender-neutral either way).**
 - **later** — you *inhabit* a being (first person); a community library of
   worlds, characters, and modules. (The drive is the understanding spine itself —
   no separate "overarching story" grafted on, and deliberately *no* retrospective

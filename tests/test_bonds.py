@@ -58,18 +58,31 @@ def test_marriage_must_be_grown_to():
     assert not w.marry(other.id)["ok"]
 
 
-def test_a_child_is_born_of_you_and_your_spouse():
+def test_a_child_comes_to_you_and_your_spouse():
     w = _village()
     sela = next(a for a in w.agents.values() if a.name == "Sela")
-    assert not w.bear_child(random.Random(0))["ok"]   # no spouse yet
+    assert not w.have_child(random.Random(0))["ok"]   # no spouse yet
     w.player.bonds[sela.id] = 0.95
     w.marry(sela.id)
-    r = w.bear_child(random.Random(1))
+    r = w.have_child(random.Random(1))
     assert r["ok"]
     child = w.agents[r["child"]]
     assert child.parents == (sela.id, "you")
     assert r["child"] in w.player.children
     assert child.generation == sela.generation + 1
+
+
+def test_player_gender_is_looks_only_and_persists(tmp_path):
+    from loam import persistence
+    from loam.player import Player
+    p = Player()
+    assert p.gender == "" and p.name == "You"        # a choice, not a default
+    w = _village()
+    w.player.gender, w.player.name = "female", "Robin"
+    path = tmp_path / "w.json"
+    persistence.save(w, path)
+    back = persistence.load(path).player
+    assert back.gender == "female" and back.name == "Robin"
 
 
 def test_bonds_survive_a_save(tmp_path):
