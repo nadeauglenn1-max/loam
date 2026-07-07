@@ -19,6 +19,7 @@
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
+  loam introduce Aro Bel         # help two beings who are together understand each other
   loam reset --agents 6          # begin a new scratch world
   loam village hollow            # mint the authored founding village (people with pasts)
   loam genesis eden --agents 8   # mint a reusable base world (an immutable template)
@@ -360,6 +361,25 @@ def cmd_identity(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_introduce(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    a, b = _find_being(w, args.a), _find_being(w, args.b)
+    if a is None or b is None:
+        print("Name two beings who are together. See:  loam map")
+        return 1
+    r = w.introduce(a.id, b.id)
+    if not r["ok"]:
+        print(r["reason"])
+        return 1
+    for name, word, concept in r["taught"]:
+        print(f'  {name} now knows "{word}" = {concept}.')
+    (persistence.save_play if args.play else persistence.save)(w)
+    return 0
+
+
 def cmd_translate(args: argparse.Namespace) -> int:
     w = _require_world()
     if w is None:
@@ -635,6 +655,12 @@ def build_parser() -> argparse.ArgumentParser:
     t.add_argument("symbol")
     t.add_argument("agent")
     t.set_defaults(func=cmd_translate)
+
+    intr = sub.add_parser("introduce", help="help two beings who are together understand each other")
+    intr.add_argument("a", help="one being's id or name")
+    intr.add_argument("b", help="another being's id or name")
+    intr.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    intr.set_defaults(func=cmd_introduce)
 
     x = sub.add_parser("reset", help="begin a new scratch world")
     x.add_argument("--agents", type=int, default=6)
