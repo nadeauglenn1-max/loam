@@ -9,6 +9,7 @@
   loam zones                     # the dangerous areas and the monsters they spawn
   loam crafts                    # the professions and what each trade makes
   loam rifts                     # the families you have yet to understand — your progress
+  loam help Sela                 # sit with a being — help them, and understand their family
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -169,6 +170,36 @@ def cmd_visit(args: argparse.Namespace) -> int:
     if w is None:
         return 1
     print(w.visit(args.agent))
+    return 0
+
+
+def cmd_help_being(args: argparse.Namespace) -> int:
+    from . import rifts
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    being = _find_being(w, args.being)
+    if being is None:
+        print(f"No being '{args.being}' there. Try:  loam rifts")
+        return 1
+    r = w.aid(being.id)
+    if not r["ok"]:
+        print(r.get("reason", "could not help"))
+        return 1
+    print(f"You sat with {being.name} of {r['family']}. "
+          f"You understand the {r['family']} now {int(r['level'] * 100)}%.")
+    if r["brokered"]:
+        b = r["brokered"]
+        print(f"  You helped them speak: '{b['word']}' = {b['concept']}.")
+    if r["closed"]:
+        print(f"  You have come to understand the {r['family']} completely — a rift closed.")
+    frac, done, total = rifts.progress(w)
+    print(f"  ({done}/{total} families understood, {frac * 100:.0f}%)")
+    if args.play:
+        persistence.save_play(w)
+    else:
+        persistence.save(w)
     return 0
 
 
@@ -403,6 +434,11 @@ def build_parser() -> argparse.ArgumentParser:
     v = sub.add_parser("visit", help="sit with one being")
     v.add_argument("agent")
     v.set_defaults(func=cmd_visit)
+
+    hb = sub.add_parser("help", help="sit with a family member — help them, and come to understand their family")
+    hb.add_argument("being", help="a being's id or name")
+    hb.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    hb.set_defaults(func=cmd_help_being)
 
     t = sub.add_parser("translate", help="help a being understand a word")
     t.add_argument("symbol")

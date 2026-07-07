@@ -522,6 +522,47 @@ class World:
         self.agents.pop(a.id, None)
 
     # ---- your levers (the gardener, not the god) --------------------------
+    def aid(self, agent_id: str) -> dict:
+        """The quest primitive. You sit with a family member: you ease their day,
+        and where a kinmate is beside them you broker one of that kin's words to
+        them (advancing THEIR understanding of each other). In helping them, your
+        own understanding of their family deepens a step — and enough help and you
+        understand the family completely, a rift closed."""
+        from . import rifts
+        a = self.agents.get(agent_id)
+        if a is None or not a.alive:
+            return {"ok": False, "reason": "no one there to help"}
+        fam = rifts.family_of(a)
+        a.vitality = min(self._vcap(a), a.vitality + config.AID_BOON)
+        a.memory.remember(self.tick, "the one who listens sat with me")
+        brokered = self._broker_among_kin(a, fam)
+        before = self.player.of(fam)
+        level = self.player.learn(fam, config.UNDERSTAND_STEP)
+        closed = level >= 1.0 and before < 1.0
+        self._log(f"You sat with {a.name} of {fam} — you understand them "
+                  f"better ({int(level * 100)}%).")
+        if closed:
+            self._log(f"You have come to understand the {fam} family completely.")
+        return {"ok": True, "family": fam, "level": level, "closed": closed,
+                "brokered": brokered}
+
+    def _broker_among_kin(self, a: Agent, fam: str) -> dict | None:
+        """Teach a family member one word a kinmate beside them already speaks —
+        the gardener helping kin reach each other."""
+        from . import rifts
+        for other in self.co_located(a):
+            if rifts.family_of(other) != fam:
+                continue
+            for concept in config.CONCEPTS:
+                word = other.language.say(concept)
+                if a.comprehends(word) is None:
+                    a.lexicon.teach(word, concept)
+                    a.memory.remember(self.tick, f'you helped: "{word}" = {concept} (from {other.name})')
+                    a.warm_to(other.id, 0.5)
+                    other.warm_to(a.id, 0.5)
+                    return {"learner": a.id, "from": other.id, "word": word, "concept": concept}
+        return None
+
     def translate(self, symbol: str, for_agent_id: str) -> str:
         listener = self.agents.get(for_agent_id)
         if listener is None:

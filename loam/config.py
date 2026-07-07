@@ -132,6 +132,13 @@ LEVEL_POWER_GAIN = 0.12        # each level past 1 adds this fraction to attack/
 XP_PER_LEVEL = 3              # xp to reach the next level = this × current level
 XP_PER_KILL = 2              # xp for a defeat = this × the foe's level
 
+# ---- understanding: the story spine ------------------------------------------
+# You begin understanding no one. Helping a family advances your understanding of
+# them a step at a time; enough help and you understand them completely (a tier).
+# Helping also advances THEM — you ease their day and broker a word between kin.
+UNDERSTAND_STEP = 0.2         # your understanding of a family gained per act of help
+AID_BOON = 0.05              # vitality your help restores to the one you sit with
+
 # ---- zones -------------------------------------------------------------------
 # A zone is a dangerous area with a spawn table (see zones.py). Building a cave
 # or dungeon is adding a data row; this is how many monsters a zone holds when
