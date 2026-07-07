@@ -419,11 +419,15 @@ class Theme:
         tag = self.small.render(name, True, INK if highlight else MUTE)
         surf.blit(tag, (x - tag.get_width() // 2, y + 4))
 
-    def draw_player(self, surf, x, y, step, moving, facing, gender=""):
+    def draw_player(self, surf, x, y, step, moving, facing, gender="", name="You"):
         x, y = int(x), int(y)
-        style = 1 if gender == "female" else 2 if gender == "male" else 0  # hair only — no difference
-        self._figure(surf, x, y, (245, 222, 178), (120, 90, 40), PLAYER, style,
-                     step, moving, facing)
+        style = 1 if gender == "female" else 2 if gender == "male" else 0  # hair length — no difference
+        # a named character wears their own face and hair; the cream tunic + gold
+        # cape stay the hero's mark. Unnamed keeps the classic look.
+        named = bool(name) and name != "You"
+        skin = _pick(SKIN, name + ":pskin") if named else (245, 222, 178)
+        hair = _pick(HAIR, name + ":phair") if named else (120, 90, 40)
+        self._figure(surf, x, y, skin, hair, PLAYER, style, step, moving, facing)
         pygame.draw.polygon(surf, (198, 168, 96),                               # a gold cape
                             [(x - 7, y - 18), (x + 7, y - 18), (x + 5, y - 4), (x - 5, y - 4)])
         pygame.draw.polygon(surf, OUTLINE,
