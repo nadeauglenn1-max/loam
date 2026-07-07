@@ -241,8 +241,9 @@ family. (Saving a newborn you take a liking to is already covered by `save-char`
   that can grow (with real effort, over tiers) toward love, marriage, children.
 
 **Later**
-- A bigger overarching story as the drive; inhabit a being (first person); a
-  community library of worlds, characters, and mini-game modules.
+- Inhabit a being (first person); a community library of worlds, characters, and
+  mini-game modules. (The drive is the understanding spine itself — no separate
+  story grafted on top.)
 
 ## A place to learn to build
 
