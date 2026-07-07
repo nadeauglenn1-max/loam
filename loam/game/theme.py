@@ -550,11 +550,18 @@ class Theme:
 
     # ---- the combat scene -------------------------------------------------
     FOE_COLOR = {
-        "cave rat": (150, 142, 130), "goblin": (110, 150, 90), "wolf": (140, 130, 120),
-        "giant spider": (60, 54, 70), "boar": (140, 110, 88), "bandit": (150, 120, 96),
-        "bog serpent": (96, 150, 120), "lurker": (96, 88, 120), "the beast": (120, 70, 70),
-        "bear": (150, 116, 84), "wraith": (176, 186, 200), "cave troll": (110, 150, 96),
+        "cave rat": (150, 142, 130), "goblin": (110, 160, 88), "wolf": (150, 138, 126),
+        "giant spider": (66, 58, 78), "boar": (150, 116, 90), "bandit": (156, 126, 100),
+        "bog serpent": (96, 158, 120), "lurker": (110, 96, 140), "the beast": (128, 74, 72),
+        "bear": (156, 120, 86), "wraith": (186, 196, 210), "cave troll": (112, 156, 96),
     }
+    FOE_BODY = {
+        "cave rat": "critter", "goblin": "brute", "wolf": "beast", "giant spider": "crawler",
+        "boar": "beast", "bandit": "brute", "bog serpent": "serpent", "lurker": "shade",
+        "the beast": "beast", "bear": "beast", "wraith": "shade", "cave troll": "brute",
+    }
+    FOE_SIZE = {"cave rat": 0.7, "goblin": 0.92, "boar": 1.1, "the beast": 1.25,
+                "bear": 1.3, "cave troll": 1.45}
 
     def draw_combat(self, screen, fight, W, H):
         screen.fill((28, 24, 26))                                   # a dim arena
@@ -603,21 +610,96 @@ class Theme:
         big = pygame.transform.scale(s, (int(40 * scale), int(44 * scale)))
         screen.blit(big, (int(x - big.get_width() // 2), int(y - big.get_height() + 12)))
 
+    def _eyes(self, screen, x, y, dx=8, r=5):
+        for ex in (x - dx, x + dx):
+            pygame.draw.circle(screen, (252, 224, 90), (ex, y), r)
+            pygame.draw.circle(screen, (20, 16, 14), (ex, y), max(1, r - 3))
+
     def _foe(self, screen, x, y, kind, flash):
         x, y = int(x), int(y)
         col = self.FOE_COLOR.get(kind, (140, 110, 110))
         if flash:
             col = tuple(min(255, c + 60) for c in col)
-        pygame.draw.ellipse(screen, SHADOW, (x - 44, y - 6, 88, 18))
-        pygame.draw.ellipse(screen, col, (x - 42, y - 78, 84, 78))            # bulk
-        pygame.draw.ellipse(screen, tuple(max(0, c - 24) for c in col), (x - 42, y - 40, 84, 40))
-        pygame.draw.circle(screen, (250, 230, 90), (x - 16, y - 52), 6)       # eyes
-        pygame.draw.circle(screen, (250, 230, 90), (x + 16, y - 52), 6)
-        pygame.draw.circle(screen, (20, 16, 14), (x - 16, y - 52), 3)
-        pygame.draw.circle(screen, (20, 16, 14), (x + 16, y - 52), 3)
-        pygame.draw.polygon(screen, (240, 236, 226),                          # a maw
-                            [(x - 12, y - 34), (x + 12, y - 34), (x, y - 24)])
-        pygame.draw.ellipse(screen, OUTLINE, (x - 42, y - 78, 84, 78), 2)      # outline the bulk
+        s = self.FOE_SIZE.get(kind, 1.0)
+        dark = tuple(max(0, c - 30) for c in col)
+        pygame.draw.ellipse(screen, SHADOW, (x - int(46 * s), y - 6, int(92 * s), 18))
+        getattr(self, "_foe_" + self.FOE_BODY.get(kind, "beast"))(screen, x, y, col, dark, s)
+
+    def _foe_critter(self, screen, x, y, col, dark, s):
+        w, h = int(48 * s), int(34 * s)
+        pygame.draw.line(screen, dark, (x + w // 2, y - 8), (x + w, y - 2), 3)        # tail
+        pygame.draw.ellipse(screen, col, (x - w // 2, y - h, w, h))                   # body
+        pygame.draw.ellipse(screen, OUTLINE, (x - w // 2, y - h, w, h), 2)
+        hx = x - w // 3
+        pygame.draw.circle(screen, dark, (hx - 6, y - h + 4), 6)                      # ears
+        pygame.draw.circle(screen, dark, (hx + 6, y - h + 4), 6)
+        pygame.draw.circle(screen, col, (hx, y - h + 10), 12)                         # head
+        pygame.draw.circle(screen, OUTLINE, (hx, y - h + 10), 12, 2)
+        pygame.draw.circle(screen, (230, 160, 170), (hx - 12, y - h + 12), 3)         # nose
+        self._eyes(screen, hx, y - h + 8, dx=5, r=4)
+
+    def _foe_beast(self, screen, x, y, col, dark, s):
+        w, h = int(72 * s), int(40 * s)
+        for lx in (x - w // 3, x - w // 6, x + w // 6, x + w // 3):                   # four legs
+            pygame.draw.rect(screen, dark, (lx, y - 12, 6, 12))
+        pygame.draw.ellipse(screen, col, (x - w // 2, y - h - 12, w, h))              # body
+        pygame.draw.ellipse(screen, OUTLINE, (x - w // 2, y - h - 12, w, h), 2)
+        hx, hy = x - w // 2 + 6, y - h - 6
+        pygame.draw.circle(screen, col, (hx, hy), int(16 * s))                        # head
+        pygame.draw.circle(screen, OUTLINE, (hx, hy), int(16 * s), 2)
+        pygame.draw.polygon(screen, dark, [(hx - 4, hy + 2), (hx - int(22 * s), hy + 4),  # snout
+                                           (hx - 4, hy + int(12 * s))])
+        pygame.draw.polygon(screen, dark, [(hx - 6, hy - 12), (hx, hy - 2), (hx + 6, hy - 12)])  # ears
+        self._eyes(screen, hx - 2, hy - 2, dx=6, r=4)
+
+    def _foe_brute(self, screen, x, y, col, dark, s):
+        bw, bh = int(40 * s), int(46 * s)
+        pygame.draw.rect(screen, dark, (x - 12, y - 20, 9, 20))                       # legs
+        pygame.draw.rect(screen, dark, (x + 3, y - 20, 9, 20))
+        pygame.draw.rect(screen, col, (x - bw // 2, y - bh - 12, bw, bh), border_radius=6)  # torso
+        pygame.draw.rect(screen, OUTLINE, (x - bw // 2, y - bh - 12, bw, bh), 2, border_radius=6)
+        pygame.draw.rect(screen, dark, (x - bw // 2 - 6, y - bh - 6, 8, int(26 * s)), border_radius=3)  # arms
+        pygame.draw.rect(screen, dark, (x + bw // 2 - 2, y - bh - 6, 8, int(26 * s)), border_radius=3)
+        hy = y - bh - int(22 * s)
+        pygame.draw.circle(screen, col, (x, hy), int(15 * s))                         # head
+        pygame.draw.circle(screen, OUTLINE, (x, hy), int(15 * s), 2)
+        pygame.draw.polygon(screen, dark, [(x - int(15 * s), hy - 4), (x - int(24 * s), hy - int(14 * s)),  # ears
+                                           (x - int(11 * s), hy - int(12 * s))])
+        pygame.draw.polygon(screen, dark, [(x + int(15 * s), hy - 4), (x + int(24 * s), hy - int(14 * s)),
+                                           (x + int(11 * s), hy - int(12 * s))])
+        self._eyes(screen, x, hy, dx=6, r=4)
+
+    def _foe_crawler(self, screen, x, y, col, dark, s):
+        for i, off in enumerate((-30, -20, 20, 30)):                                 # eight legs
+            for side in (1, -1):
+                pygame.draw.lines(screen, dark, False,
+                                  [(x, y - 22), (x + off, y - 22 - side * 10 - i), (x + int(off * 1.4), y - 6)], 2)
+        pygame.draw.circle(screen, col, (x, y - 24), 24)                             # abdomen
+        pygame.draw.circle(screen, OUTLINE, (x, y - 24), 24, 2)
+        pygame.draw.circle(screen, dark, (x, y - 40), 12)                            # head
+        for ex, ey in ((-8, -44), (8, -44), (-4, -40), (4, -40)):                    # many eyes
+            pygame.draw.circle(screen, (232, 90, 90), (x + ex, y + ey), 3)
+
+    def _foe_serpent(self, screen, x, y, col, dark, s):
+        pts = [(x - 30, y - 4), (x - 10, y - 26), (x + 14, y - 10), (x + 24, y - 40), (x + 6, y - 58)]
+        pygame.draw.lines(screen, col, False, pts, 14)                               # coiled body
+        pygame.draw.lines(screen, OUTLINE, False, pts, 2)
+        hx, hy = x + 6, y - 58
+        pygame.draw.circle(screen, col, (hx, hy), 12)                                # head
+        pygame.draw.circle(screen, OUTLINE, (hx, hy), 12, 2)
+        pygame.draw.line(screen, (220, 90, 90), (hx, hy + 8), (hx, hy + 16), 2)      # tongue
+        self._eyes(screen, hx, hy - 2, dx=5, r=3)
+
+    def _foe_shade(self, screen, x, y, col, dark, s):
+        top, bot = y - int(78 * s), y - 6
+        body = [(x - 30, bot), (x - 26, top + 20), (x, top), (x + 26, top + 20), (x + 30, bot)]
+        for i in range(3):                                                            # a hovering hem
+            wob = [(px + (i - 1) * 3, py) for px, py in body]
+            pygame.draw.polygon(screen, dark if i else col, wob)
+        pygame.draw.polygon(screen, OUTLINE, body, 2)
+        pygame.draw.polygon(screen, (18, 16, 22), [(x - 16, top + 18), (x + 16, top + 18),   # hood shadow
+                                                   (x + 10, top + 40), (x - 10, top + 40)])
+        self._eyes(screen, x, top + 30, dx=7, r=4)
 
     def _banner(self, screen, W, H, fight):
         won = fight.over == "won"
