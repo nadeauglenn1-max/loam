@@ -12,6 +12,8 @@ future "converse" beat is where a model would plug in, on interaction only.
 """
 from __future__ import annotations
 
+import random
+
 import pygame
 
 from .. import config, persistence
@@ -95,6 +97,10 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
                     reading = None if reading else _near_id(pos, px, py)
                 elif e.key == pygame.K_h and reading and reading in world.agents:
                     world.aid(reading)      # help them — your understanding grows
+                elif e.key == pygame.K_m and reading and reading in world.agents:
+                    world.marry(reading)    # wed them (if the bond has grown to betrothal)
+                elif e.key == pygame.K_k and reading and world.player.spouse == reading:
+                    world.have_child(random.Random(world.tick))   # a child, if this is your spouse
 
         keys = pygame.key.get_pressed()
         pmoving = False

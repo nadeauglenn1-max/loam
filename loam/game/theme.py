@@ -533,8 +533,15 @@ class Theme:
                 if not understood else f"the {fam} — you understand them")
         screen.blit(self.font.render(note, True, (200, 210, 190)),
                     (x, panel.bottom - 26))
-        hint = "E / Esc — step back" if understood else "H — help them · E / Esc — step back"
-        t = self.font.render(hint, True, MUTE)
+        actions = []
+        if not understood:
+            actions.append("H — help")
+        if wed:
+            actions.append("K — raise a child")
+        elif bondlib.can_marry(lvl):
+            actions.append("M — marry")
+        actions.append("E / Esc — step back")
+        t = self.font.render(" · ".join(actions), True, MUTE)
         screen.blit(t, (panel.right - t.get_width() - 18, panel.bottom - 26))
 
     def draw_near_hint(self, screen, name, px, py):
