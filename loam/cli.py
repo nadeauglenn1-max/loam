@@ -255,6 +255,8 @@ def cmd_you(args: argparse.Namespace) -> int:
           f"({s['understanding'] * 100:.0f}%), {s['words_earned']} words earned")
     trades = ", ".join(f"{t} {int(v * 100)}%" for t, v in s["trades"][:6]) or "no trade yet"
     print(f"  trades: {trades}")
+    if s["felled"]:
+        print(f"  at arms: {s['felled']} foe(s) felled")
     if s["closest"]:
         print("  closest to: " + ", ".join(f"{n} ({tier})" for n, tier in s["closest"]))
     if s["spouse"]:

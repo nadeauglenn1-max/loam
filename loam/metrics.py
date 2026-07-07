@@ -51,6 +51,7 @@ def player_summary(world: "World") -> dict:
         "name": p.name, "gender": p.gender,
         "understood": done, "families": total, "understanding": frac,
         "words_earned": sum(len(v) for v in p.words.values()),
+        "felled": world.tally.get("felled_by_you", 0),
         "trades": sorted(((t, lvl) for t, lvl in p.skills.items() if lvl > 0),
                          key=lambda kv: -kv[1]),
         "spouse": world.agents[p.spouse].name if p.spouse in world.agents else "",

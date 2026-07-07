@@ -39,10 +39,12 @@ class Fight:
         if self.foe.vitality <= 0:
             self.over = "won"
             self.reward = arena.reward_win(self.world.player, self.foe.level)
+            self._record()
 
     def flee(self) -> None:
         if not self.over:
             self.over = "fled"
+            self._record()
 
     def update(self, dt: float) -> None:
         if self.over:
@@ -56,3 +58,17 @@ class Fight:
             self.enemy_timer = self.ENEMY_CADENCE
             if self.you.vitality <= 0:
                 self.over = "lost"
+                self._record()
+
+    def _record(self) -> None:
+        """Leave a mark on the world — a fight should show in the logs and the
+        chronicle, not vanish with the scene."""
+        foe, lvl = self.foe.name, self.foe.level
+        if self.over == "won":
+            self.world._bump("felled_by_you")
+            self.world._log(f"You felled a {foe} (level {lvl}); +{self.reward}% at arms.")
+        elif self.over == "lost":
+            self.world._bump("beaten_back")
+            self.world._log(f"A {foe} (level {lvl}) beat you back.")
+        elif self.over == "fled":
+            self.world._log(f"You fled from a {foe}.")

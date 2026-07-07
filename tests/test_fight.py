@@ -19,6 +19,8 @@ def test_striking_a_weak_foe_to_the_finish_wins_and_teaches_you():
             break
     assert f.over == "won" and f.reward > 0
     assert f.world.player.skill("combat") > before   # you learned by fighting
+    assert f.world.tally.get("felled_by_you") == 1   # and the world remembers it
+    assert any("felled" in line for line in f.world.feed)
 
 
 def test_strike_respects_its_cooldown():
@@ -42,6 +44,8 @@ def test_the_foe_strikes_on_its_cadence_and_can_beat_you():
         if f.over:
             break
     assert f.over == "lost"
+    assert f.world.tally.get("beaten_back") == 1
+    assert any("beat you back" in line for line in f.world.feed)
 
 
 def test_fleeing_ends_the_fight():
