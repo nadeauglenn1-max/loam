@@ -16,9 +16,9 @@ import random
 
 import pygame
 
-from .. import config, persistence
+from .. import config, persistence, zones
 from ..cognition import RuleCognition
-from . import layout, theme as theme_mod
+from . import combat as combatlib, layout, theme as theme_mod
 from .theme import Theme
 
 # a stable, font-free handle on the look for tests and external callers
@@ -36,6 +36,14 @@ def _house_positions(home_rect, families):
         r, c = divmod(i, cols)
         out[fam] = (x + cw * (c + 0.5), y + 44 + ch * (r + 0.5))
     return out
+
+
+def _place_at(px, py, rects):
+    """Which area the player is standing in (or None)."""
+    for place, (x, y, w, h) in rects.items():
+        if x <= px <= x + w and y <= py <= y + h:
+            return place
+    return None
 
 
 def _being_pos(a, rects, houses):
@@ -79,6 +87,7 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
     facing: dict[str, int] = {}
     px, py, pfacing = W / 2, H - 120, 1
     reading = None
+    fight = None
     accum, frame = 0.0, 0
     running = True
     while running:
@@ -87,6 +96,13 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
         for e in pygame.event.get():
             if e.type == pygame.QUIT:
                 running = False
+            elif e.type == pygame.KEYDOWN and fight is not None:
+                if fight.over and e.key in (pygame.K_ESCAPE, pygame.K_e, pygame.K_SPACE):
+                    fight = None                 # the fight is done — back to the village
+                elif e.key == pygame.K_ESCAPE:
+                    fight.flee()
+                elif e.key == pygame.K_SPACE:
+                    fight.strike()
             elif e.type == pygame.KEYDOWN:
                 if e.key == pygame.K_ESCAPE:
                     if reading:
@@ -101,8 +117,22 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
                     world.marry(reading)    # wed them (if the bond has grown to betrothal)
                 elif e.key == pygame.K_k and reading and world.player.spouse == reading:
                     world.have_child(random.Random(world.tick))   # a child, if this is your spouse
+                elif e.key == pygame.K_f and reading is None:
+                    place = _place_at(px, py, rects)   # a fight, if you stand in a dangerous place
+                    if place in zones.ZONES and zones.danger_of(place) > 0.1:
+                        foe = zones.populate(place, random.Random(frame), count=1)[0]
+                        fight = combatlib.Fight(world, foe)
 
         keys = pygame.key.get_pressed()
+        if fight is not None:                    # the combat scene owns the frame
+            fight.bracing = bool(keys[pygame.K_b])
+            fight.update(dt)
+            theme.draw_combat(screen, fight, W, H)
+            pygame.display.flip()
+            if max_frames is not None and frame >= max_frames:
+                running = False
+            continue
+
         pmoving = False
         if reading is None:
             speed = 230 * dt
@@ -165,6 +195,10 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
             theme.draw_reading_panel(screen, world.agents[reading], world, W, H)
         elif near:
             theme.draw_near_hint(screen, world.agents[near].name, px, py)
+        else:
+            here = _place_at(px, py, rects)
+            if here in zones.ZONES and zones.danger_of(here) > 0.1:
+                theme.draw_prompt(screen, "press F to fight", px, py)
 
         pygame.display.flip()
         if max_frames is not None and frame >= max_frames:

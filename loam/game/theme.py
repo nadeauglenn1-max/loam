@@ -548,8 +548,97 @@ class Theme:
         t = self.font.render(" · ".join(actions), True, MUTE)
         screen.blit(t, (panel.right - t.get_width() - 18, panel.bottom - 26))
 
+    # ---- the combat scene -------------------------------------------------
+    FOE_COLOR = {
+        "cave rat": (150, 142, 130), "goblin": (110, 150, 90), "wolf": (140, 130, 120),
+        "giant spider": (60, 54, 70), "boar": (140, 110, 88), "bandit": (150, 120, 96),
+        "bog serpent": (96, 150, 120), "lurker": (96, 88, 120), "the beast": (120, 70, 70),
+        "bear": (150, 116, 84), "wraith": (176, 186, 200), "cave troll": (110, 150, 96),
+    }
+
+    def draw_combat(self, screen, fight, W, H):
+        screen.fill((28, 24, 26))                                   # a dim arena
+        pygame.draw.rect(screen, (44, 38, 34), (0, H - 150, W, 150))  # the floor
+        pygame.draw.line(screen, (60, 52, 46), (0, H - 150), (W, H - 150), 2)
+        rng = random.Random("arena")
+        for _ in range(160):                                        # grit
+            screen.set_at((rng.randint(0, W), rng.randint(H - 148, H)), (52, 46, 40))
+        pygame.draw.rect(screen, PANEL, (0, 0, W, 44))
+        screen.blit(self.big.render("A fight", True, INK), (16, 8))
+        # health bars
+        self._hp(screen, 40, 60, 380, fight.you.vitality / fight.you.max_vitality,
+                 fight.you.name, (120, 200, 140))
+        self._hp(screen, W - 420, 60, 380, fight.foe.vitality / max(0.01, fight.foe.max_vitality),
+                 f"{fight.foe.name} (lvl {fight.foe.level})", (208, 120, 120))
+        # the fighters (foe telegraphs a red flash as it winds up to strike)
+        fy = H - 156
+        self._combat_figure(screen, 300, fy, PLAYER, (120, 90, 40), 3.4)
+        flash = fight.telegraph > 0
+        self._foe(screen, W - 300, fy, fight.foe.kind, flash)
+        if flash:
+            t = self.font.render("it winds up — brace!", True, (232, 150, 130))
+            screen.blit(t, (W - 300 - t.get_width() // 2, fy - 92))
+        # result banner, or the controls
+        if fight.over:
+            self._banner(screen, W, H, fight)
+        else:
+            state = "bracing" if fight.bracing else ("ready" if fight.cooldown <= 0 else "recovering")
+            hud = f"SPACE strike · hold B brace · Esc flee    [you are {state}]"
+            t = self.font.render(hud, True, MUTE)
+            screen.blit(t, (W // 2 - t.get_width() // 2, H - 30))
+        for line in fight.log[-3:]:                                 # recent blows
+            pass  # kept minimal; the bars tell the tale
+
+    def _hp(self, screen, x, y, w, frac, label, color):
+        frac = max(0.0, min(1.0, frac))
+        pygame.draw.rect(screen, PANEL, (x - 3, y - 3, w + 6, 24), border_radius=6)
+        pygame.draw.rect(screen, (40, 40, 34), (x, y, w, 18), border_radius=5)
+        pygame.draw.rect(screen, color, (x, y, int(w * frac), 18), border_radius=5)
+        pygame.draw.rect(screen, OUTLINE, (x, y, w, 18), 1, border_radius=5)
+        screen.blit(self.small.render(label, True, INK), (x + 2, y - 18))
+
+    def _combat_figure(self, screen, x, y, tunic, hair, scale):
+        s = pygame.Surface((40, 44), pygame.SRCALPHA)
+        self._figure(s, 20, 40, (245, 222, 178), hair, tunic, 2, 0, False, 1)
+        big = pygame.transform.scale(s, (int(40 * scale), int(44 * scale)))
+        screen.blit(big, (int(x - big.get_width() // 2), int(y - big.get_height() + 12)))
+
+    def _foe(self, screen, x, y, kind, flash):
+        x, y = int(x), int(y)
+        col = self.FOE_COLOR.get(kind, (140, 110, 110))
+        if flash:
+            col = tuple(min(255, c + 60) for c in col)
+        pygame.draw.ellipse(screen, SHADOW, (x - 44, y - 6, 88, 18))
+        pygame.draw.ellipse(screen, col, (x - 42, y - 78, 84, 78))            # bulk
+        pygame.draw.ellipse(screen, tuple(max(0, c - 24) for c in col), (x - 42, y - 40, 84, 40))
+        pygame.draw.circle(screen, (250, 230, 90), (x - 16, y - 52), 6)       # eyes
+        pygame.draw.circle(screen, (250, 230, 90), (x + 16, y - 52), 6)
+        pygame.draw.circle(screen, (20, 16, 14), (x - 16, y - 52), 3)
+        pygame.draw.circle(screen, (20, 16, 14), (x + 16, y - 52), 3)
+        pygame.draw.polygon(screen, (240, 236, 226),                          # a maw
+                            [(x - 12, y - 34), (x + 12, y - 34), (x, y - 24)])
+        pygame.draw.ellipse(screen, OUTLINE, (x - 42, y - 78, 84, 78), 2)      # outline the bulk
+
+    def _banner(self, screen, W, H, fight):
+        won = fight.over == "won"
+        text = (f"You felled the {fight.foe.name}!  (+{fight.reward}% combat)" if won
+                else f"You were beaten back by the {fight.foe.name}.")
+        sub = "You have grown a little surer with a blade." if won else "You will heal, and know it better next time."
+        box = pygame.Rect(W // 2 - 300, H // 2 - 60, 600, 120)
+        self._round(screen, box, PANEL, 14)
+        self._round(screen, box, LINE, 14, 2)
+        big = self.big.render(text, True, (208, 224, 176) if won else (224, 176, 150))
+        screen.blit(big, (W // 2 - big.get_width() // 2, box.y + 22))
+        s = self.font.render(sub, True, MUTE)
+        screen.blit(s, (W // 2 - s.get_width() // 2, box.y + 58))
+        e = self.font.render("Esc / E — back to the village", True, MUTE)
+        screen.blit(e, (W // 2 - e.get_width() // 2, box.y + 86))
+
     def draw_near_hint(self, screen, name, px, py):
-        t = self.font.render(f"press E to meet {name}", True, INK)
+        self.draw_prompt(screen, f"press E to meet {name}", px, py)
+
+    def draw_prompt(self, screen, text, px, py):
+        t = self.font.render(text, True, INK)
         self._round(screen, (int(px) - t.get_width() // 2 - 10, int(py) - 46,
                              t.get_width() + 20, 24), PANEL, 8)
         screen.blit(t, (int(px) - t.get_width() // 2, int(py) - 42))
