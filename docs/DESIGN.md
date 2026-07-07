@@ -280,9 +280,10 @@ model can author richer tensions behind the same seam.
 - **next — bonds**: meeting a being opens a fuller portrait, and helping builds a
   player↔being bond that can grow, with effort and over tiers, toward love,
   marriage, children — a model layer unblocked by the graphics work.
-- **later** — a bigger overarching story as the drive (a retrospective narrator —
-  the hero telling, from later and broken, how weak they once were); you *inhabit*
-  a being (first person); a community library of worlds, characters, and modules.
+- **later** — you *inhabit* a being (first person); a community library of
+  worlds, characters, and modules. (The drive is the understanding spine itself —
+  no separate "overarching story" grafted on, and deliberately *no* retrospective
+  narrator frame: that way lies the corner Rothfuss wrote himself into.)
 
 ## Standing principles
 
