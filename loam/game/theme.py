@@ -21,12 +21,15 @@ from ..config import PLACES
 from . import layout
 
 # ---- palette (edit here to reskin, or subclass Theme) ------------------------
-GROUND = (17, 19, 14)
-GRASS = ((27, 41, 25), (31, 47, 29), (24, 38, 23))
-INK = (239, 236, 226)
-MUTE = (168, 164, 150)
+GROUND = (21, 27, 18)
+GRASS = ((31, 48, 29), (35, 54, 32), (27, 43, 26), (39, 58, 35))
+TUFT = (24, 40, 23)
+FLOWERS = ((198, 182, 96), (186, 126, 156), (150, 172, 212), (214, 152, 112))
+SHADOW = (12, 15, 10)
+INK = (240, 237, 227)
+MUTE = (170, 166, 152)
 PANEL = (26, 27, 21)
-LINE = (52, 52, 43)
+LINE = (58, 58, 48)
 PLAYER = (245, 232, 180)
 
 SKIN = [(242, 203, 165), (226, 182, 143), (198, 152, 112), (158, 114, 82), (120, 84, 60)]
@@ -129,16 +132,26 @@ class Theme:
     def build_background(self, W, H, rects, houses) -> pygame.Surface:
         bg = pygame.Surface((W, H))
         bg.fill(GROUND)
-        tile = 34
+        # a soft, dithered meadow — tiles blended, then strewn with tufts and flowers
+        tile = 24
         for ty in range(0, H, tile):
             for tx in range(0, W, tile):
                 shade = GRASS[int(layout._unit(f"{tx}:{ty}:g") * len(GRASS))]
                 bg.fill(shade, (tx, ty, tile, tile))
+        rng = random.Random("meadow")
+        for _ in range(520):                                   # grass tufts
+            gx, gy = rng.randint(0, W), rng.randint(80, H)
+            pygame.draw.line(bg, TUFT, (gx, gy), (gx, gy - rng.randint(2, 4)), 1)
+        for _ in range(70):                                    # wildflowers
+            fx, fy = rng.randint(0, W), rng.randint(80, H)
+            pygame.draw.circle(bg, rng.choice(FLOWERS), (fx, fy), 1)
         for place, rect in rects.items():
             x, y, rw, rh = rect
             name, kind = VILLAGE.get(place, (place, "square"))
-            self._round(bg, rect, self.room_tint(place), 14)
-            self._round(bg, rect, LINE, 14, width=2)
+            self._round(bg, (x + 3, y + 4, rw, rh), SHADOW, 16)   # a soft drop shadow
+            self._round(bg, rect, self.room_tint(place), 16)
+            self._round(bg, (x + 2, y + 2, rw - 4, rh - 4), self._lift(self.room_tint(place)), 14, width=1)
+            self._round(bg, rect, LINE, 16, width=2)
             if kind == "home":
                 for fam, (hx, hy) in houses.items():
                     self._house(bg, hx, hy, fam)
@@ -150,105 +163,148 @@ class Theme:
                 self._marsh(bg, rect)
             elif kind == "wood":
                 self._wood(bg, rect, PLACES[place]["danger"])
-            bg.blit(self.font.render(name, True, INK), (x + 12, y + 8))
-            bg.blit(self.small.render(self.danger_word(place), True, MUTE), (x + 12, y + 28))
+            label = self.font.render(name, True, INK)
+            bg.blit(label, (x + 13, y + 9))
+            bg.blit(self.small.render(self.danger_word(place), True, MUTE), (x + 13, y + 29))
         return bg
+
+    @staticmethod
+    def _lift(color, by=14):
+        return tuple(min(255, c + by) for c in color)
 
     def _house(self, surf, x, y, label):
         x, y = int(x), int(y)
-        pygame.draw.rect(surf, (96, 76, 55), (x - 17, y - 4, 34, 22), border_radius=3)
-        pygame.draw.polygon(surf, (122, 62, 46), [(x - 22, y - 4), (x + 22, y - 4), (x, y - 22)])
-        pygame.draw.polygon(surf, OUTLINE, [(x - 22, y - 4), (x + 22, y - 4), (x, y - 22)], 1)
-        pygame.draw.rect(surf, (50, 36, 24), (x - 4, y + 6, 8, 12))
-        pygame.draw.rect(surf, (214, 176, 96), (x + 8, y + 2, 5, 5))     # a lit window
+        pygame.draw.rect(surf, SHADOW, (x - 18, y - 2, 38, 24), border_radius=3)   # ground shadow
+        pygame.draw.rect(surf, (104, 82, 58), (x - 17, y - 4, 34, 22), border_radius=3)  # wall
+        pygame.draw.rect(surf, (86, 66, 46), (x - 17, y + 8, 34, 10), border_radius=3)   # wall shade
+        pygame.draw.polygon(surf, (138, 72, 52), [(x - 22, y - 3), (x + 22, y - 3), (x, y - 23)])  # roof
+        pygame.draw.polygon(surf, (158, 88, 66), [(x - 22, y - 3), (x, y - 3), (x, y - 23)])       # roof lit side
+        pygame.draw.polygon(surf, OUTLINE, [(x - 22, y - 3), (x + 22, y - 3), (x, y - 23)], 1)
+        pygame.draw.rect(surf, (150, 40, 30), (x + 11, y - 20, 4, 8))            # chimney
+        pygame.draw.rect(surf, (46, 32, 22), (x - 4, y + 6, 9, 12), border_radius=2)  # door
+        pygame.draw.rect(surf, (214, 176, 96), (x + 7, y + 1, 6, 6))             # lit window
+        pygame.draw.rect(surf, OUTLINE, (x + 7, y + 1, 6, 6), 1)
         tag = self.small.render(label, True, MUTE)
-        surf.blit(tag, (x - tag.get_width() // 2, y + 20))
+        surf.blit(tag, (x - tag.get_width() // 2, y + 21))
 
     def _square(self, surf, rect):
         x, y, w, h = rect
         cx, cy = int(x + w * 0.34), int(y + h * 0.60)
-        pygame.draw.circle(surf, (78, 78, 86), (cx, cy), 15)            # the well
-        pygame.draw.circle(surf, (38, 38, 44), (cx, cy), 15, 2)
-        pygame.draw.circle(surf, (24, 34, 52), (cx, cy), 8)
-        sx, sy = int(x + w * 0.68), int(y + h * 0.44)                   # a market stall
-        pygame.draw.rect(surf, (104, 82, 58), (sx - 24, sy, 48, 20))
-        pygame.draw.rect(surf, (152, 74, 60), (sx - 28, sy - 9, 56, 9))
+        pygame.draw.ellipse(surf, SHADOW, (cx - 16, cy + 8, 32, 10))
+        pygame.draw.circle(surf, (96, 98, 104), (cx, cy), 16)          # well stones
+        pygame.draw.circle(surf, (60, 62, 68), (cx, cy), 16, 2)
+        pygame.draw.circle(surf, (20, 30, 46), (cx, cy), 9)            # water
+        pygame.draw.circle(surf, (44, 66, 92), (cx - 2, cy - 2), 4)    # a glint
+        pygame.draw.rect(surf, (86, 60, 40), (cx - 15, cy - 26, 3, 22))   # roof posts
+        pygame.draw.rect(surf, (86, 60, 40), (cx + 12, cy - 26, 3, 22))
+        pygame.draw.polygon(surf, (140, 74, 52), [(cx - 20, cy - 24), (cx + 20, cy - 24), (cx, cy - 34)])
+        sx, sy = int(x + w * 0.70), int(y + h * 0.46)                  # market stall
+        pygame.draw.rect(surf, SHADOW, (sx - 24, sy + 20, 50, 8))
+        pygame.draw.rect(surf, (116, 90, 62), (sx - 24, sy, 48, 20), border_radius=2)
+        for i in range(4):                                            # striped awning
+            col = (168, 82, 66) if i % 2 == 0 else (206, 190, 160)
+            pygame.draw.rect(surf, col, (sx - 28 + i * 14, sy - 9, 14, 9))
+        pygame.draw.circle(surf, (196, 160, 70), (sx - 12, sy + 8), 3)  # goods
+        pygame.draw.circle(surf, (150, 80, 70), (sx + 4, sy + 8), 3)
 
     def _field(self, surf, rect):
         x, y, w, h = rect
-        for ry in range(int(y + 46), int(y + h - 14), 15):
-            for rx in range(int(x + 22), int(x + w - 14), 13):
-                pygame.draw.line(surf, (86, 122, 52), (rx, ry), (rx, ry - 8), 2)
+        rows = list(range(int(y + 48), int(y + h - 16), 16))
+        for ry in rows:
+            pygame.draw.line(surf, (54, 44, 30), (x + 18, ry + 5), (x + w - 14, ry + 5), 3)  # furrow
+        for i, ry in enumerate(rows):
+            for rx in range(int(x + 22), int(x + w - 14), 15):
+                pygame.draw.line(surf, (70, 104, 44), (rx, ry + 4), (rx, ry - 5), 2)   # stalk
+                top = (150, 176, 74) if (i + rx) % 3 else (196, 168, 84)              # leaf / ripe
+                pygame.draw.circle(surf, top, (rx, ry - 6), 3)
 
     def _marsh(self, surf, rect):
         x, y, w, h = rect
         rng = random.Random(f"{x}:{y}:marsh")
-        for _ in range(5):                                             # still pools
-            px = rng.randint(int(x + 22), int(x + w - 34))
-            py = rng.randint(int(y + 48), int(y + h - 22))
-            pw = rng.randint(20, 40)
-            pygame.draw.ellipse(surf, (36, 66, 78), (px, py, pw, pw // 2))
-            pygame.draw.ellipse(surf, (58, 96, 104), (px + 3, py + 2, pw - 6, 3))
-        for _ in range(14):                                            # reeds
+        for _ in range(6):                                             # still pools, layered
+            px = rng.randint(int(x + 20), int(x + w - 46))
+            py = rng.randint(int(y + 46), int(y + h - 26))
+            pw, ph = rng.randint(30, 54), rng.randint(14, 22)
+            pygame.draw.ellipse(surf, (28, 54, 64), (px, py, pw, ph))
+            pygame.draw.ellipse(surf, (40, 74, 86), (px + 2, py + 2, pw - 4, ph - 4))
+            pygame.draw.ellipse(surf, (70, 112, 120), (px + 5, py + 3, pw - 16, 3))   # sheen
+            if rng.random() < 0.6:                                     # a lily pad
+                lx, ly = px + pw // 2, py + ph // 2
+                pygame.draw.circle(surf, (58, 104, 66), (lx, ly), 4)
+                pygame.draw.circle(surf, (210, 160, 180), (lx, ly), 1)
+        for _ in range(18):                                            # reeds
             tx = rng.randint(int(x + 16), int(x + w - 16))
             ty = rng.randint(int(y + 44), int(y + h - 12))
-            pygame.draw.line(surf, (74, 96, 58), (tx, ty), (tx, ty - 10), 1)
+            pygame.draw.line(surf, (86, 108, 62), (tx, ty), (tx - 1, ty - rng.randint(8, 13)), 1)
+            pygame.draw.line(surf, (86, 108, 62), (tx + 3, ty), (tx + 4, ty - rng.randint(6, 11)), 1)
 
     def _wood(self, surf, rect, danger):
         x, y, w, h = rect
         rng = random.Random(f"{x}:{y}:wood")
-        for _ in range(int(9 + danger * 16)):
-            tx = rng.randint(int(x + 16), int(x + w - 16))
-            ty = rng.randint(int(y + 44), int(y + h - 14))
-            g = max(30, 74 - int(danger * 34))
-            pygame.draw.polygon(surf, (28, g, 34), [(tx - 7, ty), (tx + 7, ty), (tx, ty - 16)])
-            pygame.draw.polygon(surf, OUTLINE, [(tx - 7, ty), (tx + 7, ty), (tx, ty - 16)], 1)
-            pygame.draw.rect(surf, (58, 42, 28), (tx - 1, ty, 2, 5))
+        trees = [(rng.randint(int(x + 18), int(x + w - 18)),
+                  rng.randint(int(y + 46), int(y + h - 16))) for _ in range(int(10 + danger * 16))]
+        for tx, ty in sorted(trees, key=lambda t: t[1]):              # painter's order
+            r = rng.randint(8, 12)
+            g = max(34, 78 - int(danger * 32))
+            pygame.draw.ellipse(surf, SHADOW, (tx - r, ty - 2, r * 2, 6))
+            pygame.draw.rect(surf, (60, 44, 30), (tx - 2, ty - 6, 4, 8))         # trunk
+            pygame.draw.circle(surf, (20, g - 12, 26), (tx, ty - r - 4), r)      # canopy base
+            pygame.draw.circle(surf, (26, g, 34), (tx - 2, ty - r - 6), r - 2)   # mid
+            pygame.draw.circle(surf, (34, g + 16, 44), (tx - 4, ty - r - 8), r - 5)  # highlight
 
     # ---- people -----------------------------------------------------------
-    def _legs(self, surf, x, y, step, moving, color=(58, 44, 32)):
+    def _legs(self, surf, x, y, step, moving, color=(52, 38, 28)):
         off = int(math.sin(step) * 3) if moving else 0
-        pygame.draw.rect(surf, color, (x - 5, y - 7 + max(0, off), 3, 8))
-        pygame.draw.rect(surf, color, (x + 2, y - 7 + max(0, -off), 3, 8))
+        pygame.draw.rect(surf, color, (x - 4, y - 6 + max(0, off), 3, 7), border_radius=1)
+        pygame.draw.rect(surf, color, (x + 2, y - 6 + max(0, -off), 3, 7), border_radius=1)
+        pygame.draw.rect(surf, (34, 26, 18), (x - 5, y - 1 + max(0, off), 4, 2))   # feet
+        pygame.draw.rect(surf, (34, 26, 18), (x + 1, y - 1 + max(0, -off), 4, 2))
+
+    def _figure(self, surf, x, y, skin, hair, tunic, style, step, moving, facing, hair_back=True):
+        pygame.draw.ellipse(surf, SHADOW, (x - 8, y - 1, 16, 5))                 # shadow
+        self._legs(surf, x, y, step, moving)
+        shade = tuple(max(0, c - 26) for c in tunic)
+        lift = self._lift(tunic, 22)
+        body = pygame.Rect(x - 7, y - 19, 14, 15)
+        pygame.draw.rect(surf, tunic, body, border_radius=5)                    # tunic
+        pygame.draw.rect(surf, shade, (x - 7, y - 8, 14, 4), border_radius=3)    # hem shade
+        pygame.draw.rect(surf, lift, (x - 2, y - 18, 4, 12), border_radius=2)    # centre highlight
+        pygame.draw.rect(surf, OUTLINE, body, width=1, border_radius=5)
+        pygame.draw.rect(surf, tunic, (x - 9, y - 18, 3, 9), border_radius=2)    # arms
+        pygame.draw.rect(surf, tunic, (x + 6, y - 18, 3, 9), border_radius=2)
+        pygame.draw.rect(surf, skin, (x - 2, y - 22, 4, 4))                      # neck
+        hy = y - 26
+        if hair_back:
+            pygame.draw.circle(surf, hair, (x, hy - 1), 7)                       # hair behind
+        pygame.draw.circle(surf, skin, (x, hy), 6)                              # head
+        pygame.draw.circle(surf, OUTLINE, (x, hy), 6, 1)
+        if style == 1:                                                          # long hair
+            pygame.draw.rect(surf, hair, (x - 7, hy - 1, 3, 12), border_radius=2)
+            pygame.draw.rect(surf, hair, (x + 4, hy - 1, 3, 12), border_radius=2)
+        cap = 5 if style == 2 else 6                                            # short vs fuller
+        pygame.draw.circle(surf, hair, (x, hy - 4), cap)                        # crown
+        pygame.draw.circle(surf, self._lift(hair, 18), (x - 2, hy - 5), 2)      # sheen
+        ex = 2 * facing
+        pygame.draw.circle(surf, (24, 20, 16), (x - 2 + ex, hy), 1)             # eyes
+        pygame.draw.circle(surf, (24, 20, 16), (x + 3 + ex, hy), 1)
 
     def draw_person(self, surf, x, y, appr, step, moving, facing, name, highlight=False):
         skin, hair, tunic, style = appr
         x, y = int(x), int(y)
-        pygame.draw.ellipse(surf, (10, 12, 8), (x - 9, y - 1, 18, 6))            # shadow
-        self._legs(surf, x, y, step, moving)
-        body = pygame.Rect(x - 7, y - 20, 14, 15)
-        pygame.draw.rect(surf, tunic, body, border_radius=4)                    # tunic
-        pygame.draw.rect(surf, OUTLINE, body, width=1, border_radius=4)
-        pygame.draw.rect(surf, tunic, (x - 9, y - 19, 3, 10), border_radius=2)  # arms
-        pygame.draw.rect(surf, tunic, (x + 6, y - 19, 3, 10), border_radius=2)
-        hy = y - 27
-        pygame.draw.circle(surf, hair, (x, hy - 3), 8)                          # hair
-        pygame.draw.circle(surf, skin, (x, hy), 7)                              # head
-        pygame.draw.circle(surf, OUTLINE, (x, hy), 7, 1)
-        if style == 1:                                                          # long hair
-            pygame.draw.rect(surf, hair, (x - 8, hy - 1, 3, 11), border_radius=2)
-            pygame.draw.rect(surf, hair, (x + 5, hy - 1, 3, 11), border_radius=2)
-        ex = 2 * facing
-        pygame.draw.circle(surf, (26, 22, 18), (x - 2 + ex, hy), 1)             # eyes
-        pygame.draw.circle(surf, (26, 22, 18), (x + 3 + ex, hy), 1)
         if highlight:
-            pygame.draw.circle(surf, PLAYER, (x, y - 12), 24, 2)
+            pygame.draw.circle(surf, PLAYER, (x, y - 12), 22, 2)
+        self._figure(surf, x, y, skin, hair, tunic, style, step, moving, facing)
         tag = self.small.render(name, True, INK if highlight else MUTE)
         surf.blit(tag, (x - tag.get_width() // 2, y + 4))
 
     def draw_player(self, surf, x, y, step, moving, facing):
         x, y = int(x), int(y)
-        pygame.draw.ellipse(surf, (10, 12, 8), (x - 10, y - 1, 20, 6))
-        self._legs(surf, x, y, step, moving, color=(120, 96, 34))
-        cloak = pygame.Rect(x - 8, y - 21, 16, 16)
-        pygame.draw.rect(surf, PLAYER, cloak, border_radius=4)                  # cloak
-        pygame.draw.rect(surf, OUTLINE, cloak, width=1, border_radius=4)
-        pygame.draw.circle(surf, (120, 90, 40), (x, y - 31), 8)                 # hair
-        pygame.draw.circle(surf, (245, 222, 178), (x, y - 28), 8)              # head
-        pygame.draw.circle(surf, OUTLINE, (x, y - 28), 8, 1)
-        ex = 2 * facing
-        pygame.draw.circle(surf, (26, 22, 18), (x - 2 + ex, y - 28), 1)
-        pygame.draw.circle(surf, (26, 22, 18), (x + 3 + ex, y - 28), 1)
+        self._figure(surf, x, y, (245, 222, 178), (120, 90, 40), PLAYER, 1,
+                     step, moving, facing)
+        pygame.draw.polygon(surf, (198, 168, 96),                               # a gold cape
+                            [(x - 7, y - 18), (x + 7, y - 18), (x + 5, y - 4), (x - 5, y - 4)])
+        pygame.draw.polygon(surf, OUTLINE,
+                            [(x - 7, y - 18), (x + 7, y - 18), (x + 5, y - 4), (x - 5, y - 4)], 1)
 
     # ---- overlays: sky wash, vignette, hud, panels ------------------------
     def apply_sky(self, screen, W, H, t):

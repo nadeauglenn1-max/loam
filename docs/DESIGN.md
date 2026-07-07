@@ -261,16 +261,28 @@ model can author richer tensions behind the same seam.
   words); you push against that entropy. Combat, trade, and the professions stop
   competing with the gardener's soul and become the means you use to close a rift.
   Order: **rift ✓ → primitive ✓ → meter ✓ → you-grow-into-it ✓.**
-- **next — the mini-games** (feel to be shaped with Glenn): each trade is a
-  *player-controlled* mini-game (fishing, mining, smithing, combat), and playing
-  it well is what grows the skill and earns the faction. `world.practice_trade` is
-  the resolved seam the mini-games slot into. Some factions harder than others;
-  dabble, partial-start a family, follow the fun.
-- **next** — the quest primitive (help a family, understand them); the meter in
-  the explore client; player combat in the client (enter a zone, fight, level,
-  loot) as one of the verbs that serve a rift; a "converse" beat.
-- **later** — a bigger overarching story as the drive; language may retire from
-  the engine (a common tongue); you *inhabit* a being (first person).
+- **v0.29 (done)** — **a prettier world**: a real pass on the default `Theme` —
+  a dithered meadow strewn with tufts and wildflowers, layered forests (trunk +
+  a shaded canopy), a marsh of pooled water with sheen and lily pads, planted
+  fields with ripe rows, roofed houses with a chimney and a lit window, a covered
+  well and a striped market stall, and cleaner two-tone sprites. All in the
+  swappable theme; verified by headless screenshot.
+- **next — the mini-games, as a community project** (feel to be shaped with Glenn;
+  real-time action is the target, which needs its own combat *scene*, not the
+  cozy overworld). Each trade is a *player-controlled* mini-game, and **each is a
+  module**: someone builds a new fishing module, opens a PR, and it's taken or
+  left on its merits — this is a place to *learn to build with AI*, all levels
+  welcome, no "the AI wrote it" gatekeeping. `world.practice_trade` is the resolved
+  seam the modules slot into. **Combat first**, its own scene you enter, tiered
+  (rats before dragons) over hours; the ecology-beast merges here. *(How it works
+  with Glenn: he plays and tunes the feel — a live window can't be seen from here;
+  the build brings structure, the module seam, and visuals verified by screenshot.)*
+- **next — bonds**: meeting a being opens a fuller portrait, and helping builds a
+  player↔being bond that can grow, with effort and over tiers, toward love,
+  marriage, children — a model layer unblocked by the graphics work.
+- **later** — a bigger overarching story as the drive (a retrospective narrator —
+  the hero telling, from later and broken, how weak they once were); you *inhabit*
+  a being (first person); a community library of worlds, characters, and modules.
 
 ## Standing principles
 

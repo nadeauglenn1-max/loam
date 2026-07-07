@@ -169,10 +169,11 @@ cognition also falls back to the rule policy on any transient model error.)
 
 ## Backlog & current state
 
-**State:** playable and CI-green (149 tests). The engine + content platform is
-complete, and the medieval-village explore client — day/night, anchors, distinct
-moving people — is in and walkable. (Saving a newborn you take a liking to is
-already covered by `save-char`.)
+**State:** playable and CI-green (214 tests). The engine + content platform is
+complete; the medieval-village explore client — day/night, anchors, distinct
+moving people, a working economy — is in and walkable; and the story spine is
+laid: **you start knowing nothing and become the one who understands**, family by
+family. (Saving a newborn you take a liking to is already covered by `save-char`.)
 
 **Done**
 - Genesis web — villages wake tangled, with mechanical teeth from tick one.
@@ -218,22 +219,38 @@ already covered by `save-char`.)
   perilous trades (mining, hunting) are the player's to brave. Beings **trade
   surplus** to neighbours whose craft can use it, so the chains circulate on
   their own — a shepherd's wool reaches the weaver, who makes cloth.
-- **You start knowing nothing** — the story is *becoming* the one who understands.
-  You begin a novice at every trade and learn only by doing; and you understand a
-  family slowly, against their distrust — a word of theirs is a prize, won by
-  advancing the trade that is theirs. Fish, and the Fen come to trust you.
+- **The story spine — becoming the one who understands** (`rifts.py`, `player.py`).
+  You do *not* begin as the keeper of every tongue: you start understanding no one
+  and no faction trusts a stranger. A *rift* is a family whose tongue is closed to
+  you; the tiers are the households themselves. You are also no expert — a novice
+  at every trade, who learns only by doing — and **advancing a family's trade is
+  how you advance with them**: fish, and the Fen come to trust you, slowly, a word
+  at a time (words are prizes, not handouts). In the client, a meter tracks your
+  understanding and **H** helps the being you're meeting.
+- **A prettier world** — a richer default `Theme`: a dithered meadow with tufts
+  and wildflowers, layered forests, a marsh with pools and reeds, planted fields,
+  roofed houses, a covered well, cleaner sprites.
 
-**Next — the combat pillar**
-- **Player combat in the client** — enter a zone, fight, level, loot (this is
-  where the action-vs-turn *feel* is chosen, and where the beast that haunts the
-  forage becomes a foe you actually face).
-- Also: make the village's everyday work playable; a "converse" beat (a model
-  speaking *for* a being, on interaction only).
+**Next — the mini-games (a community project)**
+- **Each trade is a player-controlled mini-game, and each is a module.** Combat
+  first — its own scene you *enter* (rats before dragons), tiered over many hours,
+  where getting better is what grows the skill and earns the faction. Fishing,
+  mining, smithing follow. The seam is a clean plug-in: **someone builds a new
+  fishing module and opens a PR — you look, and take it or leave it.**
+- **Bonds** — meeting a being opens a fuller portrait, and helping builds a bond
+  that can grow (with real effort, over tiers) toward love, marriage, children.
 
 **Later**
-- A bigger overarching story as the drive; a common tongue (language may retire
-  from the engine); inhabit a being (first person); mod tooling so others author
-  and share their own worlds and characters.
+- A bigger overarching story as the drive; inhabit a being (first person); a
+  community library of worlds, characters, and mini-game modules.
+
+## A place to learn to build
+
+This is meant to be a good place to *learn to build with AI* — to make a change,
+prompt your way through it, and see it come alive. **All levels welcome.** If a
+twelve-year-old shows up with a good idea or a good change, it gets picked up on
+its merits; there's no "the AI wrote it, so it's junk" here. Open a PR, and we'll
+look at what it *does*.
 
 ## Architecture
 
@@ -258,6 +275,8 @@ combat.py      combat & leveling — attack/defense, damage off vitality, xp/lev
 bestiary.py    monsters as data-driven entities — a registry of kinds
 zones.py       dangerous areas as data — named area, danger, monster spawn table
 crafts.py      professions & goods as data — a trade is a recipe (skill×place→goods)
+player.py      you — skills grown by doing, understanding won against distrust
+rifts.py       the story spine — families you have yet to understand, the tiers
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 game/explore.py the explore client — the loop, input, and stepping the sim
