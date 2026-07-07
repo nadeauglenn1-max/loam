@@ -24,7 +24,13 @@ def test_attraction_is_deterministic_and_bounded():
     a = next(iter(w.agents.values()))
     assert bonds.attraction(a) == bonds.attraction(a)
     assert 0.0 <= bonds.attraction(a) <= 1.0
+
+
+def test_attraction_word_spans_the_range():
     assert bonds.attraction_word(0.9) == "striking"
+    assert bonds.attraction_word(0.6) == "intriguing"
+    assert bonds.attraction_word(0.4) == "easy to be near"
+    assert bonds.attraction_word(0.1) == "plain, but kind"
 
 
 def test_a_bond_deepens_slower_the_deeper_it_runs():
