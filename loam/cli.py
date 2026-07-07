@@ -9,6 +9,7 @@
   loam zones                     # the dangerous areas and the monsters they spawn
   loam crafts                    # the professions and what each trade makes
   loam rifts                     # the families you have yet to understand — your progress
+  loam you                       # who you have become — your journey so far
   loam help Sela                 # sit with a being — help them, and understand their family
   loam practice fishing          # ply a trade — grow the skill, advance with its family
   loam listen Sela               # hear a being speak — legible once you've earned their words
@@ -238,6 +239,26 @@ def cmd_help_being(args: argparse.Namespace) -> int:
         persistence.save_play(w)
     else:
         persistence.save(w)
+    return 0
+
+
+def cmd_you(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    s = metrics.player_summary(w)
+    who = f"a {'woman' if s['gender'] == 'female' else 'man'}" if s["gender"] else "a wanderer"
+    print(f"{s['name']} — {who}, still learning this world.")
+    print(f"  understanding: {s['understood']}/{s['families']} families "
+          f"({s['understanding'] * 100:.0f}%), {s['words_earned']} words earned")
+    trades = ", ".join(f"{t} {int(v * 100)}%" for t, v in s["trades"][:6]) or "no trade yet"
+    print(f"  trades: {trades}")
+    if s["closest"]:
+        print("  closest to: " + ", ".join(f"{n} ({tier})" for n, tier in s["closest"]))
+    if s["spouse"]:
+        kids = f", raising {', '.join(s['children'])}" if s["children"] else ""
+        print(f"  wed to {s['spouse']}{kids}")
     return 0
 
 
@@ -580,6 +601,10 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("trade", help="fishing, mining, smithing, … (see loam crafts)")
     pr.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
     pr.set_defaults(func=cmd_practice)
+
+    yo = sub.add_parser("you", help="who you have become — your journey so far")
+    yo.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    yo.set_defaults(func=cmd_you)
 
     ls = sub.add_parser("listen", help="meet a being and hear them speak (legible once you've earned their words)")
     ls.add_argument("being", help="a being's id or name")
