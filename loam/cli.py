@@ -13,6 +13,7 @@
   loam practice fishing          # ply a trade — grow the skill, advance with its family
   loam bonds                     # the people you have grown close to
   loam marry Sela                # wed a being you have come to love (once betrothed)
+  loam identity female Robin     # choose who you are — a woman or a man (looks only)
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -288,11 +289,27 @@ def cmd_child(args: argparse.Namespace) -> int:
     if w is None:
         print("No world yet. Try:  loam play <base>")
         return 1
-    r = w.bear_child(random.Random(w.tick))
+    r = w.have_child(random.Random(w.tick))
     if not r["ok"]:
         print(r["reason"])
         return 1
-    print(f"{r['name']} is born to you (generation {r['generation']}).")
+    print(f"A child, {r['name']}, comes to you (generation {r['generation']}).")
+    (persistence.save_play if args.play else persistence.save)(w)
+    return 0
+
+
+def cmd_identity(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    if args.gender not in ("female", "male"):
+        print("Choose 'female' or 'male' (looks only — no difference to how you play).")
+        return 1
+    w.player.gender = args.gender
+    if args.name:
+        w.player.name = args.name
+    print(f"You are {w.player.name}, a {'woman' if args.gender == 'female' else 'man'} of this world.")
     (persistence.save_play if args.play else persistence.save)(w)
     return 0
 
@@ -551,6 +568,12 @@ def build_parser() -> argparse.ArgumentParser:
     ch = sub.add_parser("child", help="have a child with the one you wed")
     ch.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
     ch.set_defaults(func=cmd_child)
+
+    idn = sub.add_parser("identity", help="choose who you are — a woman or a man (looks only)")
+    idn.add_argument("gender", choices=("female", "male"))
+    idn.add_argument("name", nargs="?", help="your name in this world")
+    idn.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    idn.set_defaults(func=cmd_identity)
 
     t = sub.add_parser("translate", help="help a being understand a word")
     t.add_argument("symbol")
