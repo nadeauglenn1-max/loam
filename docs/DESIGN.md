@@ -220,10 +220,26 @@ model can author richer tensions behind the same seam.
   the craft chains circulate without the player: verified in a free run a
   shepherd's wool reached a weaver who wove cloth. Goods, not bloom, so the
   survival balance stays untouched.
-- **next** — player combat in the client (enter a zone, fight, level, loot; where
-  the action-vs-turn feel is chosen, and where the ecology beast and the combat
-  beast finally merge); a "converse" beat (a model speaking *for* a being, on
-  interaction only). (Saving a newborn you like is already covered by `save-char`.)
+- **v0.25 (done)** — the **rifts engine** (`rifts.py`, `player.py`): the first
+  brick of the story spine. You do **not** begin as the one who understands — at
+  the start you understand no one, and your understanding grows family by family
+  until you have understood everyone. A *rift* is a family whose tongue is still
+  closed to you; the tiers of the game are the households themselves (no
+  hand-authored levels). `world.player.understanding` (0..1 per family, persisted)
+  is your progress; `world.rifts()` enumerates the open ones, the family you've
+  begun first. `loam rifts` shows the meter. **Next two bricks: the quest
+  *primitive* (advance a family → your understanding of them rises), then the
+  *meter* surfaced in the client.**
+- **the story spine (in progress)** — understanding is the goal, the verbs are the
+  means. The families' mutual understanding is a living thing that drifts up and
+  down as the language evolves (births add strangers, deaths cost a hub its
+  words); you push against that entropy by *helping* — and as you help a family
+  enough, you come to understand them (a tier). Combat, trade, and the professions
+  stop competing with the gardener's soul and become the means you use to close a
+  rift. Order: **rift ✓ → primitive → meter.**
+- **next** — the quest primitive (help a family, understand them); the meter in
+  the explore client; player combat in the client (enter a zone, fight, level,
+  loot) as one of the verbs that serve a rift; a "converse" beat.
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

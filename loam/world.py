@@ -17,6 +17,7 @@ from .agent import Agent
 from .cognition import Cognition, Decision, RuleCognition
 from .config import PLACES, SOCIAL_WANTS
 from .language import Utterance
+from .player import Player
 
 
 @dataclass
@@ -37,7 +38,12 @@ class World:
     name: str = ""            # a named base/playthrough ("" = the scratch world)
     role: str = "play"        # "base" (immutable template) or "play" (mutable run)
     forked_from: str = ""     # the base a playthrough was forked from
+    player: Player = field(default_factory=Player)   # you — your growing understanding
     cognition: Cognition = field(default_factory=RuleCognition, repr=False)
+
+    def rifts(self) -> list:
+        from . import rifts
+        return rifts.open_rifts(self)
 
     # ---- construction -----------------------------------------------------
     @classmethod

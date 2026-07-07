@@ -13,6 +13,7 @@ from .config import STARTING_PLACE
 from .genome import Genome
 from .language import Lexicon, PrivateLanguage, Utterance
 from .memory import Memory
+from .player import Player
 from .wants import Wants
 from .world import World
 
@@ -70,7 +71,7 @@ def to_dict(w: World) -> dict:
     return {
         "seed": w.seed, "tick": w.tick, "present": w.present, "next_index": w.next_index,
         "name": w.name, "role": w.role, "forked_from": w.forked_from,
-        "predator": w.predator,
+        "predator": w.predator, "player": {"understanding": w.player.understanding},
         "agents": [_agent_to_dict(a) for a in w.agents.values()],
         "monsters": [vars(m) for m in w.monsters],
         "bloom": w.bloom, "feed": w.feed,
@@ -96,6 +97,7 @@ def from_dict(d: dict, model=None) -> World:
     w.history = list(d.get("history", []))
     w.fallen = list(d.get("fallen", []))
     w.tally = dict(d.get("tally", {}))
+    w.player = Player(understanding=dict(d.get("player", {}).get("understanding", {})))
     return w
 
 

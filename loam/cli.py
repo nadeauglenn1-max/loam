@@ -8,6 +8,7 @@
   loam map                       # places, danger, bloom, who is where
   loam zones                     # the dangerous areas and the monsters they spawn
   loam crafts                    # the professions and what each trade makes
+  loam rifts                     # the families you have yet to understand — your progress
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -137,6 +138,29 @@ def cmd_zones(args: argparse.Namespace) -> int:
         table = ", ".join(f"{k} L{lo}-{hi}" for k, _w, lo, hi in zones.spawn_table(name))
         print(f"  {name:18} {zones.ZONES[name]['kind']:8} {band:6} "
               f"(danger {d:.2f})  | {table}")
+    return 0
+
+
+def cmd_rifts(args: argparse.Namespace) -> int:
+    from . import rifts
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        where = f"playthrough '{args.play}'" if args.play else "world"
+        print(f"No {where} yet. Try:  loam play <base>")
+        return 1
+    frac, done, total = rifts.progress(w)
+    bar_n = 24
+    filled = int(frac * bar_n)
+    print(f"You understand {done}/{total} families  [{'#' * filled}{'-' * (bar_n - filled)}] {frac * 100:.0f}%")
+    if rifts.all_understood(w):
+        print("You have become the one who understands. Every tongue is open to you.")
+        return 0
+    print("Rifts still open (finish the one you've begun, then the next):")
+    for r in w.rifts():
+        pct = int(r.level * 100)
+        state = f"{pct:3d}% understood" if r.started else "  a stranger still"
+        names = ", ".join(a.name for a in r.members[:5]) + ("…" if r.size > 5 else "")
+        print(f"  {r.family:10} {state}  ·  {r.size} living  ·  {names}")
     return 0
 
 
@@ -371,6 +395,10 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("map", help="places, danger, bloom, who is where").set_defaults(func=cmd_map)
     sub.add_parser("zones", help="the dangerous areas and what they spawn").set_defaults(func=cmd_zones)
     sub.add_parser("crafts", help="the professions and what each one makes").set_defaults(func=cmd_crafts)
+
+    rf = sub.add_parser("rifts", help="the families you have yet to understand — your progress")
+    rf.add_argument("play", nargs="?", help="a playthrough to read (default: the scratch world)")
+    rf.set_defaults(func=cmd_rifts)
 
     v = sub.add_parser("visit", help="sit with one being")
     v.add_argument("agent")
