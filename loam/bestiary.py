@@ -15,12 +15,18 @@ from . import config
 # kind -> base stats. attack/defense are 0..1 (like a genome); hp is starting
 # vitality (can exceed 1 for tanks); xp is the reward for felling it at level 1.
 BESTIARY: dict[str, dict] = {
-    "cave rat":   {"attack": 0.22, "defense": 0.18, "hp": 0.4, "xp": 1},
-    "wolf":       {"attack": 0.40, "defense": 0.28, "hp": 0.7, "xp": 2},
-    "boar":       {"attack": 0.48, "defense": 0.40, "hp": 1.0, "xp": 3},
-    "lurker":     {"attack": 0.58, "defense": 0.46, "hp": 1.4, "xp": 5},
-    "the beast":  {"attack": 0.60, "defense": 0.50, "hp": 1.6, "xp": 6},
-    "cave troll": {"attack": 0.72, "defense": 0.68, "hp": 3.0, "xp": 12},
+    "cave rat":     {"attack": 0.22, "defense": 0.18, "hp": 0.4, "xp": 1},
+    "goblin":       {"attack": 0.30, "defense": 0.22, "hp": 0.5, "xp": 2},
+    "wolf":         {"attack": 0.40, "defense": 0.28, "hp": 0.7, "xp": 2},
+    "giant spider": {"attack": 0.44, "defense": 0.30, "hp": 0.8, "xp": 3},
+    "boar":         {"attack": 0.48, "defense": 0.40, "hp": 1.0, "xp": 3},
+    "bandit":       {"attack": 0.50, "defense": 0.44, "hp": 1.2, "xp": 4},
+    "bog serpent":  {"attack": 0.52, "defense": 0.36, "hp": 1.1, "xp": 4},
+    "lurker":       {"attack": 0.58, "defense": 0.46, "hp": 1.4, "xp": 5},
+    "the beast":    {"attack": 0.60, "defense": 0.50, "hp": 1.6, "xp": 6},
+    "bear":         {"attack": 0.64, "defense": 0.52, "hp": 1.9, "xp": 7},
+    "wraith":       {"attack": 0.70, "defense": 0.40, "hp": 1.5, "xp": 9},
+    "cave troll":   {"attack": 0.72, "defense": 0.68, "hp": 3.0, "xp": 12},
 }
 
 

@@ -23,25 +23,29 @@ ZONES: dict[str, dict] = {
     # overlays on the wild map — danger is inherited from the place it covers
     "the mire": {
         "place": "the mire", "kind": "wild",
-        "spawns": (("cave rat", 3, 1, 2), ("wolf", 2, 1, 2)),
+        "spawns": (("cave rat", 3, 1, 2), ("wolf", 2, 1, 2), ("bog serpent", 2, 1, 3)),
     },
     "the thornwood": {
         "place": "the thornwood", "kind": "wild",
-        "spawns": (("wolf", 3, 1, 3), ("boar", 2, 1, 2)),
+        "spawns": (("wolf", 3, 1, 3), ("boar", 2, 1, 2), ("goblin", 2, 1, 2)),
     },
     "the deepwood": {
         "place": "the deepwood", "kind": "wild",
         # the beast that haunts the forage is also a foe you can face here
-        "spawns": (("boar", 2, 1, 3), ("lurker", 2, 2, 4), ("the beast", 1, 2, 4)),
+        "spawns": (("boar", 2, 1, 3), ("lurker", 2, 2, 4), ("the beast", 1, 2, 4), ("bear", 1, 2, 5)),
     },
     # standalone areas you travel to and fight — add a row like these to build one
     "the hollow cave": {
         "danger": 0.60, "kind": "cave",
-        "spawns": (("cave rat", 4, 1, 3), ("lurker", 2, 2, 4)),
+        "spawns": (("cave rat", 4, 1, 3), ("giant spider", 3, 1, 3), ("lurker", 2, 2, 4)),
+    },
+    "the old mine": {
+        "danger": 0.70, "kind": "cave",
+        "spawns": (("goblin", 4, 1, 3), ("bandit", 3, 2, 4), ("giant spider", 2, 2, 4)),
     },
     "the sunken barrow": {
         "danger": 0.85, "kind": "dungeon",
-        "spawns": (("lurker", 2, 3, 5), ("cave troll", 1, 3, 6)),
+        "spawns": (("lurker", 2, 3, 5), ("wraith", 2, 3, 6), ("cave troll", 1, 3, 6)),
     },
 }
 
