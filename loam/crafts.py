@@ -87,6 +87,13 @@ def list_professions() -> list[str]:
     return list(PROFESSIONS)
 
 
+def needs_good(vocation: str, good: str) -> bool:
+    """Whether a trade consumes a good as an input — so a gatherer knows whose
+    hands its surplus is worth something in."""
+    p = PROFESSIONS.get(vocation)
+    return bool(p and good in p.inputs)
+
+
 # the trades a being can practise from nothing (no inputs needed) — what a
 # plain-born villager takes up, and the safe backbone of the living economy.
 GATHER_TRADES: tuple[str, ...] = tuple(n for n, p in PROFESSIONS.items() if not p.inputs)

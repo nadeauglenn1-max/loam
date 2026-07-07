@@ -50,6 +50,7 @@ class Decision:
     kind: str
     place: str | None = None
     target: str | None = None
+    good: str | None = None       # for a trade: which good changes hands
     thought: str = ""
 
 
@@ -82,6 +83,8 @@ class RuleCognition:
     HUNGRY = 0.6
     STARVING = 0.25
     SEEK_CHANCE = 0.08
+    TRADE_CHANCE = 0.5       # how readily surplus is handed to a neighbour who needs it
+    TRADE_SURPLUS = 2.0      # a good is spare once you hold at least this much
     WORK_CHANCE = 0.5        # how readily a well-fed villager turns to their trade
     WORK_VITALITY = 0.72     # only work once survival is secured
     WORK_DANGER_CAP = 0.15   # only *travel* to work at safe ground; risky ground is worked only if already there
@@ -158,6 +161,20 @@ class RuleCognition:
                      if a.affinity(o.id) > 0 and o.vitality < 0.5]
             if needy and rng.random() < 0.35:
                 return Decision("give", target=needy[0].id, thought=thought)
+
+        # 3b. hand a surplus good to a neighbour whose trade needs it — the
+        # economy circulates: a shepherd's wool reaches the weaver, ore the smith
+        if a.goods:
+            from . import crafts
+            for o in world.co_located(a):
+                if a.affinity(o.id) < 0:
+                    continue
+                good = next((g for g, q in a.goods.items()
+                             if q >= self.TRADE_SURPLUS and crafts.needs_good(o.vocation, g)), None)
+                if good is not None:
+                    if rng.random() < self.TRADE_CHANCE:
+                        return Decision("trade", target=o.id, good=good, thought=thought)
+                    break
 
         # 4. turn to you now and then
         if rng.random() < self.SEEK_CHANCE:

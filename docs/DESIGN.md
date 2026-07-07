@@ -214,11 +214,16 @@ model can author richer tensions behind the same seam.
   default look was sharpened in the same pass: outlined sprites, a real marsh with
   water and reeds, a sun that arcs the HUD and turns to a moon at night, a soft
   vignette. Not a deep component — a skin.
+- **v0.24 (done)** — **trade between beings** (`world.hand_goods`): a well-fed
+  villager hands a surplus good to a co-located neighbour whose trade can use it
+  (a new `trade` decision), warming the bond like a gift. This closes the loop —
+  the craft chains circulate without the player: verified in a free run a
+  shepherd's wool reached a weaver who wove cloth. Goods, not bloom, so the
+  survival balance stays untouched.
 - **next** — player combat in the client (enter a zone, fight, level, loot; where
   the action-vs-turn feel is chosen, and where the ecology beast and the combat
-  beast finally merge); trade/sharing of goods between beings (so the craft
-  chains flow without the player); a "converse" beat. (Saving a newborn you like
-  is already covered by `save-char`.)
+  beast finally merge); a "converse" beat (a model speaking *for* a being, on
+  interaction only). (Saving a newborn you like is already covered by `save-char`.)
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

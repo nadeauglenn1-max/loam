@@ -188,6 +188,8 @@ class World:
             self._mate(agent, d.target, rng)
         elif k == "speak" and d.target in self.agents:
             self._speak(agent, self.agents[d.target])
+        elif k == "trade" and d.good:
+            self.hand_goods(agent, d.target, d.good, rng)
         elif k == "work":
             self.do_craft(agent, agent.vocation, rng)
         elif k == "seek":
@@ -337,6 +339,26 @@ class World:
         return m
 
     # ---- the trades -------------------------------------------------------
+    def hand_goods(self, giver: Agent, taker_id: str | None, good: str,
+                   rng: random.Random) -> dict:
+        """Pass a surplus good to a neighbour whose trade can use it. Goodwill,
+        like a gift — it warms the bond and makes the craft economy circulate."""
+        taker = self.agents.get(taker_id or "")
+        have = giver.goods.get(good, 0.0)
+        if taker is None or not taker.alive or taker.location != giver.location or have < 0.5:
+            giver.memory.remember(self.tick, "had nothing worth passing on")
+            return {"ok": False}
+        amt = min(have, 2.0)
+        giver.goods[good] = have - amt
+        taker.goods[good] = taker.goods.get(good, 0.0) + amt
+        giver.warm_to(taker.id, 1.0)
+        taker.warm_to(giver.id, 1.5)
+        self._bump("trades")
+        giver.memory.remember(self.tick, f"gave {amt:g} {good} to {taker.name}")
+        taker.memory.remember(self.tick, f"{giver.name} gave me {amt:g} {good} for my work")
+        self._log(f"{giver.name} handed {good} to {taker.name}.")
+        return {"ok": True, "good": good, "amount": amt}
+
     def do_craft(self, agent: Agent, profession: str, rng: random.Random):
         """A being works a profession: turns effort (and inputs) into goods,
         maybe taking a mishap. Returns the Outcome (ok=False if it can't be done

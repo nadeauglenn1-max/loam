@@ -215,7 +215,9 @@ already covered by `save-char`.)
 - **A working village** — every soul has a vocation (authored for the founding
   cast, inherited by their children), and a well-fed villager turns to their
   trade through the day. The village visibly fishes, herds, and gathers; the
-  perilous trades (mining, hunting) are the player's to brave.
+  perilous trades (mining, hunting) are the player's to brave. Beings **trade
+  surplus** to neighbours whose craft can use it, so the chains circulate on
+  their own — a shepherd's wool reaches the weaver, who makes cloth.
 
 **Next — the combat pillar**
 - **Player combat in the client** — enter a zone, fight, level, loot (this is
