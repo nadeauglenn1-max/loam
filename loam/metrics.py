@@ -41,6 +41,33 @@ def coverage(world: "World") -> tuple[float, int, int]:
     return (edges / total, edges, total)
 
 
+def tongue_trend(world: "World", window: int = 5) -> tuple[float, float, str]:
+    """How the shared tongue has moved lately — it is a living thing, rising as
+    beings learn each other and fraying as elders (and their words) are lost and
+    newborns arrive speaking a drifted tongue. Returns (now, change, word)."""
+    frac, _edges, _total = coverage(world)
+    hist = [h["coverage"] for h in world.history if "coverage" in h]
+    if len(hist) < 2:
+        return (frac, 0.0, "still forming")
+    earlier = hist[max(0, len(hist) - 1 - window)]
+    d = frac - earlier
+    word = "holding steady" if abs(d) < 0.02 else ("growing" if d > 0 else "fraying")
+    return (frac, d, word)
+
+
+def family_cohesion(world: "World", family: str) -> tuple[float, int]:
+    """How well a family's own living members understand each other."""
+    from .rifts import family_of
+    members = [a for a in world.agents.values() if a.alive and family_of(a) == family]
+    n = len(members)
+    total = n * (n - 1)
+    if total == 0:
+        return (0.0, n)
+    edges = sum(1 for listener in members for o in members if o.id != listener.id
+                and any(listener.comprehends(o.language.word_of[c]) is not None for c in CONCEPTS))
+    return (edges / total, n)
+
+
 def word_spread(world: "World") -> list[tuple[str, str, str, int]]:
     own = owners(world)
     names = {a.id: a.name for a in world.agents.values()}
@@ -207,8 +234,18 @@ def chronicle(world: "World") -> str:
             lines.append(f"  · {', '.join(t)}")
     lines.append("")
 
+    _now, change, way = tongue_trend(world)
+    move = "" if way in ("still forming", "holding steady") else f", and {way} ({change * 100:+.0f}% lately)"
     lines.append(f"A shared tongue is {frac * 100:.0f}% formed "
-                 f"({edges} of {total} understanding-links live).")
+                 f"({edges} of {total} understanding-links live){move or ', ' + way}.")
+    from .rifts import families
+    cohesion = [(f, *family_cohesion(world, f)) for f in families(world)]
+    cohesion = [(f, coh, n) for f, coh, n in cohesion if n > 1]
+    if cohesion:
+        cohesion.sort(key=lambda r: -r[1])
+        best, worst = cohesion[0], cohesion[-1]
+        lines.append(f"  within families: the {best[0]} understand each other best "
+                     f"({best[1] * 100:.0f}%); the {worst[0]} least ({worst[1] * 100:.0f}%).")
     spread = word_spread(world)
     if spread:
         lines.append("Words that have spread:")
