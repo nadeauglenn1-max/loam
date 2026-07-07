@@ -30,6 +30,7 @@ class Player:
     bonds: dict[str, float] = field(default_factory=dict)           # being id -> 0..1, ties you tend
     spouse: str = ""                                                # a being you have wed
     children: list = field(default_factory=list)                    # ids of children you have raised
+    quests: dict = field(default_factory=dict)                      # family -> a trouble you've taken on
 
     # ---- understanding a family (slow, distrust-gated, prizes) ------------
     def of(self, family: str) -> float:

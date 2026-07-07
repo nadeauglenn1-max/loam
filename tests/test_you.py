@@ -20,16 +20,17 @@ def test_the_portrait_reflects_a_life_lived():
     w = _village()
     w.player.gender, w.player.name = "female", "Robin"
     sela = next(a for a in w.agents.values() if a.name == "Sela")
-    for _ in range(40):                                # help until you understand the Thorn
-        if w.player.understands("Thorn"):
-            break
-        w.aid(sela.id)
+    # you cleared the Thorn's trouble (understanding + a word) and grew a bond
+    w.player.understanding["Thorn"] = 1.0
+    w.player.words["Thorn"] = ["trust"]
+    for _ in range(3):
+        w.aid(sela.id)                                 # H still builds a personal bond
     w.practice_trade("fishing")
     s = metrics.player_summary(w)
     assert s["name"] == "Robin" and s["gender"] == "female"
     assert s["understood"] >= 1 and s["words_earned"] >= 1
     assert any(t == "fishing" for t, _ in s["trades"])
-    assert any(n == "Sela" for n, _ in s["closest"])   # a bond grew as you helped
+    assert any(n == "Sela" for n, _ in s["closest"])   # a bond grew as you sat with her
 
 
 def test_marriage_and_children_show_in_the_portrait():

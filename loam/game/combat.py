@@ -67,6 +67,7 @@ class Fight:
         if self.over == "won":
             self.world._bump("felled_by_you")
             self.world._log(f"You felled a {foe} (level {lvl}); +{self.reward}% at arms.")
+            self.world._advance_quests(self.foe.kind)   # a felled foe counts toward a trouble
         elif self.over == "lost":
             self.world._bump("beaten_back")
             self.world._log(f"A {foe} (level {lvl}) beat you back.")

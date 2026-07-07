@@ -9,15 +9,15 @@ def _village():
     return w
 
 
-def test_the_first_step_is_small_because_they_distrust_a_stranger():
+def test_sitting_with_someone_only_trickles_understanding():
     w = _village()
     sela = next(a for a in w.agents.values() if a.name == "Sela")   # a Thorn
     assert w.player.of("Thorn") == 0.0
     r = w.aid(sela.id)
     assert r["ok"] and r["family"] == "Thorn"
-    # a stranger earns only the distrust-floor fraction of a step, not the whole one
-    assert w.player.of("Thorn") == config.UNDERSTAND_STEP * config.DISTRUST_FLOOR
-    assert w.player.of("Thorn") < config.UNDERSTAND_STEP
+    # H is cheap now — the real understanding is earned by clearing their trouble
+    assert w.player.of("Thorn") == config.AID_UNDERSTAND_STEP * config.DISTRUST_FLOOR
+    assert w.player.of("Thorn") < config.UNDERSTAND_STEP * config.DISTRUST_FLOOR
 
 
 def test_enough_help_understands_a_family_and_closes_its_rift():

@@ -21,6 +21,11 @@ from .config import PLACES
 # Weight sets how often a kind is rolled; the level range scales its strength.
 ZONES: dict[str, dict] = {
     # overlays on the wild map — danger is inherited from the place it covers
+    "the meadow": {
+        "place": "the meadow", "kind": "wild",
+        # pests at the crops — the fields are where a farmer's trouble is fought
+        "spawns": (("gopher", 4, 1, 2), ("cave rat", 1, 1, 1)),
+    },
     "the mire": {
         "place": "the mire", "kind": "wild",
         "spawns": (("cave rat", 3, 1, 2), ("wolf", 2, 1, 2), ("bog serpent", 2, 1, 3)),

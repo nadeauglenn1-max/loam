@@ -15,6 +15,7 @@ from . import config
 # kind -> base stats. attack/defense are 0..1 (like a genome); hp is starting
 # vitality (can exceed 1 for tanks); xp is the reward for felling it at level 1.
 BESTIARY: dict[str, dict] = {
+    "gopher":       {"attack": 0.16, "defense": 0.12, "hp": 0.3, "xp": 1},
     "cave rat":     {"attack": 0.22, "defense": 0.18, "hp": 0.4, "xp": 1},
     "goblin":       {"attack": 0.30, "defense": 0.22, "hp": 0.5, "xp": 2},
     "wolf":         {"attack": 0.40, "defense": 0.28, "hp": 0.7, "xp": 2},
