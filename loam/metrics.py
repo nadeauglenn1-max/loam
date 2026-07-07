@@ -278,5 +278,19 @@ def chronicle(world: "World") -> str:
         lines.extend(f"  {m}" for m in moments)
         lines.append("")
 
+    s = player_summary(world)
+    if s["understood"] or s["trades"] or s["closest"]:
+        lines.append("Your story so far:")
+        lines.append(f"  you understand {s['understood']}/{s['families']} families "
+                     f"({s['words_earned']} words earned)"
+                     + (f"; you ply " + ", ".join(f"{t} ({int(v * 100)}%)" for t, v in s["trades"][:3])
+                        if s["trades"] else ""))
+        if s["closest"]:
+            lines.append("  closest to: " + ", ".join(f"{n} ({tier})" for n, tier in s["closest"]))
+        if s["spouse"]:
+            kids = f", raising {', '.join(s['children'])}" if s["children"] else ""
+            lines.append(f"  wed to {s['spouse']}{kids}")
+        lines.append("")
+
     lines.append("The world is still turning. Come tend it.")
     return "\n".join(lines)
