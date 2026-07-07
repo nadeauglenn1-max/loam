@@ -26,8 +26,8 @@ testpaths = ["tests"]
 [tool.coverage.run]
 source = ["loam"]
 # boundaries exercised by real runs / a live window, not unit tests:
-# llm.py = the network; game/explore.py = the pygame render loop (smoke-tested only).
-omit = ["loam/llm.py", "loam/game/explore.py"]
+# llm.py = the network; game/ = the pygame render loop + theme (smoke-tested only).
+omit = ["loam/llm.py", "loam/game/explore.py", "loam/game/theme.py"]
 
 [tool.coverage.report]
 exclude_lines = ["pragma: no cover", "if TYPE_CHECKING:", "\\.\\.\\."]

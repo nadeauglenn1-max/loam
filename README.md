@@ -233,7 +233,10 @@ already covered by `save-char`.)
 
 The world owns *consequences*; cognition owns *choices*; the genome and the
 tongue own what is *inherited*. The sim is headless and zero-dep; presentation
-(dashboard, explore client) reads world state through a decoupled seam.
+(dashboard, explore client) reads world state through a decoupled seam. Within
+the client, *how it looks* is a swappable subsystem too: a `Theme` owns the whole
+palette, the sprites, the day/night wash and the panels, and the loop just asks
+it to draw — reskin the world by writing another `Theme`, no core changes.
 
 ```
 config.py      model tiers, the map, and every balance constant (one source of truth)
@@ -251,6 +254,8 @@ zones.py       dangerous areas as data — named area, danger, monster spawn tab
 crafts.py      professions & goods as data — a trade is a recipe (skill×place→goods)
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
+game/explore.py the explore client — the loop, input, and stepping the sim
+game/theme.py  the look — a swappable graphics subsystem (palette, sprites, panels)
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
 metrics.py     census, lineage tribes, the economy, the ties that bind — the chronicle
 persistence.py JSON save/load; an immutable base forked into a mutable playthrough

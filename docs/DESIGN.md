@@ -206,6 +206,14 @@ model can author richer tensions behind the same seam.
   perilous gathers (mining, hunting) are the player's to brave, and crafting is
   immune to the forage-predator. Verified across seeds: the equilibrium holds
   within normal variance while the village visibly fishes, herds, and gathers.
+- **v0.23 (done)** — graphics made a **swappable subsystem** (`game/theme.py`): a
+  `Theme` owns the entire look — palette, fonts, how each place reads as an
+  anchor, the sprites, the day/night wash, the panels — and the explore client
+  owns only the loop, input, and stepping the sim. Reskin the world by writing
+  another `Theme` and passing it to `run(theme=…)`; the core never changes. The
+  default look was sharpened in the same pass: outlined sprites, a real marsh with
+  water and reeds, a sun that arcs the HUD and turns to a moon at night, a soft
+  vignette. Not a deep component — a skin.
 - **next** — player combat in the client (enter a zone, fight, level, loot; where
   the action-vs-turn feel is chosen, and where the ecology beast and the combat
   beast finally merge); trade/sharing of goods between beings (so the craft
