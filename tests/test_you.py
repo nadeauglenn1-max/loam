@@ -40,3 +40,13 @@ def test_marriage_and_children_show_in_the_portrait():
     w.have_child(random.Random(0))
     s = metrics.player_summary(w)
     assert s["spouse"] == "Sela" and len(s["children"]) == 1
+
+
+def test_chronicle_tells_your_story_once_you_have_one():
+    w = _village()
+    sela = next(a for a in w.agents.values() if a.name == "Sela")
+    w.player.understanding["Thorn"] = 1.0
+    w.player.skills["fishing"] = 0.5
+    w.player.bonds[sela.id] = 0.6
+    text = metrics.chronicle(w)
+    assert "Your story so far" in text and "fishing" in text
