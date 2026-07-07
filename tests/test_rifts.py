@@ -25,7 +25,7 @@ def test_a_family_you_have_begun_sorts_first():
     w = cast.build_base(seed=7)
     fams = rifts.families(w)
     begun = fams[2]
-    w.player.learn(begun, 0.4)
+    w.player.understanding[begun] = 0.4
     first = w.rifts()[0]
     assert first.family == begun and first.started and 0.0 < first.level < 1.0
 
@@ -33,24 +33,24 @@ def test_a_family_you_have_begun_sorts_first():
 def test_understanding_a_family_removes_its_rift_and_advances_progress():
     w = cast.build_base(seed=7)
     fam = rifts.families(w)[0]
-    w.player.learn(fam, 1.0)
+    w.player.understanding[fam] = 1.0
     assert w.player.understands(fam)
     assert fam not in {r.family for r in rifts.open_rifts(w)}
     _frac, done, _total = rifts.progress(w)
     assert done == 1
 
 
-def test_learn_never_passes_complete():
+def test_understanding_never_passes_complete():
     p = Player()
-    assert p.learn("Vane", 0.6) == 0.6
-    assert p.learn("Vane", 5.0) == 1.0                            # capped
-    assert p.understands("Vane")
+    for _ in range(200):
+        p.deepen("Vane", 0.2)
+    assert p.of("Vane") == 1.0 and p.understands("Vane")          # capped, never over
 
 
 def test_understanding_survives_a_save(tmp_path):
     w = cast.build_base(seed=7)
     w.role, w.name = "play", "story"
-    w.player.learn("Thorn", 0.5)
+    w.player.understanding["Thorn"] = 0.5
     path = tmp_path / "w.json"
     persistence.save(w, path)
     reloaded = persistence.load(path)

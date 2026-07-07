@@ -23,6 +23,20 @@ def families(world) -> list[str]:
     return sorted({family_of(a) for a in world.living()})
 
 
+def family_trade(world, family: str) -> str:
+    """A family's trade — the vocation most of its living members share. This is
+    the trade you practise to advance with them."""
+    from collections import Counter
+    vocs = [a.vocation for a in world.living()
+            if family_of(a) == family and a.vocation]
+    return Counter(vocs).most_common(1)[0][0] if vocs else ""
+
+
+def factions_of_trade(world, trade: str) -> list[str]:
+    """The families whose trade this is — those you advance by practising it."""
+    return [f for f in families(world) if family_trade(world, f) == trade]
+
+
 @dataclass
 class Rift:
     family: str

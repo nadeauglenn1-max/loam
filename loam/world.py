@@ -526,8 +526,10 @@ class World:
         """The quest primitive. You sit with a family member: you ease their day,
         and where a kinmate is beside them you broker one of that kin's words to
         them (advancing THEIR understanding of each other). In helping them, your
-        own understanding of their family deepens a step — and enough help and you
-        understand the family completely, a rift closed."""
+        own understanding of their family deepens a small, trust-gated step — and
+        when it crosses a milestone you *earn one of their words*, a prize. Enough
+        of this, against their distrust, and you understand the family — a rift
+        closed."""
         from . import rifts
         a = self.agents.get(agent_id)
         if a is None or not a.alive:
@@ -537,14 +539,39 @@ class World:
         a.memory.remember(self.tick, "the one who listens sat with me")
         brokered = self._broker_among_kin(a, fam)
         before = self.player.of(fam)
-        level = self.player.learn(fam, config.UNDERSTAND_STEP)
+        prize = self.player.deepen(fam, config.UNDERSTAND_STEP)
+        level = self.player.of(fam)
         closed = level >= 1.0 and before < 1.0
         self._log(f"You sat with {a.name} of {fam} — you understand them "
                   f"better ({int(level * 100)}%).")
+        if prize:
+            self._log(f'You earned the {fam}\'s word for "{prize}" — trust, hard-won.')
         if closed:
             self._log(f"You have come to understand the {fam} family completely.")
         return {"ok": True, "family": fam, "level": level, "closed": closed,
-                "brokered": brokered}
+                "prize": prize, "brokered": brokered}
+
+    def practice_trade(self, trade: str) -> dict:
+        """Ply a trade yourself (the resolved stand-in for its mini-game): your
+        skill in it grows through the doing, and you advance with every family
+        whose trade it is — slowly, against their distrust, a word at a time. A
+        surer hand earns a family's trust a little faster."""
+        from . import crafts, rifts
+        if trade not in crafts.PROFESSIONS and trade != "combat":
+            return {"ok": False, "reason": f"no such trade: {trade}"}
+        skill = self.player.practice(trade)
+        advanced = []
+        for fam in rifts.factions_of_trade(self, trade):
+            before = self.player.of(fam)
+            prize = self.player.deepen(fam, config.UNDERSTAND_STEP * (0.7 + 0.6 * skill))
+            advanced.append({"family": fam, "level": self.player.of(fam),
+                             "prize": prize, "closed": self.player.of(fam) >= 1.0 and before < 1.0})
+        self._log(f"You practised {trade} — your skill is now {int(skill * 100)}%.")
+        for adv in advanced:
+            if adv["prize"]:
+                self._log(f'The {adv["family"]}, whose trade this is, warm to you: '
+                          f'you earned their word for "{adv["prize"]}".')
+        return {"ok": True, "trade": trade, "skill": skill, "advanced": advanced}
 
     def _broker_among_kin(self, a: Agent, fam: str) -> dict | None:
         """Teach a family member one word a kinmate beside them already speaks —

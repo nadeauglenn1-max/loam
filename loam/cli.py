@@ -10,6 +10,7 @@
   loam crafts                    # the professions and what each trade makes
   loam rifts                     # the families you have yet to understand — your progress
   loam help Sela                 # sit with a being — help them, and understand their family
+  loam practice fishing          # ply a trade — grow the skill, advance with its family
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -160,8 +161,13 @@ def cmd_rifts(args: argparse.Namespace) -> int:
     for r in w.rifts():
         pct = int(r.level * 100)
         state = f"{pct:3d}% understood" if r.started else "  a stranger still"
-        names = ", ".join(a.name for a in r.members[:5]) + ("…" if r.size > 5 else "")
-        print(f"  {r.family:10} {state}  ·  {r.size} living  ·  {names}")
+        trade = rifts.family_trade(w, r.family)
+        earned = len(w.player.earned(r.family))
+        prize = f"  ·  {earned} words earned" if earned else ""
+        print(f"  {r.family:10} {state}  ·  by {trade or 'no trade'}{prize}")
+    if w.player.skills:
+        top = sorted(w.player.skills.items(), key=lambda kv: -kv[1])
+        print("Your trades: " + ", ".join(f"{t} {int(v * 100)}%" for t, v in top))
     return 0
 
 
@@ -170,6 +176,32 @@ def cmd_visit(args: argparse.Namespace) -> int:
     if w is None:
         return 1
     print(w.visit(args.agent))
+    return 0
+
+
+def cmd_practice(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    r = w.practice_trade(args.trade)
+    if not r["ok"]:
+        print(r.get("reason", "you cannot practise that"))
+        return 1
+    print(f"You practised {r['trade']} — your skill is now {int(r['skill'] * 100)}%.")
+    for a in r["advanced"]:
+        line = f"  the {a['family']} (whose trade this is): understanding {int(a['level'] * 100)}%"
+        if a["prize"]:
+            line += f" — you earned their word for '{a['prize']}'"
+        if a["closed"]:
+            line += "   ← you understand them now"
+        print(line)
+    if not r["advanced"]:
+        print("  (no family here keeps that trade — but your own skill still grew)")
+    if args.play:
+        persistence.save_play(w)
+    else:
+        persistence.save(w)
     return 0
 
 
@@ -192,6 +224,8 @@ def cmd_help_being(args: argparse.Namespace) -> int:
     if r["brokered"]:
         b = r["brokered"]
         print(f"  You helped them speak: '{b['word']}' = {b['concept']}.")
+    if r["prize"]:
+        print(f"  You earned the {r['family']}'s word for '{r['prize']}' — a prize, hard-won.")
     if r["closed"]:
         print(f"  You have come to understand the {r['family']} completely — a rift closed.")
     frac, done, total = rifts.progress(w)
@@ -439,6 +473,11 @@ def build_parser() -> argparse.ArgumentParser:
     hb.add_argument("being", help="a being's id or name")
     hb.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
     hb.set_defaults(func=cmd_help_being)
+
+    pr = sub.add_parser("practice", help="ply a trade yourself — grow the skill, and advance with the family whose trade it is")
+    pr.add_argument("trade", help="fishing, mining, smithing, … (see loam crafts)")
+    pr.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    pr.set_defaults(func=cmd_practice)
 
     t = sub.add_parser("translate", help="help a being understand a word")
     t.add_argument("symbol")

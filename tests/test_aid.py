@@ -9,26 +9,44 @@ def _village():
     return w
 
 
-def test_helping_advances_your_understanding_a_step():
+def test_the_first_step_is_small_because_they_distrust_a_stranger():
     w = _village()
     sela = next(a for a in w.agents.values() if a.name == "Sela")   # a Thorn
     assert w.player.of("Thorn") == 0.0
     r = w.aid(sela.id)
     assert r["ok"] and r["family"] == "Thorn"
-    assert w.player.of("Thorn") == config.UNDERSTAND_STEP
-    assert sela.vitality >= 1.0 - 1e-9 or sela.memory.recent()      # eased their day / sat with
+    # a stranger earns only the distrust-floor fraction of a step, not the whole one
+    assert w.player.of("Thorn") == config.UNDERSTAND_STEP * config.DISTRUST_FLOOR
+    assert w.player.of("Thorn") < config.UNDERSTAND_STEP
 
 
 def test_enough_help_understands_a_family_and_closes_its_rift():
     w = _village()
     thorns = [a.id for a in w.agents.values() if rifts.family_of(a) == "Thorn"]
     closed = False
-    for _ in range(int(1 / config.UNDERSTAND_STEP) + 1):
+    for _ in range(200):                                            # understanding is slow now
+        if w.player.understands("Thorn"):
+            break
         r = w.aid(thorns[0])
         closed = closed or r["closed"]
     assert w.player.understands("Thorn") and closed
     assert "Thorn" not in {rf.family for rf in w.rifts()}           # rift gone
-    assert w.player.learn("Thorn", 0.2) == 1.0                      # capped, stays understood
+    w.player.deepen("Thorn", 0.2)
+    assert w.player.of("Thorn") == 1.0                             # stays capped
+
+
+def test_words_come_as_prizes_at_milestones_not_every_step():
+    w = _village()
+    sela = next(a for a in w.agents.values() if a.name == "Sela")
+    prizes = 0
+    for _ in range(200):
+        if w.player.understands("Thorn"):
+            break
+        if w.aid(sela.id)["prize"]:
+            prizes += 1
+    # you earn one word per concept in their tongue — prizes, not a handout each step
+    assert 0 < prizes <= len(config.CONCEPTS)
+    assert len(w.player.earned("Thorn")) == prizes
 
 
 def test_helping_advances_them_by_brokering_a_kinmate_word():

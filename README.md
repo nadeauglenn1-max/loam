@@ -218,6 +218,10 @@ already covered by `save-char`.)
   perilous trades (mining, hunting) are the player's to brave. Beings **trade
   surplus** to neighbours whose craft can use it, so the chains circulate on
   their own — a shepherd's wool reaches the weaver, who makes cloth.
+- **You start knowing nothing** — the story is *becoming* the one who understands.
+  You begin a novice at every trade and learn only by doing; and you understand a
+  family slowly, against their distrust — a word of theirs is a prize, won by
+  advancing the trade that is theirs. Fish, and the Fen come to trust you.
 
 **Next — the combat pillar**
 - **Player combat in the client** — enter a zone, fight, level, loot (this is

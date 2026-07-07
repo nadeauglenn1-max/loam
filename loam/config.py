@@ -133,11 +133,15 @@ XP_PER_LEVEL = 3              # xp to reach the next level = this × current lev
 XP_PER_KILL = 2              # xp for a defeat = this × the foe's level
 
 # ---- understanding: the story spine ------------------------------------------
-# You begin understanding no one. Helping a family advances your understanding of
-# them a step at a time; enough help and you understand them completely (a tier).
-# Helping also advances THEM — you ease their day and broker a word between kin.
-UNDERSTAND_STEP = 0.2         # your understanding of a family gained per act of help
+# You begin understanding no one, and no family trusts a stranger. Understanding
+# is won SLOWLY, against that distrust — a word of theirs is a prize, not a gift.
+# Each act deepens your understanding a small step, gated by how far you've come
+# (they give little at first, more as trust builds); crossing a milestone earns
+# you one of their words. Advancing a family's TRADE is how you advance with them.
+UNDERSTAND_STEP = 0.06        # base understanding gained per act (before the distrust gate)
+DISTRUST_FLOOR = 0.5          # a stranger earns this fraction of a step; trust lifts it to full
 AID_BOON = 0.05              # vitality your help restores to the one you sit with
+SKILL_STEP = 0.08            # how fast a trade-skill grows with use (faster while a novice)
 
 # ---- zones -------------------------------------------------------------------
 # A zone is a dangerous area with a spawn table (see zones.py). Building a cave

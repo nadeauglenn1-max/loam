@@ -241,13 +241,31 @@ model can author richer tensions behind the same seam.
   understand it, and pressing **H** helps them right there (`world.aid`), your
   understanding climbing as you do. Walk up to a Thorn, help them, watch the meter
   move — rift → primitive → meter, closed. All in the swappable theme + the loop.
+- **v0.28 (done)** — **you start knowing nothing** (`player.py`): the reframe that
+  ties it together. You are no expert — you begin a novice at every trade
+  (`player.skills`, 0..1) and learn only by doing (`practice`, fast while a novice,
+  slow to master). And understanding is now *slow and earned against distrust*: a
+  family gives little to a stranger and more as trust builds (`DISTRUST_FLOOR`),
+  each act deepening you a small `UNDERSTAND_STEP`, and **a word of theirs is a
+  prize** won at a milestone, not a handout each step (`player.deepen` →
+  `player.words`). Crucially, **advancing a family's trade is how you advance with
+  them** (`world.practice_trade`, `rifts.family_trade`): fish, and the Fen — whose
+  trade it is — come to trust you, faster as your hand grows surer. Verified: ~22
+  fishing sessions to understand the Fen, their six words earned as prizes along
+  the way. `loam practice <trade>`; `loam rifts` shows your trades.
 - **the story spine (in progress)** — understanding is the goal, the verbs are the
-  means. The families' mutual understanding is a living thing that drifts up and
-  down as the language evolves (births add strangers, deaths cost a hub its
-  words); you push against that entropy by *helping* — and as you help a family
-  enough, you come to understand them (a tier). Combat, trade, and the professions
-  stop competing with the gardener's soul and become the means you use to close a
-  rift. Order: **rift ✓ → primitive ✓ → meter ✓.**
+  means. You start a novice and a stranger; you grow your trades by doing them,
+  and a family's trust — and their words — are won slowly through the trade that is
+  theirs. The families' mutual understanding is itself a living thing that drifts
+  up and down as the language evolves (births add strangers, deaths cost a hub its
+  words); you push against that entropy. Combat, trade, and the professions stop
+  competing with the gardener's soul and become the means you use to close a rift.
+  Order: **rift ✓ → primitive ✓ → meter ✓ → you-grow-into-it ✓.**
+- **next — the mini-games** (feel to be shaped with Glenn): each trade is a
+  *player-controlled* mini-game (fishing, mining, smithing, combat), and playing
+  it well is what grows the skill and earns the faction. `world.practice_trade` is
+  the resolved seam the mini-games slot into. Some factions harder than others;
+  dabble, partial-start a family, follow the fun.
 - **next** — the quest primitive (help a family, understand them); the meter in
   the explore client; player combat in the client (enter a zone, fight, level,
   loot) as one of the verbs that serve a rift; a "converse" beat.
