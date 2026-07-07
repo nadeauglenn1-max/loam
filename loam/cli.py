@@ -167,8 +167,8 @@ def cmd_rifts(args: argparse.Namespace) -> int:
         pct = int(r.level * 100)
         state = f"{pct:3d}% understood" if r.started else "  a stranger still"
         trade = rifts.family_trade(w, r.family)
-        earned = len(w.player.earned(r.family))
-        prize = f"  ·  {earned} words earned" if earned else ""
+        earned = w.player.earned(r.family)
+        prize = f"  ·  words: {', '.join(earned)}" if earned else ""
         print(f"  {r.family:10} {state}  ·  by {trade or 'no trade'}{prize}")
     if w.player.skills:
         top = sorted(w.player.skills.items(), key=lambda kv: -kv[1])
