@@ -93,6 +93,8 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
                         running = False      # nothing open — leave
                 elif e.key in (pygame.K_e, pygame.K_SPACE):
                     reading = None if reading else _near_id(pos, px, py)
+                elif e.key == pygame.K_h and reading and reading in world.agents:
+                    world.aid(reading)      # help them — your understanding grows
 
         keys = pygame.key.get_pressed()
         pmoving = False
@@ -150,6 +152,7 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
         theme.apply_sky(screen, W, H, world.time_of_day)
         theme.apply_vignette(screen, W, H)
         theme.draw_hud(screen, W, world)
+        theme.draw_meter(screen, W, world)
 
         if reading and reading in world.agents:
             theme.draw_reading_panel(screen, world.agents[reading], world, W, H)

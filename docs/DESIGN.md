@@ -234,14 +234,20 @@ model can author richer tensions behind the same seam.
   each other). In helping them, your own understanding of their family deepens a
   step (`config.UNDERSTAND_STEP`); enough help and you understand the family
   completely — a rift closed, on to the next. "You advance your understanding by
-  advancing them." **Next: the *meter* surfaced in the explore client.**
+  advancing them."
+- **v0.27 (done)** — the **meter, in the client**, and the spine made *playable*: a
+  panel top-right shows your understanding (N/M families, a bar, your nearest
+  rift); meeting a being now reads their family and how far you've come to
+  understand it, and pressing **H** helps them right there (`world.aid`), your
+  understanding climbing as you do. Walk up to a Thorn, help them, watch the meter
+  move — rift → primitive → meter, closed. All in the swappable theme + the loop.
 - **the story spine (in progress)** — understanding is the goal, the verbs are the
   means. The families' mutual understanding is a living thing that drifts up and
   down as the language evolves (births add strangers, deaths cost a hub its
   words); you push against that entropy by *helping* — and as you help a family
   enough, you come to understand them (a tier). Combat, trade, and the professions
   stop competing with the gardener's soul and become the means you use to close a
-  rift. Order: **rift ✓ → primitive ✓ → meter.**
+  rift. Order: **rift ✓ → primitive ✓ → meter ✓.**
 - **next** — the quest primitive (help a family, understand them); the meter in
   the explore client; player combat in the client (enter a zone, fight, level,
   loot) as one of the verbs that serve a rift; a "converse" beat.

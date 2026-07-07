@@ -283,6 +283,25 @@ class Theme:
                "arrows/WASD to walk · E to meet · Esc to leave")
         screen.blit(self.font.render(hud, True, MUTE), (140, 15))
 
+    def draw_meter(self, screen, W, world):
+        """Your understanding of the village — the story's meter — top-right."""
+        from .. import rifts
+        frac, done, total = rifts.progress(world)
+        bw, x, y = 240, W - 240 - 16, 52
+        box = pygame.Rect(x, y, bw, 60)
+        self._round(screen, box, PANEL, 10)
+        self._round(screen, box, LINE, 10, width=2)
+        title = ("You understand everyone" if rifts.all_understood(world)
+                 else f"You understand  {done}/{total} families")
+        screen.blit(self.small.render(title, True, INK), (x + 12, y + 8))
+        bx, by, bwid = x + 12, y + 26, bw - 24
+        pygame.draw.rect(screen, (40, 40, 34), (bx, by, bwid, 8), border_radius=4)
+        pygame.draw.rect(screen, (150, 200, 150), (bx, by, int(bwid * frac), 8), border_radius=4)
+        openr = world.rifts()
+        focus = (f"nearest: {openr[0].family} · {int(openr[0].level * 100)}%"
+                 if openr else "every tongue is open to you")
+        screen.blit(self.small.render(focus, True, MUTE), (x + 12, y + 40))
+
     def draw_reading_panel(self, screen, being, world, W, H):
         ph = 176
         panel = pygame.Rect(16, H - ph - 16, W - 32, ph)
@@ -307,8 +326,18 @@ class Theme:
         parts = [f"{world.agents[oid].name} {'+' if v > 0 else ''}{v:.0f}"
                  for oid, v in bonds[:4] if oid in world.agents]
         screen.blit(self.font.render("ties: " + (", ".join(parts) or "none yet"), True, MUTE), (x, y))
-        screen.blit(self.font.render("E / Esc — step back", True, MUTE),
-                    (panel.right - 150, panel.bottom - 24))
+        # the story line: their family, and how far you've come to understand it
+        from .. import rifts
+        fam = rifts.family_of(being)
+        level = int(world.player.of(fam) * 100)
+        understood = world.player.understands(fam)
+        note = (f"the {fam} — you understand them {level}%"
+                if not understood else f"the {fam} — you understand them")
+        screen.blit(self.font.render(note, True, (200, 210, 190)),
+                    (x, panel.bottom - 26))
+        hint = "E / Esc — step back" if understood else "H — help them · E / Esc — step back"
+        t = self.font.render(hint, True, MUTE)
+        screen.blit(t, (panel.right - t.get_width() - 18, panel.bottom - 26))
 
     def draw_near_hint(self, screen, name, px, py):
         t = self.font.render(f"press E to meet {name}", True, INK)
