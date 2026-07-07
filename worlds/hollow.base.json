@@ -1,0 +1,2744 @@
+{
+  "seed": 7,
+  "tick": 0,
+  "present": false,
+  "next_index": 30,
+  "name": "hollow",
+  "role": "base",
+  "forked_from": "",
+  "predator": "the meadow",
+  "player": {
+    "name": "You",
+    "gender": "",
+    "understanding": {},
+    "skills": {},
+    "words": {},
+    "bonds": {},
+    "spouse": "",
+    "children": []
+  },
+  "agents": [
+    {
+      "id": "a0",
+      "name": "Doran",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.3,
+        "grow_skill": 0.9,
+        "craft_skill": 0.5,
+        "bravery": 0.35,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "husbandry",
+      "language": {
+        "word_of": {
+          "company": "navo",
+          "status": "fenwei",
+          "trust": "grigri",
+          "safety": "fentau",
+          "rest": "ormi",
+          "novelty": "mivo"
+        },
+        "concept_of": {
+          "navo": "company",
+          "fenwei": "status",
+          "grigri": "trust",
+          "fentau": "safety",
+          "ormi": "rest",
+          "mivo": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] a debt Ivo still owes, that Doran has stopped expecting back",
+          "[t0] the long dispute over the fields and the water"
+        ]
+      },
+      "relationships": {
+        "a1": 5.75,
+        "a2": 5.75,
+        "a3": 5.75,
+        "a4": 5.75,
+        "a5": -4.108333333333333,
+        "a9": 3.0,
+        "a11": 3.0,
+        "a22": -4.108333333333333
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 80,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the hollow's stubborn farmer; he feeds half the village and forgives almost no one",
+      "home": "Vane"
+    },
+    {
+      "id": "a1",
+      "name": "Mara",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.4,
+        "grow_skill": 0.82,
+        "craft_skill": 0.5,
+        "bravery": 0.45,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "herbalism",
+      "language": {
+        "word_of": {
+          "company": "elzi",
+          "status": "mivo",
+          "trust": "gritau",
+          "safety": "mior",
+          "rest": "fenvo",
+          "novelty": "zivo"
+        },
+        "concept_of": {
+          "elzi": "company",
+          "mivo": "status",
+          "gritau": "trust",
+          "mior": "safety",
+          "fenvo": "rest",
+          "zivo": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] old friends who keep each other's oldest secrets",
+          "[t0] two women who have buried too many of their own"
+        ]
+      },
+      "relationships": {
+        "a0": 5.75,
+        "a2": 8.75,
+        "a3": 5.75,
+        "a4": 5.75,
+        "a7": 6.0,
+        "a15": 3.0,
+        "a17": 3.0,
+        "a20": 3.0,
+        "a11": 5.5
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 157,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "keeps the village's memory and its herb-lore; she buried her partner in the thornwood years ago",
+      "home": "Vane"
+    },
+    {
+      "id": "a2",
+      "name": "Bex",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.5,
+        "grow_skill": 0.6,
+        "craft_skill": 0.5,
+        "bravery": 0.4,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "husbandry",
+      "language": {
+        "word_of": {
+          "company": "losha",
+          "status": "tete",
+          "trust": "umor",
+          "safety": "shazi",
+          "rest": "weigri",
+          "novelty": "fenmi"
+        },
+        "concept_of": {
+          "losha": "company",
+          "tete": "status",
+          "umor": "trust",
+          "shazi": "safety",
+          "weigri": "rest",
+          "fenmi": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] the only person Cass will speak to",
+          "[t0] the two girls caught between their families"
+        ]
+      },
+      "relationships": {
+        "a0": 5.75,
+        "a1": 8.75,
+        "a3": 5.75,
+        "a4": 5.75,
+        "a7": 3.0,
+        "a15": 3.0,
+        "a17": 3.0,
+        "a20": 3.0,
+        "a25": 6.0,
+        "a8": 5.5
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 124,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "an orphan the Vanes took in; she belongs to the whole village and to no one",
+      "home": "Vane"
+    },
+    {
+      "id": "a3",
+      "name": "Elin",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.55,
+        "grow_skill": 0.55,
+        "craft_skill": 0.5,
+        "bravery": 0.58,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "husbandry",
+      "language": {
+        "word_of": {
+          "company": "tauvo",
+          "status": "tauor",
+          "trust": "tauba",
+          "safety": "baba",
+          "rest": "orqua",
+          "novelty": "iewei"
+        },
+        "concept_of": {
+          "tauvo": "company",
+          "tauor": "status",
+          "tauba": "trust",
+          "baba": "safety",
+          "orqua": "rest",
+          "iewei": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] she wants the wandering life he left behind"
+        ]
+      },
+      "relationships": {
+        "a0": 5.75,
+        "a1": 5.75,
+        "a2": 5.75,
+        "a4": 5.75,
+        "a14": 5.5
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 132,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Doran's daughter, restless in the fields and hungry for a wider life",
+      "home": "Vane"
+    },
+    {
+      "id": "a4",
+      "name": "Corin",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.6,
+        "grow_skill": 0.45,
+        "craft_skill": 0.5,
+        "bravery": 0.62,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "husbandry",
+      "language": {
+        "word_of": {
+          "company": "umka",
+          "status": "elel",
+          "trust": "fenzi",
+          "safety": "volo",
+          "rest": "taushu",
+          "novelty": "weiel"
+        },
+        "concept_of": {
+          "umka": "company",
+          "elel": "status",
+          "fenzi": "trust",
+          "volo": "safety",
+          "taushu": "rest",
+          "weiel": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] kin \u2014 the Vane family",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] hero-worship, from the boy who wants the deep woods"
+        ]
+      },
+      "relationships": {
+        "a0": 5.75,
+        "a1": 5.75,
+        "a2": 5.75,
+        "a3": 5.75,
+        "a10": 5.5,
+        "a12": 3.0,
+        "a13": 3.0,
+        "a14": 3.0,
+        "a24": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 131,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Doran's young son, who worships Sela and wants the deep woods",
+      "home": "Vane"
+    },
+    {
+      "id": "a5",
+      "name": "Ivo",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.55,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.5,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "elsha",
+          "status": "kawei",
+          "trust": "teru",
+          "safety": "logri",
+          "rest": "lofen",
+          "novelty": "quashu"
+        },
+        "concept_of": {
+          "elsha": "company",
+          "kawei": "status",
+          "teru": "trust",
+          "logri": "safety",
+          "lofen": "rest",
+          "quashu": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] the old betrayal Odile never forgave and Ivo pretends to have forgotten",
+          "[t0] a debt Ivo still owes, that Doran has stopped expecting back"
+        ]
+      },
+      "relationships": {
+        "a6": 5.75,
+        "a7": -5.611111111111111,
+        "a8": 5.75,
+        "a9": 8.75,
+        "a0": -4.833333333333333,
+        "a11": 3.0,
+        "a22": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 123,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "a smooth-tongued trader who owes small debts all over the village",
+      "home": "Ashmol"
+    },
+    {
+      "id": "a6",
+      "name": "Pell",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.45,
+        "grow_skill": 0.6,
+        "craft_skill": 0.5,
+        "bravery": 0.5,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "weaving",
+      "language": {
+        "word_of": {
+          "company": "rumi",
+          "status": "elgri",
+          "trust": "zizi",
+          "safety": "teba",
+          "rest": "quana",
+          "novelty": "mizi"
+        },
+        "concept_of": {
+          "rumi": "company",
+          "elgri": "status",
+          "zizi": "trust",
+          "teba": "safety",
+          "quana": "rest",
+          "mizi": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family"
+        ]
+      },
+      "relationships": {
+        "a5": 5.75,
+        "a7": 5.75,
+        "a8": 5.75,
+        "a9": 5.75
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 165,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Ivo's steadier brother, forever cleaning up after him",
+      "home": "Ashmol"
+    },
+    {
+      "id": "a7",
+      "name": "Odile",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.4,
+        "grow_skill": 0.76,
+        "craft_skill": 0.5,
+        "bravery": 0.4,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "weaving",
+      "language": {
+        "word_of": {
+          "company": "elmi",
+          "status": "taugri",
+          "trust": "tena",
+          "safety": "elqua",
+          "rest": "umba",
+          "novelty": "umsha"
+        },
+        "concept_of": {
+          "elmi": "company",
+          "taugri": "status",
+          "tena": "trust",
+          "elqua": "safety",
+          "umba": "rest",
+          "umsha": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] the old betrayal Odile never forgave and Ivo pretends to have forgotten",
+          "[t0] old friends who keep each other's oldest secrets"
+        ]
+      },
+      "relationships": {
+        "a5": -4.769444444444444,
+        "a6": 5.75,
+        "a8": 5.75,
+        "a9": 5.75,
+        "a1": 5.1,
+        "a2": 3.0,
+        "a15": 3.0,
+        "a17": 3.0,
+        "a20": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 70,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the village weaver, quiet and exact, estranged from her family by an old wrong",
+      "home": "Ashmol"
+    },
+    {
+      "id": "a8",
+      "name": "Wren",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.5,
+        "grow_skill": 0.55,
+        "craft_skill": 0.5,
+        "bravery": 0.48,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "weaving",
+      "language": {
+        "word_of": {
+          "company": "weitau",
+          "status": "nalo",
+          "trust": "elzi",
+          "safety": "losha",
+          "rest": "mimi",
+          "novelty": "orel"
+        },
+        "concept_of": {
+          "weitau": "company",
+          "nalo": "status",
+          "elzi": "trust",
+          "losha": "safety",
+          "mimi": "rest",
+          "orel": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] the two girls caught between their families"
+        ]
+      },
+      "relationships": {
+        "a5": 5.75,
+        "a6": 5.75,
+        "a7": 5.75,
+        "a9": 5.75,
+        "a2": 4.675
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 77,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Odile's daughter, caught between her mother's silence and her uncle Ivo's charm",
+      "home": "Ashmol"
+    },
+    {
+      "id": "a9",
+      "name": "Sable",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.35,
+        "grow_skill": 0.45,
+        "craft_skill": 0.5,
+        "bravery": 0.32,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "weaving",
+      "language": {
+        "word_of": {
+          "company": "voor",
+          "status": "orum",
+          "trust": "elba",
+          "safety": "quazi",
+          "rest": "votau",
+          "novelty": "fentau"
+        },
+        "concept_of": {
+          "voor": "company",
+          "orum": "status",
+          "elba": "trust",
+          "quazi": "safety",
+          "votau": "rest",
+          "fentau": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] kin \u2014 the Ashmol family",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council"
+        ]
+      },
+      "relationships": {
+        "a5": 8.75,
+        "a6": 5.75,
+        "a7": 5.75,
+        "a8": 5.75,
+        "a0": 3.0,
+        "a11": 3.0,
+        "a22": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 152,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the Ashmol elder, who keeps the family's ledgers and its grudges",
+      "home": "Ashmol"
+    },
+    {
+      "id": "a10",
+      "name": "Sela",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.9,
+        "grow_skill": 0.3,
+        "craft_skill": 0.5,
+        "bravery": 0.92,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "hunting",
+      "language": {
+        "word_of": {
+          "company": "ortau",
+          "status": "grilo",
+          "trust": "elor",
+          "safety": "nana",
+          "rest": "orte",
+          "novelty": "loba"
+        },
+        "concept_of": {
+          "ortau": "company",
+          "grilo": "status",
+          "elor": "trust",
+          "nana": "safety",
+          "orte": "rest",
+          "loba": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] he thinks her recklessness will get someone killed; she thinks him a coward",
+          "[t0] hero-worship, from the boy who wants the deep woods"
+        ]
+      },
+      "relationships": {
+        "a11": 5.75,
+        "a12": 8.75,
+        "a13": 8.75,
+        "a14": 8.75,
+        "a4": 4.675,
+        "a24": 3.0,
+        "a15": -3.7777777777777777
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 164,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the boldest forager in the hollow; she goes deepest since her sister was lost to the wild",
+      "home": "Thorn"
+    },
+    {
+      "id": "a11",
+      "name": "Vesna",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.6,
+        "grow_skill": 0.45,
+        "craft_skill": 0.5,
+        "bravery": 0.5,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "woodcutting",
+      "language": {
+        "word_of": {
+          "company": "mimi",
+          "status": "ziel",
+          "trust": "quaru",
+          "safety": "umka",
+          "rest": "shavo",
+          "novelty": "quami"
+        },
+        "concept_of": {
+          "mimi": "company",
+          "ziel": "status",
+          "quaru": "trust",
+          "umka": "safety",
+          "shavo": "rest",
+          "quami": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] two women who have buried too many of their own"
+        ]
+      },
+      "relationships": {
+        "a10": 5.75,
+        "a12": 5.75,
+        "a13": 5.75,
+        "a14": 5.75,
+        "a0": 3.0,
+        "a5": 3.0,
+        "a9": 3.0,
+        "a22": 3.0,
+        "a1": 4.675
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 142,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the Thorn matriarch, who has buried too many of her own",
+      "home": "Thorn"
+    },
+    {
+      "id": "a12",
+      "name": "Kael",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.82,
+        "grow_skill": 0.35,
+        "craft_skill": 0.5,
+        "bravery": 0.8,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "hunting",
+      "language": {
+        "word_of": {
+          "company": "ruba",
+          "status": "ieum",
+          "trust": "shami",
+          "safety": "voba",
+          "rest": "lovo",
+          "novelty": "bashu"
+        },
+        "concept_of": {
+          "ruba": "company",
+          "ieum": "status",
+          "shami": "trust",
+          "voba": "safety",
+          "lovo": "rest",
+          "bashu": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers"
+        ]
+      },
+      "relationships": {
+        "a10": 8.75,
+        "a11": 5.75,
+        "a13": 8.75,
+        "a14": 8.75,
+        "a4": 3.0,
+        "a24": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 163,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Sela's cousin, who follows her into the dark without question",
+      "home": "Thorn"
+    },
+    {
+      "id": "a13",
+      "name": "Dax",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.75,
+        "grow_skill": 0.3,
+        "craft_skill": 0.5,
+        "bravery": 0.86,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "hunting",
+      "language": {
+        "word_of": {
+          "company": "weimi",
+          "status": "vote",
+          "trust": "ruwei",
+          "safety": "voum",
+          "rest": "weivo",
+          "novelty": "balo"
+        },
+        "concept_of": {
+          "weimi": "company",
+          "vote": "status",
+          "ruwei": "trust",
+          "voum": "safety",
+          "weivo": "rest",
+          "balo": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] a young rivalry, forager against guard"
+        ]
+      },
+      "relationships": {
+        "a10": 8.75,
+        "a11": 5.75,
+        "a12": 8.75,
+        "a14": 8.75,
+        "a4": 3.0,
+        "a24": 3.0,
+        "a16": -3.7777777777777777
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 63,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the youngest forager, eager and reckless",
+      "home": "Thorn"
+    },
+    {
+      "id": "a14",
+      "name": "Ren",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.7,
+        "grow_skill": 0.4,
+        "craft_skill": 0.5,
+        "bravery": 0.6,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "woodcutting",
+      "language": {
+        "word_of": {
+          "company": "shaie",
+          "status": "ietau",
+          "trust": "quaum",
+          "safety": "shael",
+          "rest": "orzi",
+          "novelty": "taufen"
+        },
+        "concept_of": {
+          "shaie": "company",
+          "ietau": "status",
+          "quaum": "trust",
+          "shael": "safety",
+          "orzi": "rest",
+          "taufen": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] kin \u2014 the Thorn family",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] she wants the wandering life he left behind",
+          "[t0] two wanderers who recognize each other"
+        ]
+      },
+      "relationships": {
+        "a10": 8.75,
+        "a11": 5.75,
+        "a12": 8.75,
+        "a13": 8.75,
+        "a4": 3.0,
+        "a24": 3.0,
+        "a3": 4.675,
+        "a26": 4.25
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 116,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "a wanderer from the east who took the Thorn name when Sela vouched for him",
+      "home": "Thorn"
+    },
+    {
+      "id": "a15",
+      "name": "Tam",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.6,
+        "grow_skill": 0.4,
+        "craft_skill": 0.5,
+        "bravery": 0.86,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "smithing",
+      "language": {
+        "word_of": {
+          "company": "mika",
+          "status": "kaor",
+          "trust": "quaqua",
+          "safety": "umwei",
+          "rest": "shalo",
+          "novelty": "tauum"
+        },
+        "concept_of": {
+          "mika": "company",
+          "kaor": "status",
+          "quaqua": "trust",
+          "umwei": "safety",
+          "shalo": "rest",
+          "tauum": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] he thinks her recklessness will get someone killed; she thinks him a coward"
+        ]
+      },
+      "relationships": {
+        "a16": 5.75,
+        "a17": 8.75,
+        "a18": 5.75,
+        "a1": 3.0,
+        "a2": 3.0,
+        "a7": 3.0,
+        "a20": 3.0,
+        "a10": -4.444444444444445
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 163,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the hearth's watchman, brave to a fault; he has never forgiven himself for a night he was too slow",
+      "home": "Bly"
+    },
+    {
+      "id": "a16",
+      "name": "Rook",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.55,
+        "grow_skill": 0.4,
+        "craft_skill": 0.5,
+        "bravery": 0.7,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "smithing",
+      "language": {
+        "word_of": {
+          "company": "mika",
+          "status": "elie",
+          "trust": "ieel",
+          "safety": "fenor",
+          "rest": "rutau",
+          "novelty": "lovo"
+        },
+        "concept_of": {
+          "mika": "company",
+          "elie": "status",
+          "ieel": "trust",
+          "fenor": "safety",
+          "rutau": "rest",
+          "lovo": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] a young rivalry, forager against guard"
+        ]
+      },
+      "relationships": {
+        "a15": 5.75,
+        "a17": 5.75,
+        "a18": 5.75,
+        "a13": -4.444444444444445
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 142,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Tam's apprentice, desperate to prove himself",
+      "home": "Bly"
+    },
+    {
+      "id": "a17",
+      "name": "Nessa",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.45,
+        "grow_skill": 0.6,
+        "craft_skill": 0.5,
+        "bravery": 0.4,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "smithing",
+      "language": {
+        "word_of": {
+          "company": "teor",
+          "status": "quaqua",
+          "trust": "rugri",
+          "safety": "shaor",
+          "rest": "weiru",
+          "novelty": "bael"
+        },
+        "concept_of": {
+          "teor": "company",
+          "quaqua": "status",
+          "rugri": "trust",
+          "shaor": "safety",
+          "weiru": "rest",
+          "bael": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth"
+        ]
+      },
+      "relationships": {
+        "a15": 8.75,
+        "a16": 5.75,
+        "a18": 5.75,
+        "a1": 3.0,
+        "a2": 3.0,
+        "a7": 3.0,
+        "a20": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 132,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Tam's wife, who keeps the hearth-fire and the village's fragile peace",
+      "home": "Bly"
+    },
+    {
+      "id": "a18",
+      "name": "Bram",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.5,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.5,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "smithing",
+      "language": {
+        "word_of": {
+          "company": "tautau",
+          "status": "teka",
+          "trust": "elsha",
+          "safety": "zitau",
+          "rest": "shawei",
+          "novelty": "rute"
+        },
+        "concept_of": {
+          "tautau": "company",
+          "teka": "status",
+          "elsha": "trust",
+          "zitau": "safety",
+          "shawei": "rest",
+          "rute": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family",
+          "[t0] kin \u2014 the Bly family"
+        ]
+      },
+      "relationships": {
+        "a15": 5.75,
+        "a16": 5.75,
+        "a17": 5.75
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 114,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Tam's quieter brother, who privately doubts the guard is worth the fear it trades in",
+      "home": "Bly"
+    },
+    {
+      "id": "a19",
+      "name": "Odo",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.6,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.45,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "fishing",
+      "language": {
+        "word_of": {
+          "company": "orzi",
+          "status": "weior",
+          "trust": "mizi",
+          "safety": "kaba",
+          "rest": "quaqua",
+          "novelty": "shuzi"
+        },
+        "concept_of": {
+          "orzi": "company",
+          "weior": "status",
+          "mizi": "trust",
+          "kaba": "safety",
+          "quaqua": "rest",
+          "shuzi": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "safety",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family"
+        ]
+      },
+      "relationships": {
+        "a20": 5.75,
+        "a21": 5.75,
+        "a22": 5.75,
+        "a23": 5.75
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 102,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "reads the water and the weather better than anyone",
+      "home": "Fen"
+    },
+    {
+      "id": "a20",
+      "name": "Lys",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.45,
+        "grow_skill": 0.6,
+        "craft_skill": 0.5,
+        "bravery": 0.4,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "herbalism",
+      "language": {
+        "word_of": {
+          "company": "lozi",
+          "status": "shaum",
+          "trust": "nazi",
+          "safety": "shusha",
+          "rest": "weivo",
+          "novelty": "weiwei"
+        },
+        "concept_of": {
+          "lozi": "company",
+          "shaum": "status",
+          "nazi": "trust",
+          "shusha": "safety",
+          "weivo": "rest",
+          "weiwei": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth",
+          "[t0] one of the hearth"
+        ]
+      },
+      "relationships": {
+        "a19": 5.75,
+        "a21": 5.75,
+        "a22": 5.75,
+        "a23": 5.75,
+        "a1": 3.0,
+        "a2": 3.0,
+        "a7": 3.0,
+        "a15": 3.0,
+        "a17": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 106,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "Odo's partner and a healer of small hurts",
+      "home": "Fen"
+    },
+    {
+      "id": "a21",
+      "name": "Miri",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.6,
+        "grow_skill": 0.45,
+        "craft_skill": 0.5,
+        "bravery": 0.55,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "fishing",
+      "language": {
+        "word_of": {
+          "company": "ieshu",
+          "status": "zishu",
+          "trust": "ziba",
+          "safety": "shutau",
+          "rest": "shami",
+          "novelty": "nael"
+        },
+        "concept_of": {
+          "ieshu": "company",
+          "zishu": "status",
+          "ziba": "trust",
+          "shutau": "safety",
+          "shami": "rest",
+          "nael": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family"
+        ]
+      },
+      "relationships": {
+        "a19": 5.75,
+        "a20": 5.75,
+        "a22": 5.75,
+        "a23": 5.75
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 156,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "their daughter, curious about the dryland families",
+      "home": "Fen"
+    },
+    {
+      "id": "a22",
+      "name": "Tolan",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.45,
+        "grow_skill": 0.55,
+        "craft_skill": 0.5,
+        "bravery": 0.4,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "fishing",
+      "language": {
+        "word_of": {
+          "company": "ieel",
+          "status": "taute",
+          "trust": "ruwei",
+          "safety": "tautau",
+          "rest": "tezi",
+          "novelty": "kael"
+        },
+        "concept_of": {
+          "ieel": "company",
+          "taute": "status",
+          "ruwei": "trust",
+          "tautau": "safety",
+          "tezi": "rest",
+          "kael": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.9,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] one of the council",
+          "[t0] the long dispute over the fields and the water"
+        ]
+      },
+      "relationships": {
+        "a19": 5.75,
+        "a20": 5.75,
+        "a21": 5.75,
+        "a23": 5.75,
+        "a0": -4.833333333333333,
+        "a5": 3.0,
+        "a9": 3.0,
+        "a11": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 124,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "the Fen elder, who distrusts the Vane hold on the fields and the water",
+      "home": "Fen"
+    },
+    {
+      "id": "a23",
+      "name": "Senna",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.5,
+        "grow_skill": 0.55,
+        "craft_skill": 0.5,
+        "bravery": 0.42,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "fishing",
+      "language": {
+        "word_of": {
+          "company": "rusha",
+          "status": "shami",
+          "trust": "weiie",
+          "safety": "shuor",
+          "rest": "tezi",
+          "novelty": "mimi"
+        },
+        "concept_of": {
+          "rusha": "company",
+          "shami": "status",
+          "weiie": "trust",
+          "shuor": "safety",
+          "tezi": "rest",
+          "mimi": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family",
+          "[t0] kin \u2014 the Fen family"
+        ]
+      },
+      "relationships": {
+        "a19": 5.75,
+        "a20": 5.75,
+        "a21": 5.75,
+        "a22": 5.75
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 75,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "quiet, and the only Fen who trades openly with Odile",
+      "home": "Fen"
+    },
+    {
+      "id": "a24",
+      "name": "Yara",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.7,
+        "grow_skill": 0.4,
+        "craft_skill": 0.5,
+        "bravery": 0.6,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "bagri",
+          "status": "telo",
+          "trust": "shushu",
+          "safety": "orka",
+          "rest": "orgri",
+          "novelty": "elmi"
+        },
+        "concept_of": {
+          "bagri": "company",
+          "telo": "status",
+          "shushu": "trust",
+          "orka": "safety",
+          "orgri": "rest",
+          "elmi": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.9
+        },
+        "focus": "rest",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers",
+          "[t0] one of the foragers"
+        ]
+      },
+      "relationships": {
+        "a4": 3.0,
+        "a10": 3.0,
+        "a12": 3.0,
+        "a13": 3.0,
+        "a14": 3.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 118,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "came alone, owes nothing to anyone, and likes it that way",
+      "home": "Unbound"
+    },
+    {
+      "id": "a25",
+      "name": "Cass",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.5,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.45,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "iemi",
+          "status": "quaqua",
+          "trust": "kaor",
+          "safety": "weiru",
+          "rest": "shuvo",
+          "novelty": "ziie"
+        },
+        "concept_of": {
+          "iemi": "company",
+          "quaqua": "status",
+          "kaor": "trust",
+          "weiru": "safety",
+          "shuvo": "rest",
+          "ziie": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.9,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.2
+        },
+        "focus": "trust",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] the only person Cass will speak to"
+        ]
+      },
+      "relationships": {
+        "a2": 5.1
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 131,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "a loner who talks to no one but Bex",
+      "home": "Unbound"
+    },
+    {
+      "id": "a26",
+      "name": "Juno",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.55,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.5,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "loru",
+          "status": "taulo",
+          "trust": "grisha",
+          "safety": "kaie",
+          "rest": "vozi",
+          "novelty": "weilo"
+        },
+        "concept_of": {
+          "loru": "company",
+          "taulo": "status",
+          "grisha": "trust",
+          "kaie": "safety",
+          "vozi": "rest",
+          "weilo": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.9
+        },
+        "focus": "status",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] two wanderers who recognize each other"
+        ]
+      },
+      "relationships": {
+        "a14": 5.0
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 173,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "an old wanderer who remembers a dozen other villages",
+      "home": "Unbound"
+    },
+    {
+      "id": "a27",
+      "name": "Pike",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.6,
+        "grow_skill": 0.45,
+        "craft_skill": 0.5,
+        "bravery": 0.5,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "shuba",
+          "status": "rusha",
+          "trust": "lote",
+          "safety": "shaba",
+          "rest": "ruba",
+          "novelty": "zisha"
+        },
+        "concept_of": {
+          "shuba": "company",
+          "rusha": "status",
+          "lote": "trust",
+          "shaba": "safety",
+          "ruba": "rest",
+          "zisha": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] rival rumor-mongers who each know too much about the other"
+        ]
+      },
+      "relationships": {
+        "a28": -4.833333333333333
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 84,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "sharp-eyed, and sells rumors as readily as bloom",
+      "home": "Unbound"
+    },
+    {
+      "id": "a28",
+      "name": "Goss",
+      "genome": {
+        "appetites": {
+          "company": 0.9,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "forage_skill": 0.5,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.45,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "kazi",
+          "status": "kagri",
+          "trust": "umsha",
+          "safety": "rufen",
+          "rest": "elor",
+          "novelty": "misha"
+        },
+        "concept_of": {
+          "kazi": "company",
+          "kagri": "status",
+          "umsha": "trust",
+          "rufen": "safety",
+          "elor": "rest",
+          "misha": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.9,
+          "status": 0.9,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.2,
+          "novelty": 0.2
+        },
+        "focus": "company",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": [
+          "[t0] rival rumor-mongers who each know too much about the other"
+        ]
+      },
+      "relationships": {
+        "a27": -4.108333333333333
+      },
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 81,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "trades in secrets; everyone is a little wary of what they know",
+      "home": "Unbound"
+    },
+    {
+      "id": "a29",
+      "name": "Wisp",
+      "genome": {
+        "appetites": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.9
+        },
+        "forage_skill": 0.55,
+        "grow_skill": 0.5,
+        "craft_skill": 0.5,
+        "bravery": 0.52,
+        "attack": 0.5,
+        "defense": 0.5,
+        "lifespan": 620
+      },
+      "level": 1,
+      "xp": 0,
+      "goods": {},
+      "vocation": "cooking",
+      "language": {
+        "word_of": {
+          "company": "voru",
+          "status": "elvo",
+          "trust": "orwei",
+          "safety": "bawei",
+          "rest": "rufen",
+          "novelty": "ziru"
+        },
+        "concept_of": {
+          "voru": "company",
+          "elvo": "status",
+          "orwei": "trust",
+          "bawei": "safety",
+          "rufen": "rest",
+          "ziru": "novelty"
+        }
+      },
+      "lexicon": {
+        "known": {},
+        "evidence": {}
+      },
+      "wants": {
+        "appetite": {
+          "company": 0.2,
+          "status": 0.2,
+          "trust": 0.2,
+          "safety": 0.2,
+          "rest": 0.9,
+          "novelty": 0.9
+        },
+        "focus": "rest",
+        "intensity": 1.0
+      },
+      "memory": {
+        "capacity": 24,
+        "events": []
+      },
+      "relationships": {},
+      "location": "the hearth",
+      "vitality": 1.0,
+      "age": 116,
+      "bloom": 0.0,
+      "alive": true,
+      "generation": 0,
+      "parents": [],
+      "gestation": 0,
+      "mate_id": "",
+      "last_thought": "",
+      "story": "barely speaks, and no one is sure where they came from",
+      "home": "Unbound"
+    }
+  ],
+  "monsters": [],
+  "bloom": {
+    "the hearth": 1.575,
+    "the commons": 1.3499999999999999,
+    "the meadow": 2.475,
+    "the mire": 3.8249999999999997,
+    "the thornwood": 4.7250000000000005,
+    "the deepwood": 6.5249999999999995
+  },
+  "feed": [
+    "[t0] The founding village wakes: 30 souls across 5 families, each with a past."
+  ],
+  "utterances": [],
+  "history": [],
+  "fallen": [],
+  "tally": {}
+}
