@@ -261,12 +261,18 @@ model can author richer tensions behind the same seam.
   words); you push against that entropy. Combat, trade, and the professions stop
   competing with the gardener's soul and become the means you use to close a rift.
   Order: **rift ✓ → primitive ✓ → meter ✓ → you-grow-into-it ✓.**
-- **v0.29 (done)** — **a prettier world**: a real pass on the default `Theme` —
-  a dithered meadow strewn with tufts and wildflowers, layered forests (trunk +
-  a shaded canopy), a marsh of pooled water with sheen and lily pads, planted
-  fields with ripe rows, roofed houses with a chimney and a lit window, a covered
-  well and a striped market stall, and cleaner two-tone sprites. All in the
-  swappable theme; verified by headless screenshot.
+- **v0.29 (done)** — **a prettier world**: a first pass on the default `Theme` —
+  a dithered meadow, layered forests, a marsh with sheen and lily pads, planted
+  fields, roofed houses, a covered well and a striped stall, cleaner sprites.
+- **v0.30 (done)** — **the glow-up**: a cohesive golden-hour palette; each area
+  now reads as its own *terrain* (a packed-earth courtyard, cobbled square, tilled
+  soil, wet marsh, forest floor) rather than a tinted box; dirt lanes run between
+  the rooms so it reads as a village; a warm **lamplight glow** blooms from every
+  window (a radial additive light — it comes into its own at dusk and night); and
+  the anchors gained detail — thatch-textured roofs and chimneys, a well with a
+  bucket, a stall with barrels and produce, a scarecrow in the fields, cattails
+  and shimmering pools in the marsh, ferns and mushrooms under the trees. All in
+  the swappable theme; verified by day and night screenshots.
 - **next — the mini-games, as a community project** (feel to be shaped with Glenn;
   real-time action is the target, which needs its own combat *scene*, not the
   cozy overworld). Each trade is a *player-controlled* mini-game, and **each is a
