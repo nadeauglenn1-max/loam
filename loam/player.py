@@ -25,6 +25,9 @@ class Player:
     understanding: dict[str, float] = field(default_factory=dict)   # family -> 0..1, against distrust
     skills: dict[str, float] = field(default_factory=dict)          # trade -> 0..1, grown by doing
     words: dict[str, list] = field(default_factory=dict)            # family -> concepts earned (prizes)
+    bonds: dict[str, float] = field(default_factory=dict)           # being id -> 0..1, ties you tend
+    spouse: str = ""                                                # a being you have wed
+    children: list = field(default_factory=list)                    # ids of children you have had
 
     # ---- understanding a family (slow, distrust-gated, prizes) ------------
     def of(self, family: str) -> float:
@@ -59,6 +62,15 @@ class Player:
                 self.words.setdefault(family, []).append(concept)
                 return concept
         return None
+
+    # ---- bonds with people (helping builds them) --------------------------
+    def bond(self, being_id: str) -> float:
+        return self.bonds.get(being_id, 0.0)
+
+    def deepen_bond(self, being_id: str, amount: float) -> float:
+        level = max(0.0, min(1.0, self.bond(being_id) + amount))
+        self.bonds[being_id] = level
+        return level
 
     # ---- skill in a trade (novice -> master, through use) -----------------
     def skill(self, trade: str) -> float:

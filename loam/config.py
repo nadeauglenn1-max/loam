@@ -142,6 +142,7 @@ UNDERSTAND_STEP = 0.06        # base understanding gained per act (before the di
 DISTRUST_FLOOR = 0.5          # a stranger earns this fraction of a step; trust lifts it to full
 AID_BOON = 0.05              # vitality your help restores to the one you sit with
 SKILL_STEP = 0.08            # how fast a trade-skill grows with use (faster while a novice)
+BOND_STEP = 0.05             # base bond gained per act of help (see bonds.py — slower the deeper it runs)
 
 # ---- zones -------------------------------------------------------------------
 # A zone is a dangerous area with a spawn table (see zones.py). Building a cave

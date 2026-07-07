@@ -283,9 +283,17 @@ model can author richer tensions behind the same seam.
   (rats before dragons) over hours; the ecology-beast merges here. *(How it works
   with Glenn: he plays and tunes the feel — a live window can't be seen from here;
   the build brings structure, the module seam, and visuals verified by screenshot.)*
-- **next — bonds**: meeting a being opens a fuller portrait, and helping builds a
-  player↔being bond that can grow, with effort and over tiers, toward love,
-  marriage, children — a model layer unblocked by the graphics work.
+- **v0.31 (done) — bonds** (`bonds.py`): helping a being builds a tie with *that
+  person*, not just their family. A bond deepens slowly and harder the deeper it
+  runs (a marriage takes far more than a friendship), a little faster for someone
+  you are drawn to (`attraction` — an innate allure and how interesting a life they
+  carry). It climbs named tiers — a familiar face, a friend, close, a sweetheart,
+  betrothed — and, once grown to betrothal, you may `marry` them, and `bear_child`
+  a child of your own. `world.aid` grows the bond as it earns the family; the
+  reading panel shows how drawn you are and how close you've grown. Verified: ~26
+  sittings from stranger to betrothed, then a wedding and a child. (Client keys for
+  the deliberate romance beats can follow; for now they're gardener levers:
+  `loam bonds` / `loam marry` / `loam child`.)
 - **later** — you *inhabit* a being (first person); a community library of
   worlds, characters, and modules. (The drive is the understanding spine itself —
   no separate "overarching story" grafted on, and deliberately *no* retrospective
