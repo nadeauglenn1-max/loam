@@ -11,6 +11,7 @@
   loam rifts                     # the families you have yet to understand — your progress
   loam help Sela                 # sit with a being — help them, and understand their family
   loam practice fishing          # ply a trade — grow the skill, advance with its family
+  loam listen Sela               # hear a being speak — legible once you've earned their words
   loam bonds                     # the people you have grown close to
   loam marry Sela                # wed a being you have come to love (once betrothed)
   loam identity female Robin     # choose who you are — a woman or a man (looks only)
@@ -237,6 +238,30 @@ def cmd_help_being(args: argparse.Namespace) -> int:
         persistence.save_play(w)
     else:
         persistence.save(w)
+    return 0
+
+
+def cmd_listen(args: argparse.Namespace) -> int:
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    being = _find_being(w, args.being)
+    if being is None:
+        print(f"No being '{args.being}' there. Try:  loam rifts")
+        return 1
+    voice = None
+    if args.real:
+        from .converse import ClaudeVoice
+        from .llm import LiveLLM
+        voice = ClaudeVoice(LiveLLM())
+    r = w.overheard(being.id, voice=voice)
+    if not r["ok"]:
+        print(r["reason"])
+        return 1
+    print(r["line"])
+    if not r["legible"]:
+        print(f"  (help the {r['family']} to earn their words:  loam help {being.name})")
     return 0
 
 
@@ -555,6 +580,12 @@ def build_parser() -> argparse.ArgumentParser:
     pr.add_argument("trade", help="fishing, mining, smithing, … (see loam crafts)")
     pr.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
     pr.set_defaults(func=cmd_practice)
+
+    ls = sub.add_parser("listen", help="meet a being and hear them speak (legible once you've earned their words)")
+    ls.add_argument("being", help="a being's id or name")
+    ls.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    ls.add_argument("--real", action="store_true", help="a living line from a model")
+    ls.set_defaults(func=cmd_listen)
 
     bd = sub.add_parser("bonds", help="the people you have grown close to")
     bd.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")

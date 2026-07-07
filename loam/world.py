@@ -580,6 +580,19 @@ class World:
                           f'you earned their word for "{adv["prize"]}".')
         return {"ok": True, "trade": trade, "skill": skill, "advanced": advanced}
 
+    def overheard(self, being_id: str, voice=None) -> dict:
+        """Meet a being and hear them speak — legible only if you've earned their
+        family's words. The line comes from `voice` (the free rule voice by
+        default); legibility is the mechanic."""
+        from . import converse
+        a = self.agents.get(being_id)
+        if a is None or not a.alive:
+            return {"ok": False, "reason": "there is no one here to hear"}
+        info = converse.overheard(self.player, a)
+        info["line"] = (voice or converse.RuleVoice()).speak(a, info["concept"], info["legible"])
+        info["ok"] = True
+        return info
+
     def marry(self, being_id: str) -> dict:
         """Wed a being you have come to love. Only when the bond has grown to
         betrothal, and only if you are not already wed."""
