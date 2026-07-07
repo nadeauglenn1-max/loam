@@ -642,6 +642,34 @@ class World:
         self._log(f"A child, {child.name}, comes to you and {spouse.name} (generation {child.generation}).")
         return {"ok": True, "child": child_id, "name": child.name, "generation": child.generation}
 
+    def introduce(self, a_id: str, b_id: str) -> dict:
+        """Help two beings beside each other understand one another — a word passes
+        each way, even across families. This is the gardener's lever on the village's
+        own shared tongue, the slow road to everyone understanding everyone."""
+        a, b = self.agents.get(a_id), self.agents.get(b_id)
+        if a is None or b is None or not a.alive or not b.alive:
+            return {"ok": False, "reason": "there is no one there by that name"}
+        if a.id == b.id:
+            return {"ok": False, "reason": "they are the same being"}
+        if a.location != b.location:
+            return {"ok": False, "reason": f"{a.name} and {b.name} are not in the same place"}
+        taught = []
+        for speaker, listener in ((a, b), (b, a)):
+            for concept in config.CONCEPTS:
+                word = speaker.language.say(concept)
+                if listener.comprehends(word) is None:
+                    listener.lexicon.teach(word, concept)
+                    listener.memory.remember(self.tick, f'you introduced: "{word}" = {concept} (from {speaker.name})')
+                    speaker.warm_to(listener.id, 0.5)
+                    listener.warm_to(speaker.id, 0.5)
+                    taught.append((listener.name, word, concept))
+                    break
+        if not taught:
+            return {"ok": False, "reason": f"{a.name} and {b.name} already understand each other"}
+        self._bump("introductions")
+        self._log(f"You helped {a.name} and {b.name} understand each other a little more.")
+        return {"ok": True, "taught": taught}
+
     def _broker_among_kin(self, a: Agent, fam: str) -> dict | None:
         """Teach a family member one word a kinmate beside them already speaks —
         the gardener helping kin reach each other."""
