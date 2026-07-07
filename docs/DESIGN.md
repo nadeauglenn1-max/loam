@@ -276,6 +276,19 @@ model can author richer tensions behind the same seam.
   combat engine, the bestiary, and the zone spawn tables. **The cadences are the
   feel — meant to be tuned by playing.** Verified by unit tests (arena + fight
   timing) and headless screenshots; the *feel* is Glenn's to shape at the keyboard.
+- **v0.34 (done) — quests: a family's trouble, cleared by doing** (`quests.py`).
+  The quest primitive grew up. Sitting with someone (**H**) was too easy — a
+  keypress that bought understanding. Now it only *trickles* understanding; the
+  real measure is earned by taking on and clearing a family's **trouble**: their
+  crops are plagued by gophers, their woods run thick with wolves. Each family has
+  a trouble tied to what they are (Vane→gophers in the fields, Thorn→wolves in the
+  thornwood, Fen→serpents in the marsh, …), and clearing it — a real fight, out in
+  the world — earns a real chunk of their understanding and a word. In the client:
+  meet a villager (**E**), see their trouble, **Q** to take it on; go fight it
+  (each felled foe of the kind counts); complete it and they are grateful. This is
+  the synthesis made concrete — understanding is the end, combat is the means. New
+  gopher pest + a fightable fields zone; `loam quests`. Verified end-to-end: cull
+  3 gophers → the Vane's understanding rises and a word is earned.
 - **the story spine (in progress)** — understanding is the goal, the verbs are the
   means. You start a novice and a stranger; you grow your trades by doing them,
   and a family's trust — and their words — are won slowly through the trade that is

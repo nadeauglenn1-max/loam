@@ -243,6 +243,28 @@ def cmd_help_being(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_quests(args: argparse.Namespace) -> int:
+    from . import quests, rifts
+    w = persistence.load_play(args.play) if args.play else persistence.load()
+    if w is None:
+        print("No world yet. Try:  loam play <base>")
+        return 1
+    if w.player.quests:
+        print("Troubles you have taken on:")
+        for fam, q in w.player.quests.items():
+            print(f"  the {fam}: cull {q['need']} {q['target']} in {q['place']}  "
+                  f"({q['done']}/{q['need']} done)")
+    else:
+        print("You have taken on no troubles. Meet a villager and take one on:  loam explore")
+    # what's still out there to take on
+    available = [rifts.family_of(a) for a in w.living()]
+    open_fams = sorted({f for f in available if quests.for_family(f)
+                        and f not in w.player.quests and not w.player.understands(f)})
+    if open_fams:
+        print("Families with a trouble to clear: " + ", ".join(open_fams))
+    return 0
+
+
 def cmd_you(args: argparse.Namespace) -> int:
     w = persistence.load_play(args.play) if args.play else persistence.load()
     if w is None:
@@ -627,6 +649,10 @@ def build_parser() -> argparse.ArgumentParser:
     yo = sub.add_parser("you", help="who you have become — your journey so far")
     yo.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
     yo.set_defaults(func=cmd_you)
+
+    qs = sub.add_parser("quests", help="the family troubles you've taken on")
+    qs.add_argument("play", nargs="?", help="a playthrough (default: the scratch world)")
+    qs.set_defaults(func=cmd_quests)
 
     ls = sub.add_parser("listen", help="meet a being and hear them speak (legible once you've earned their words)")
     ls.add_argument("being", help="a being's id or name")

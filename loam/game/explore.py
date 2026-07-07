@@ -111,8 +111,10 @@ def run(base_name, *, fresh=False, world_tps=None, max_frames=None,
                         running = False      # nothing open — leave
                 elif e.key in (pygame.K_e, pygame.K_SPACE):
                     reading = None if reading else _near_id(pos, px, py)
+                elif e.key == pygame.K_q and reading and reading in world.agents:
+                    world.accept_quest(reading)   # take on their family's trouble
                 elif e.key == pygame.K_h and reading and reading in world.agents:
-                    world.aid(reading)      # help them — your understanding grows
+                    world.aid(reading)      # sit with them — a small kindness (a bond)
                 elif e.key == pygame.K_m and reading and reading in world.agents:
                     world.marry(reading)    # wed them (if the bond has grown to betrothal)
                 elif e.key == pygame.K_k and reading and world.player.spouse == reading:

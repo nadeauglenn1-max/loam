@@ -51,3 +51,9 @@ def test_marry_and_child_refuse_without_the_bond(capsys):
     _world()
     assert main(["marry", "a0"]) == 1               # a stranger — refused
     assert main(["child"]) == 1                     # no spouse
+
+
+def test_quests_lists_troubles(capsys):
+    _world()
+    assert main(["quests"]) == 0
+    assert "trouble" in capsys.readouterr().out.lower()

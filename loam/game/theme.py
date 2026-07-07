@@ -528,9 +528,20 @@ class Theme:
         drawn = bondlib.attraction_word(bondlib.attraction(being))
         you_line = (f"you and {being.name}: {bondlib.tier(lvl, wed=wed)} — you find them {drawn}")
         screen.blit(self.font.render(you_line, True, (224, 196, 176)), (x, y))
-        # the story line: their family, and how far you've come to understand it
-        from .. import rifts
+        # their family's trouble — the real way to earn their understanding
+        from .. import quests, rifts
         fam = rifts.family_of(being)
+        active = world.player.quests.get(fam)
+        offered = quests.offered_by(world, being)          # None while one is active
+        if active:
+            line = f"their trouble: {active['done']}/{active['need']} {active['target']} culled — {active['place']}"
+        elif offered is not None:
+            line = f"they need help: {quests.telling(offered)}"
+        else:
+            line = ""
+        if line:
+            screen.blit(self.font.render(line, True, (232, 206, 150)), (x, panel.bottom - 48))
+        # the story line: their family, and how far you've come to understand it
         level = int(world.player.of(fam) * 100)
         understood = world.player.understands(fam)
         note = (f"the {fam} — you understand them {level}%"
@@ -538,6 +549,8 @@ class Theme:
         screen.blit(self.font.render(note, True, (200, 210, 190)),
                     (x, panel.bottom - 26))
         actions = []
+        if offered is not None and not active:
+            actions.append("Q — take on their task")
         if not understood:
             actions.append("H — help")
         if wed:

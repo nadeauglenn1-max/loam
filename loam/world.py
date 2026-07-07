@@ -540,7 +540,9 @@ class World:
         a.memory.remember(self.tick, "the one who listens sat with me")
         brokered = self._broker_among_kin(a, fam)
         before = self.player.of(fam)
-        prize = self.player.deepen(fam, config.UNDERSTAND_STEP)
+        # sitting with someone only trickles understanding — the real measure is
+        # earned by taking on and clearing their family's trouble (a quest)
+        prize = self.player.deepen(fam, config.AID_UNDERSTAND_STEP)
         level = self.player.of(fam)
         closed = level >= 1.0 and before < 1.0
         # helping this person also deepens your bond with them
@@ -641,6 +643,44 @@ class World:
         spouse.memory.remember(self.tick, f"a child, {child.name}, came to us")
         self._log(f"A child, {child.name}, comes to you and {spouse.name} (generation {child.generation}).")
         return {"ok": True, "child": child_id, "name": child.name, "generation": child.generation}
+
+    # ---- quests: a family's trouble, cleared by doing ---------------------
+    def offer_quest(self, being_id: str):
+        from . import quests
+        a = self.agents.get(being_id)
+        return quests.offered_by(self, a) if a is not None and a.alive else None
+
+    def accept_quest(self, being_id: str) -> dict:
+        q = self.offer_quest(being_id)
+        if q is None:
+            return {"ok": False, "reason": "they have no trouble for you (or you're already on it)"}
+        self.player.quests[q.family] = {"target": q.target, "place": q.place,
+                                        "need": q.need, "done": 0}
+        self._bump("quests_taken")
+        self._log(f"You took on the {q.family}'s trouble: cull {q.need} {q.target} "
+                  f"in {q.place}.")
+        return {"ok": True, "family": q.family, "target": q.target,
+                "place": q.place, "need": q.need}
+
+    def _advance_quests(self, foe_kind: str) -> None:
+        """A felled foe counts toward any trouble you've taken on."""
+        for fam, qd in list(self.player.quests.items()):
+            if qd["target"] == foe_kind and qd["done"] < qd["need"]:
+                qd["done"] += 1
+                self._log(f"The {fam}'s trouble: {qd['done']}/{qd['need']} {foe_kind} culled.")
+                if qd["done"] >= qd["need"]:
+                    self._complete_quest(fam)
+
+    def _complete_quest(self, fam: str) -> None:
+        self.player.quests.pop(fam, None)
+        prize = self.player.deepen(fam, config.QUEST_UNDERSTAND)
+        self._bump("quests_done")
+        self._log(f"The {fam} are grateful — you cleared their trouble. You "
+                  f"understand them better ({int(self.player.of(fam) * 100)}%).")
+        if prize:
+            self._log(f'You earned the {fam}\'s word for "{prize}".')
+        if self.player.understands(fam):
+            self._log(f"You have come to understand the {fam} family completely.")
 
     def introduce(self, a_id: str, b_id: str) -> dict:
         """Help two beings beside each other understand one another — a word passes

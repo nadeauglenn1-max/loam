@@ -150,6 +150,8 @@ FIGHT_BRACE = 0.35           # fraction of a blow you take while bracing
 # (they give little at first, more as trust builds); crossing a milestone earns
 # you one of their words. Advancing a family's TRADE is how you advance with them.
 UNDERSTAND_STEP = 0.06        # base understanding gained per act (before the distrust gate)
+AID_UNDERSTAND_STEP = 0.012   # sitting with someone (H) only trickles understanding — quests are the real lever
+QUEST_UNDERSTAND = 0.34       # understanding a family gains for clearing their trouble (a real task, not a keypress)
 DISTRUST_FLOOR = 0.5          # a stranger earns this fraction of a step; trust lifts it to full
 AID_BOON = 0.05              # vitality your help restores to the one you sit with
 SKILL_STEP = 0.08            # how fast a trade-skill grows with use (faster while a novice)
