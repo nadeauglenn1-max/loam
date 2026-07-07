@@ -110,6 +110,22 @@ TIES: list[tuple[str, str, str, int, str]] = [
     ("Juno", "Ren", "bond", 5, "two wanderers who recognize each other"),
 ]
 
+# each family keeps a trade; a few souls whose story names a craft override it
+FAMILY_VOCATION = {
+    "Vane": "husbandry", "Ashmol": "weaving", "Thorn": "woodcutting",
+    "Bly": "smithing", "Fen": "fishing", "Unbound": "cooking",
+}
+NAME_VOCATION = {
+    "Doran": "husbandry", "Mara": "herbalism", "Ivo": "cooking", "Odile": "weaving",
+    "Sela": "hunting", "Kael": "hunting", "Dax": "hunting",
+    "Odo": "fishing", "Lys": "herbalism",
+}
+
+
+def _vocation(name: str, family: str) -> str:
+    return NAME_VOCATION.get(name) or FAMILY_VOCATION.get(family or "Unbound", "cooking")
+
+
 _KIN, _GROUP = (5.0, 6.5), (2.5, 3.5)   # affinity ranges for family and group bonds
 
 
@@ -143,7 +159,7 @@ def build_base(seed: int = 7) -> World:
                   lexicon=Lexicon(), wants=Wants.of(aid, g.appetites),
                   memory=Memory(agent_id=aid), location=STARTING_PLACE,
                   vitality=1.0, age=cls_initial_age(aid), story=story,
-                  home=(family or "Unbound"))
+                  home=(family or "Unbound"), vocation=_vocation(name, family))
         w.agents[aid] = a
         by_name[name] = a
         if family:

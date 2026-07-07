@@ -87,6 +87,18 @@ def list_professions() -> list[str]:
     return list(PROFESSIONS)
 
 
+# the trades a being can practise from nothing (no inputs needed) — what a
+# plain-born villager takes up, and the safe backbone of the living economy.
+GATHER_TRADES: tuple[str, ...] = tuple(n for n, p in PROFESSIONS.items() if not p.inputs)
+
+
+def starter_vocation(key: str) -> str:
+    """A deterministic first trade for a being born without an authored one."""
+    import hashlib
+    h = int(hashlib.sha256(f"{key}:vocation".encode()).hexdigest()[:8], 16)
+    return GATHER_TRADES[h % len(GATHER_TRADES)]
+
+
 def equip_bonus(goods: dict[str, float], slot: str) -> float:
     """The best bonus a holder gets in an equipment slot from what they carry."""
     best = 0.0

@@ -188,6 +188,8 @@ class World:
             self._mate(agent, d.target, rng)
         elif k == "speak" and d.target in self.agents:
             self._speak(agent, self.agents[d.target])
+        elif k == "work":
+            self.do_craft(agent, agent.vocation, rng)
         elif k == "seek":
             self._speak_to_you(agent)
         else:
@@ -520,13 +522,17 @@ class World:
                           for i, v in friends[:3] if i in self.agents) or "no one yet"
         preg = f", carrying a child ({a.gestation} ticks left)" if a.gestation else ""
         story_line = f"  story: {a.story}\n" if a.story else ""
+        goods = ", ".join(f"{amt:g} {gd}" for gd, amt in a.goods.items() if amt >= 0.05) or "nothing"
+        trade = f"{a.vocation}" if a.vocation else "no trade"
         return (
             f"{a.name} ({a.id}) — at {a.location}, generation {a.generation}\n"
             f"{story_line}"
             f"  body: {a.condition} (vitality {a.vitality:.2f}), "
             f"age {a.age // config.TICKS_PER_DAY}d of ~{g.lifespan // config.TICKS_PER_DAY}d, "
             f"holding {a.bloom:.1f} bloom{preg}\n"
-            f"  gifts: forage {g.forage_skill:.2f}, grow {g.grow_skill:.2f}, bravery {g.bravery:.2f}\n"
+            f"  trade: {trade} (level {a.level}); holds {goods}\n"
+            f"  gifts: forage {g.forage_skill:.2f}, grow {g.grow_skill:.2f}, "
+            f"craft {g.craft_skill:.2f}, bravery {g.bravery:.2f}\n"
             f"  wants: {a.wants.describe()}\n"
             f"  thought: {a.last_thought or '(quiet)'}\n"
             f"  closest to: {bonds}\n"

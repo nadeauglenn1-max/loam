@@ -82,6 +82,27 @@ class RuleCognition:
     HUNGRY = 0.6
     STARVING = 0.25
     SEEK_CHANCE = 0.08
+    WORK_CHANCE = 0.5        # how readily a well-fed villager turns to their trade
+    WORK_VITALITY = 0.72     # only work once survival is secured
+    WORK_DANGER_CAP = 0.15   # only *travel* to work at safe ground; risky ground is worked only if already there
+    WORK_MAX_RISK = 0.15     # auto-work only the safe trades; the perilous ones are the player's
+
+    def _work(self, a: "Agent", world: "World", thought: str) -> Decision | None:
+        """Ply a trade — if it can be done where you stand, or at safe ground you
+        can reach. Never marches a villager into danger to work; the perilous
+        gathers (mining, hunting deep) are the player's to brave."""
+        from . import crafts
+        prof = crafts.PROFESSIONS.get(a.vocation)
+        if prof is None or prof.risk > self.WORK_MAX_RISK:
+            return None
+        if a.location in prof.places:
+            if not crafts.why_not(prof, a.location, a.goods):
+                return Decision("work", thought=thought)
+            return None                              # missing inputs — live normally
+        for place in prof.places:
+            if PLACES.get(place, {}).get("danger", 1.0) <= self.WORK_DANGER_CAP:
+                return Decision("move", place=place, thought=thought)
+        return None
 
     def decide(self, agent: "Agent", world: "World", rng: "random.Random") -> Decision:
         a = agent
@@ -142,6 +163,12 @@ class RuleCognition:
         if rng.random() < self.SEEK_CHANCE:
             return Decision("seek", thought=thought)
 
+        # the belly is full and the day is yours: ply your trade
+        if a.vocation and a.vitality >= self.WORK_VITALITY and rng.random() < self.WORK_CHANCE:
+            work = self._work(a, world, thought)
+            if work is not None:
+                return work
+
         # 5. pursue the social want that gives life meaning
         focus = a.wants.focus
         dest = "the commons" if focus in SOCIAL_WANTS else PLACE_FOR.get(focus)
@@ -160,14 +187,14 @@ _SYSTEM = (
     "You are a living being in a small, dangerous world. You must eat bloom or "
     "weaken and die; you age; you can bear children. You speak a private tongue. "
     "Weigh your situation and choose ONE action, replying in exactly this form:\n"
-    "ACTION: move|forage|grow|eat|give|seize|mate|speak|seek|rest\n"
+    "ACTION: move|forage|grow|work|eat|give|seize|mate|speak|seek|rest\n"
     "PLACE: <a place name, or ->\n"
     "TO: <a being's name, or ->\n"
     "THOUGHT: <one short first-person sentence>\n"
     "forage = gather wild bloom (dangerous). grow = cultivate bloom (safe, can "
-    "fail). eat = eat what you carry. give/seize/mate/speak act on a being beside "
-    "you. seek = turn to the one who understands every tongue. Only act on a "
-    "being that is here with you."
+    "fail). work = ply your trade where it can be done. eat = eat what you carry. "
+    "give/seize/mate/speak act on a being beside you. seek = turn to the one who "
+    "understands every tongue. Only act on a being that is here with you."
 )
 
 _ACTIONS_WITH_TARGET = {"give", "seize", "mate", "speak"}
@@ -248,7 +275,7 @@ class ClaudeCognition:
         action = self._field(reply, "ACTION").lower().strip()
         action = action.split()[0] if action else ""
         thought = self._field(reply, "THOUGHT") or _mood(reply)
-        if action in ("forage", "grow", "eat", "seek", "rest"):
+        if action in ("forage", "grow", "work", "eat", "seek", "rest"):
             return Decision(action, thought=thought)
         if action == "move":
             place = self._match_place(self._field(reply, "PLACE"))

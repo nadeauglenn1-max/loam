@@ -67,6 +67,7 @@ class Agent:
     # ---- birth ------------------------------------------------------------
     @classmethod
     def born(cls, index: int) -> "Agent":
+        from . import crafts
         aid = f"a{index}"
         g = Genome.genesis(aid)
         return cls(
@@ -75,6 +76,7 @@ class Agent:
             lexicon=Lexicon(), wants=Wants.of(aid, g.appetites),
             memory=Memory(agent_id=aid), location=STARTING_PLACE,
             vitality=1.0, age=cls_initial_age(aid),
+            vocation=crafts.starter_vocation(aid),
         )
 
     @classmethod
@@ -88,6 +90,7 @@ class Agent:
             vitality=NEWBORN_VITALITY, age=0,
             generation=max(carrier.generation, mate.generation) + 1,
             parents=(carrier.id, mate.id),
+            vocation=carrier.vocation,          # a child takes up a parent's trade
         )
 
     # ---- comprehension ----------------------------------------------------

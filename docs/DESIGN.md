@@ -197,11 +197,20 @@ model can author richer tensions behind the same seam.
   the combat pillar. It rides *beside* the survival ecology (bloom/hunger), never
   through it, so the tuned balance is untouched. Adding a trade is a data row —
   see `loam crafts`.
-- **next** — give the trades a place in the *living* village (villagers with
-  vocations working through the day); player combat in the client (enter a zone,
-  fight, level, loot; where the action-vs-turn feel is chosen, and where the
-  ecology beast and the combat beast finally merge); a "converse" beat.
-  (Saving a newborn you like is already covered by `save-char`.)
+- **v0.22 (done)** — the trades given a place in the *living* village. Every
+  soul has a `vocation` (authored for the founding cast, honouring their stories;
+  a gather trade for the plain-born; inherited by children — a heritable working
+  culture). A well-fed villager, once survival is secured, turns to their trade
+  (a new `work` decision → `world.do_craft`). Balance-guarded: a villager only
+  *travels* to safe ground to work, and only the safe trades auto-fire — the
+  perilous gathers (mining, hunting) are the player's to brave, and crafting is
+  immune to the forage-predator. Verified across seeds: the equilibrium holds
+  within normal variance while the village visibly fishes, herds, and gathers.
+- **next** — player combat in the client (enter a zone, fight, level, loot; where
+  the action-vs-turn feel is chosen, and where the ecology beast and the combat
+  beast finally merge); trade/sharing of goods between beings (so the craft
+  chains flow without the player); a "converse" beat. (Saving a newborn you like
+  is already covered by `save-char`.)
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

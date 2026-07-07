@@ -212,6 +212,10 @@ already covered by `save-char`.)
   and a tool sharpens a gather, so the economy feeds the combat pillar; it rides
   *beside* the tuned survival ecology, never through it. **Adding a trade is
   adding a row** — see `loam crafts`.
+- **A working village** — every soul has a vocation (authored for the founding
+  cast, inherited by their children), and a well-fed villager turns to their
+  trade through the day. The village visibly fishes, herds, and gathers; the
+  perilous trades (mining, hunting) are the player's to brave.
 
 **Next — the combat pillar**
 - **Player combat in the client** — enter a zone, fight, level, loot (this is
