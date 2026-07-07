@@ -21,22 +21,39 @@ from ..config import PLACES
 from . import layout
 
 # ---- palette (edit here to reskin, or subclass Theme) ------------------------
-GROUND = (21, 27, 18)
-GRASS = ((31, 48, 29), (35, 54, 32), (27, 43, 26), (39, 58, 35))
-TUFT = (24, 40, 23)
-FLOWERS = ((198, 182, 96), (186, 126, 156), (150, 172, 212), (214, 152, 112))
-SHADOW = (12, 15, 10)
-INK = (240, 237, 227)
-MUTE = (170, 166, 152)
-PANEL = (26, 27, 21)
-LINE = (58, 58, 48)
-PLAYER = (245, 232, 180)
+# A cozy, golden-hour storybook village: warm greens, packed earth, lamplight.
+GROUND = (38, 52, 34)
+GRASS = ((58, 92, 54), (66, 102, 60), (50, 82, 48), (74, 112, 66))
+TUFT = (44, 74, 42)
+FLOWERS = ((236, 210, 110), (218, 142, 172), (150, 180, 226), (236, 162, 120), (240, 240, 236))
+PATH = (128, 102, 68)
+PATH_EDGE = (104, 82, 54)
+SHADOW = (20, 24, 18)
+WATER = ((34, 74, 100), (52, 104, 132))
+SHEEN = (156, 204, 212)
+WOOD = (86, 60, 38)
+ROOF = (170, 86, 62)
+ROOF_LIT = (198, 112, 80)
+ROOF_DARK = (128, 60, 44)
+WALL = (200, 170, 128)
+WALL_SHADE = (158, 130, 94)
+STONE = (134, 136, 142)
+STONE_DARK = (94, 96, 102)
+LEAF = ((30, 66, 38), (46, 92, 52), (78, 132, 74))
+WARMLIGHT = (255, 216, 150)
+INK = (243, 240, 230)
+MUTE = (178, 174, 158)
+PANEL = (30, 30, 24)
+PANEL_HI = (44, 44, 35)
+LINE = (70, 68, 54)
+PLAYER = (250, 236, 190)
+CAPE = (238, 202, 112)
 
-SKIN = [(242, 203, 165), (226, 182, 143), (198, 152, 112), (158, 114, 82), (120, 84, 60)]
-HAIR = [(38, 30, 26), (92, 62, 38), (150, 110, 62), (206, 172, 96), (184, 186, 190), (122, 44, 32)]
-TUNIC = [(70, 110, 150), (156, 82, 70), (90, 142, 92), (162, 132, 60),
-         (120, 92, 150), (80, 140, 148), (172, 110, 140), (110, 122, 72)]
-OUTLINE = (12, 13, 9)
+SKIN = [(244, 206, 168), (228, 184, 146), (200, 154, 114), (160, 116, 84), (122, 86, 62)]
+HAIR = [(44, 34, 28), (104, 68, 40), (162, 118, 66), (214, 180, 104), (196, 198, 202), (140, 52, 38)]
+TUNIC = [(74, 122, 168), (176, 90, 78), (96, 158, 102), (182, 148, 68),
+         (140, 104, 172), (86, 156, 164), (192, 122, 154), (122, 138, 80)]
+OUTLINE = (16, 17, 12)
 
 # how each sim place reads as a village anchor: (display name, motif)
 VILLAGE = {
@@ -77,6 +94,22 @@ class Theme:
     def __init__(self) -> None:
         self._font_cache: dict = {}
         self._vignette: pygame.Surface | None = None
+        self._glow_cache: dict = {}
+
+    def _radial(self, r: int, color):
+        s = self._glow_cache.get((r, color))
+        if s is None:
+            s = pygame.Surface((2 * r, 2 * r), pygame.SRCALPHA)
+            for rad in range(r, 0, -1):
+                f = (1 - rad / r) ** 1.6
+                pygame.draw.circle(s, (int(color[0] * f), int(color[1] * f),
+                                       int(color[2] * f)), (r, r), rad)
+            self._glow_cache[(r, color)] = s
+        return s
+
+    def _glow(self, surf, cx, cy, r, color):
+        surf.blit(self._radial(r, color), (int(cx - r), int(cy - r)),
+                  special_flags=pygame.BLEND_RGB_ADD)
 
     def _f(self, key: str):
         if key not in self._font_cache:
@@ -98,16 +131,21 @@ class Theme:
 
     # ---- pure visual decisions -------------------------------------------
     def room_tint(self, place: str) -> tuple[int, int, int]:
-        d = PLACES[place]["danger"]
-        if place == "the hearth":
-            return (48, 40, 30)
-        if VILLAGE.get(place, ("", ""))[1] == "marsh":
-            return (26, 40, 42)
-        if d < 0.1:
-            return (30, 44, 34)
-        if d < 0.45:
-            return (46, 38, 22)
-        return (46, 26, 20)
+        """Each area reads as its own terrain, not a tinted box."""
+        kind = VILLAGE.get(place, ("", ""))[1]
+        if kind == "home":
+            return (96, 78, 54)          # a packed-earth courtyard
+        if kind == "square":
+            return (98, 92, 80)          # cobblestone
+        if kind == "field":
+            return (108, 80, 52)         # tilled soil
+        if kind == "marsh":
+            return (44, 68, 68)          # wet ground
+        if kind == "wood":
+            d = PLACES[place]["danger"]
+            b = 66 - int(d * 20)         # forest floor, darker the deadlier it is
+            return (b - 18, b, b - 26)
+        return (72, 100, 62)
 
     def danger_word(self, place: str) -> str:
         d = PLACES[place]["danger"]
@@ -132,26 +170,33 @@ class Theme:
     def build_background(self, W, H, rects, houses) -> pygame.Surface:
         bg = pygame.Surface((W, H))
         bg.fill(GROUND)
-        # a soft, dithered meadow — tiles blended, then strewn with tufts and flowers
-        tile = 24
+        # a soft, dithered meadow — blended tiles, speckled, then strewn with life
+        tile = 22
         for ty in range(0, H, tile):
             for tx in range(0, W, tile):
                 shade = GRASS[int(layout._unit(f"{tx}:{ty}:g") * len(GRASS))]
                 bg.fill(shade, (tx, ty, tile, tile))
         rng = random.Random("meadow")
-        for _ in range(520):                                   # grass tufts
-            gx, gy = rng.randint(0, W), rng.randint(80, H)
+        for _ in range(900):                                   # grain of texture
+            gx, gy = rng.randint(0, W), rng.randint(64, H)
+            bg.set_at((gx, gy), rng.choice(GRASS))
+        self._paths(bg, rects)                                 # dirt lanes between the rooms
+        for _ in range(360):                                   # grass tufts
+            gx, gy = rng.randint(0, W), rng.randint(70, H)
             pygame.draw.line(bg, TUFT, (gx, gy), (gx, gy - rng.randint(2, 4)), 1)
-        for _ in range(70):                                    # wildflowers
-            fx, fy = rng.randint(0, W), rng.randint(80, H)
-            pygame.draw.circle(bg, rng.choice(FLOWERS), (fx, fy), 1)
+        for _ in range(64):                                    # wildflowers, in little clusters
+            fx, fy, col = rng.randint(0, W), rng.randint(70, H), rng.choice(FLOWERS)
+            for _ in range(rng.randint(1, 3)):
+                bg.set_at((fx + rng.randint(-3, 3), fy + rng.randint(-3, 3)), col)
         for place, rect in rects.items():
             x, y, rw, rh = rect
             name, kind = VILLAGE.get(place, (place, "square"))
-            self._round(bg, (x + 3, y + 4, rw, rh), SHADOW, 16)   # a soft drop shadow
-            self._round(bg, rect, self.room_tint(place), 16)
-            self._round(bg, (x + 2, y + 2, rw - 4, rh - 4), self._lift(self.room_tint(place)), 14, width=1)
-            self._round(bg, rect, LINE, 16, width=2)
+            tint = self.room_tint(place)
+            self._round(bg, (x + 3, y + 5, rw, rh), SHADOW, 18)     # soft drop shadow
+            self._round(bg, rect, tint, 18)
+            self._terrain_grain(bg, rect, tint)                     # a little texture within
+            self._round(bg, (x + 2, y + 2, rw - 4, rh - 4), self._lift(tint, 20), 16, width=1)
+            self._round(bg, rect, LINE, 18, width=2)
             if kind == "home":
                 for fam, (hx, hy) in houses.items():
                     self._house(bg, hx, hy, fam)
@@ -163,10 +208,47 @@ class Theme:
                 self._marsh(bg, rect)
             elif kind == "wood":
                 self._wood(bg, rect, PLACES[place]["danger"])
-            label = self.font.render(name, True, INK)
-            bg.blit(label, (x + 13, y + 9))
+            plate = pygame.Surface((self.font.size(name)[0] + 18, 40), pygame.SRCALPHA)
+            plate.fill((0, 0, 0, 70))
+            bg.blit(plate, (x + 6, y + 6))
+            bg.blit(self.font.render(name, True, INK), (x + 13, y + 9))
             bg.blit(self.small.render(self.danger_word(place), True, MUTE), (x + 13, y + 29))
         return bg
+
+    def _paths(self, bg, rects):
+        rs = list(rects.values())
+        if not rs:
+            return
+        lefts = sorted({r[0] for r in rs})
+        tops = sorted({r[1] for r in rs})
+        w_of = {r[0]: r[2] for r in rs}
+        h_of = {r[1]: r[3] for r in rs}
+        x0, x1 = min(lefts) - 8, max(r[0] + r[2] for r in rs) + 8
+        y0, y1 = min(tops) - 8, max(r[1] + r[3] for r in rs) + 8
+        vg = [(lefts[i] + w_of[lefts[i]] + lefts[i + 1]) // 2 for i in range(len(lefts) - 1)]
+        hg = [(tops[i] + h_of[tops[i]] + tops[i + 1]) // 2 for i in range(len(tops) - 1)]
+        for gx in vg:
+            self._lane(bg, (gx - 9, y0, 18, y1 - y0))
+        for gy in hg:
+            self._lane(bg, (x0, gy - 9, x1 - x0, 18))
+
+    def _lane(self, bg, rect):
+        x, y, w, h = rect
+        pygame.draw.rect(bg, PATH_EDGE, (x - 1, y - 1, w + 2, h + 2), border_radius=8)
+        pygame.draw.rect(bg, PATH, rect, border_radius=8)
+        rng = random.Random(f"{x}:{y}:lane")
+        for _ in range(max(w, h) // 12):                       # pebbles
+            px = rng.randint(x + 2, x + w - 2)
+            py = rng.randint(y + 2, y + h - 2)
+            pygame.draw.circle(bg, self._lift(PATH, 22), (px, py), 1)
+
+    def _terrain_grain(self, bg, rect, tint):
+        x, y, w, h = rect
+        rng = random.Random(f"{x}:{y}:grain")
+        dark, lite = tuple(max(0, c - 12) for c in tint), self._lift(tint, 12)
+        for _ in range(int(w * h / 340)):
+            bg.set_at((rng.randint(x + 4, x + w - 4), rng.randint(y + 4, y + h - 4)),
+                      rng.choice((dark, lite)))
 
     @staticmethod
     def _lift(color, by=14):
@@ -174,49 +256,76 @@ class Theme:
 
     def _house(self, surf, x, y, label):
         x, y = int(x), int(y)
-        pygame.draw.rect(surf, SHADOW, (x - 18, y - 2, 38, 24), border_radius=3)   # ground shadow
-        pygame.draw.rect(surf, (104, 82, 58), (x - 17, y - 4, 34, 22), border_radius=3)  # wall
-        pygame.draw.rect(surf, (86, 66, 46), (x - 17, y + 8, 34, 10), border_radius=3)   # wall shade
-        pygame.draw.polygon(surf, (138, 72, 52), [(x - 22, y - 3), (x + 22, y - 3), (x, y - 23)])  # roof
-        pygame.draw.polygon(surf, (158, 88, 66), [(x - 22, y - 3), (x, y - 3), (x, y - 23)])       # roof lit side
-        pygame.draw.polygon(surf, OUTLINE, [(x - 22, y - 3), (x + 22, y - 3), (x, y - 23)], 1)
-        pygame.draw.rect(surf, (150, 40, 30), (x + 11, y - 20, 4, 8))            # chimney
-        pygame.draw.rect(surf, (46, 32, 22), (x - 4, y + 6, 9, 12), border_radius=2)  # door
-        pygame.draw.rect(surf, (214, 176, 96), (x + 7, y + 1, 6, 6))             # lit window
-        pygame.draw.rect(surf, OUTLINE, (x + 7, y + 1, 6, 6), 1)
-        tag = self.small.render(label, True, MUTE)
+        roof = [(x - 22, y - 2), (x + 22, y - 2), (x, y - 24)]
+        pygame.draw.ellipse(surf, SHADOW, (x - 20, y + 13, 40, 8))               # ground shadow
+        pygame.draw.rect(surf, WALL, (x - 17, y - 4, 34, 22), border_radius=3)   # wall
+        pygame.draw.rect(surf, WALL_SHADE, (x - 17, y + 9, 34, 9), border_radius=3)  # wall shade
+        pygame.draw.polygon(surf, ROOF, roof)
+        pygame.draw.polygon(surf, ROOF_LIT, [(x - 22, y - 2), (x, y - 2), (x, y - 24)])  # sunlit slope
+        for i in range(-16, 17, 5):                                             # thatch texture
+            pygame.draw.line(surf, ROOF_DARK, (x + i, y - 3), (x + i * 0.45, y - 13), 1)
+        pygame.draw.polygon(surf, OUTLINE, roof, 1)
+        pygame.draw.rect(surf, WALL_SHADE, (x + 11, y - 22, 4, 10))              # chimney
+        pygame.draw.rect(surf, OUTLINE, (x + 11, y - 22, 4, 10), 1)
+        pygame.draw.rect(surf, (44, 30, 20), (x - 5, y + 4, 9, 14), border_radius=3)  # door
+        pygame.draw.circle(surf, (196, 168, 110), (x + 2, y + 11), 1)            # door knob
+        self._glow(surf, x + 10, y + 4, 16, (150, 110, 46))                     # lamplight bloom
+        pygame.draw.rect(surf, (238, 198, 112), (x + 7, y, 6, 6))               # lit window
+        pygame.draw.line(surf, (120, 92, 40), (x + 10, y), (x + 10, y + 6), 1)
+        pygame.draw.rect(surf, OUTLINE, (x + 7, y, 6, 6), 1)
+        tag = self.small.render(label, True, INK)
         surf.blit(tag, (x - tag.get_width() // 2, y + 21))
 
     def _square(self, surf, rect):
         x, y, w, h = rect
-        cx, cy = int(x + w * 0.34), int(y + h * 0.60)
-        pygame.draw.ellipse(surf, SHADOW, (cx - 16, cy + 8, 32, 10))
-        pygame.draw.circle(surf, (96, 98, 104), (cx, cy), 16)          # well stones
-        pygame.draw.circle(surf, (60, 62, 68), (cx, cy), 16, 2)
-        pygame.draw.circle(surf, (20, 30, 46), (cx, cy), 9)            # water
-        pygame.draw.circle(surf, (44, 66, 92), (cx - 2, cy - 2), 4)    # a glint
-        pygame.draw.rect(surf, (86, 60, 40), (cx - 15, cy - 26, 3, 22))   # roof posts
-        pygame.draw.rect(surf, (86, 60, 40), (cx + 12, cy - 26, 3, 22))
-        pygame.draw.polygon(surf, (140, 74, 52), [(cx - 20, cy - 24), (cx + 20, cy - 24), (cx, cy - 34)])
-        sx, sy = int(x + w * 0.70), int(y + h * 0.46)                  # market stall
-        pygame.draw.rect(surf, SHADOW, (sx - 24, sy + 20, 50, 8))
-        pygame.draw.rect(surf, (116, 90, 62), (sx - 24, sy, 48, 20), border_radius=2)
-        for i in range(4):                                            # striped awning
-            col = (168, 82, 66) if i % 2 == 0 else (206, 190, 160)
+        rng = random.Random(f"{x}:sq")
+        for _ in range(int(w * h / 1100)):                            # cobbles
+            pygame.draw.circle(surf, STONE_DARK,
+                               (rng.randint(int(x + 16), int(x + w - 16)),
+                                rng.randint(int(y + 46), int(y + h - 14))), rng.randint(2, 3))
+        cx, cy = int(x + w * 0.32), int(y + h * 0.62)                 # the well
+        pygame.draw.ellipse(surf, SHADOW, (cx - 17, cy + 9, 34, 9))
+        pygame.draw.circle(surf, STONE, (cx, cy), 15)
+        pygame.draw.circle(surf, STONE_DARK, (cx, cy), 15, 2)
+        pygame.draw.circle(surf, WATER[0], (cx, cy), 8)
+        pygame.draw.circle(surf, WATER[1], (cx - 2, cy - 2), 4)
+        pygame.draw.rect(surf, WOOD, (cx - 14, cy - 28, 3, 24))       # roof posts
+        pygame.draw.rect(surf, WOOD, (cx + 11, cy - 28, 3, 24))
+        pygame.draw.polygon(surf, ROOF, [(cx - 19, cy - 26), (cx + 19, cy - 26), (cx, cy - 36)])
+        pygame.draw.polygon(surf, OUTLINE, [(cx - 19, cy - 26), (cx + 19, cy - 26), (cx, cy - 36)], 1)
+        pygame.draw.rect(surf, WOOD, (cx - 3, cy - 20, 6, 5))         # bucket
+        sx, sy = int(x + w * 0.70), int(y + h * 0.44)                 # market stall
+        pygame.draw.ellipse(surf, SHADOW, (sx - 26, sy + 19, 54, 8))
+        pygame.draw.rect(surf, (122, 94, 62), (sx - 24, sy, 48, 20), border_radius=2)
+        awning = [(sx - 28, sy - 9), (sx + 28, sy - 9), (sx + 24, sy), (sx - 24, sy)]
+        for i in range(4):                                           # striped awning
+            col = (178, 90, 72) if i % 2 == 0 else (218, 202, 170)
             pygame.draw.rect(surf, col, (sx - 28 + i * 14, sy - 9, 14, 9))
-        pygame.draw.circle(surf, (196, 160, 70), (sx - 12, sy + 8), 3)  # goods
-        pygame.draw.circle(surf, (150, 80, 70), (sx + 4, sy + 8), 3)
+        pygame.draw.polygon(surf, OUTLINE, awning, 1)
+        pygame.draw.circle(surf, (208, 172, 76), (sx - 12, sy + 8), 3)   # apples on the counter
+        pygame.draw.circle(surf, (176, 92, 80), (sx + 2, sy + 8), 3)
+        for bx in (sx - 32, sx + 26):                                # barrels
+            pygame.draw.rect(surf, WOOD, (bx, sy + 5, 8, 13), border_radius=2)
+            pygame.draw.line(surf, (44, 30, 20), (bx, sy + 10), (bx + 8, sy + 10), 1)
 
     def _field(self, surf, rect):
         x, y, w, h = rect
         rows = list(range(int(y + 48), int(y + h - 16), 16))
         for ry in rows:
-            pygame.draw.line(surf, (54, 44, 30), (x + 18, ry + 5), (x + w - 14, ry + 5), 3)  # furrow
+            pygame.draw.line(surf, (76, 56, 36), (x + 18, ry + 5), (x + w - 14, ry + 5), 3)  # furrow
+            pygame.draw.line(surf, (128, 96, 62), (x + 18, ry + 4), (x + w - 14, ry + 4), 1)
         for i, ry in enumerate(rows):
             for rx in range(int(x + 22), int(x + w - 14), 15):
-                pygame.draw.line(surf, (70, 104, 44), (rx, ry + 4), (rx, ry - 5), 2)   # stalk
-                top = (150, 176, 74) if (i + rx) % 3 else (196, 168, 84)              # leaf / ripe
-                pygame.draw.circle(surf, top, (rx, ry - 6), 3)
+                pygame.draw.line(surf, (74, 116, 48), (rx, ry + 4), (rx, ry - 6), 2)  # stalk
+                ripe = (i + rx) % 3 == 0
+                pygame.draw.circle(surf, (208, 176, 88) if ripe else (150, 182, 78), (rx, ry - 7), 3)
+                pygame.draw.circle(surf, self._lift((208, 176, 88) if ripe else (150, 182, 78), 26),
+                                   (rx - 1, ry - 8), 1)
+        sx, sy = int(x + w - 40), int(y + 60)                        # a scarecrow
+        pygame.draw.rect(surf, WOOD, (sx - 1, sy, 2, 22))
+        pygame.draw.rect(surf, WOOD, (sx - 10, sy + 6, 20, 2))
+        pygame.draw.circle(surf, (198, 168, 96), (sx, sy - 2), 4)
+        pygame.draw.polygon(surf, (150, 120, 60), [(sx - 6, sy - 3), (sx + 6, sy - 3), (sx, sy - 9)])
 
     def _marsh(self, surf, rect):
         x, y, w, h = rect
@@ -224,33 +333,46 @@ class Theme:
         for _ in range(6):                                             # still pools, layered
             px = rng.randint(int(x + 20), int(x + w - 46))
             py = rng.randint(int(y + 46), int(y + h - 26))
-            pw, ph = rng.randint(30, 54), rng.randint(14, 22)
-            pygame.draw.ellipse(surf, (28, 54, 64), (px, py, pw, ph))
-            pygame.draw.ellipse(surf, (40, 74, 86), (px + 2, py + 2, pw - 4, ph - 4))
-            pygame.draw.ellipse(surf, (70, 112, 120), (px + 5, py + 3, pw - 16, 3))   # sheen
-            if rng.random() < 0.6:                                     # a lily pad
+            pw, ph = rng.randint(32, 58), rng.randint(15, 24)
+            pygame.draw.ellipse(surf, WATER[0], (px, py, pw, ph))
+            pygame.draw.ellipse(surf, WATER[1], (px + 2, py + 2, pw - 4, ph - 5))
+            pygame.draw.ellipse(surf, SHEEN, (px + 6, py + 3, pw - 18, 3))       # sheen
+            self._glow(surf, px + pw // 2, py + ph // 2, 12, (16, 34, 40))       # water shimmer
+            if rng.random() < 0.6:                                     # a lily pad + bloom
                 lx, ly = px + pw // 2, py + ph // 2
-                pygame.draw.circle(surf, (58, 104, 66), (lx, ly), 4)
-                pygame.draw.circle(surf, (210, 160, 180), (lx, ly), 1)
-        for _ in range(18):                                            # reeds
+                pygame.draw.circle(surf, (58, 110, 66), (lx, ly), 4)
+                pygame.draw.circle(surf, (224, 172, 192), (lx, ly), 1)
+        for _ in range(20):                                            # cattails
             tx = rng.randint(int(x + 16), int(x + w - 16))
             ty = rng.randint(int(y + 44), int(y + h - 12))
-            pygame.draw.line(surf, (86, 108, 62), (tx, ty), (tx - 1, ty - rng.randint(8, 13)), 1)
-            pygame.draw.line(surf, (86, 108, 62), (tx + 3, ty), (tx + 4, ty - rng.randint(6, 11)), 1)
+            pygame.draw.line(surf, (92, 116, 66), (tx, ty), (tx, ty - rng.randint(9, 14)), 1)
+            if rng.random() < 0.4:
+                pygame.draw.rect(surf, (96, 66, 40), (tx - 1, ty - 14, 2, 4))    # the head
 
     def _wood(self, surf, rect, danger):
         x, y, w, h = rect
         rng = random.Random(f"{x}:{y}:wood")
+        for _ in range(int(6 + danger * 6)):                           # ferns / bushes underfoot
+            bx = rng.randint(int(x + 16), int(x + w - 16))
+            by = rng.randint(int(y + 46), int(y + h - 12))
+            pygame.draw.circle(surf, LEAF[0], (bx, by), 4)
+            pygame.draw.circle(surf, LEAF[1], (bx - 1, by - 1), 2)
+            if rng.random() < 0.12:                                    # a mushroom
+                pygame.draw.rect(surf, (222, 214, 196), (bx + 5, by - 2, 2, 4))
+                pygame.draw.circle(surf, (176, 74, 62), (bx + 6, by - 3), 2)
         trees = [(rng.randint(int(x + 18), int(x + w - 18)),
-                  rng.randint(int(y + 46), int(y + h - 16))) for _ in range(int(10 + danger * 16))]
+                  rng.randint(int(y + 48), int(y + h - 14))) for _ in range(int(9 + danger * 14))]
         for tx, ty in sorted(trees, key=lambda t: t[1]):              # painter's order
-            r = rng.randint(8, 12)
-            g = max(34, 78 - int(danger * 32))
-            pygame.draw.ellipse(surf, SHADOW, (tx - r, ty - 2, r * 2, 6))
-            pygame.draw.rect(surf, (60, 44, 30), (tx - 2, ty - 6, 4, 8))         # trunk
-            pygame.draw.circle(surf, (20, g - 12, 26), (tx, ty - r - 4), r)      # canopy base
-            pygame.draw.circle(surf, (26, g, 34), (tx - 2, ty - r - 6), r - 2)   # mid
-            pygame.draw.circle(surf, (34, g + 16, 44), (tx - 4, ty - r - 8), r - 5)  # highlight
+            r = rng.randint(9, 13)
+            dk = max(0, 1 - danger * 0.35)                            # deeper woods, darker leaves
+            base = tuple(int(c * dk) for c in LEAF[0])
+            mid = tuple(int(c * dk) for c in LEAF[1])
+            hi = tuple(int(c * dk) for c in LEAF[2])
+            pygame.draw.ellipse(surf, SHADOW, (tx - r, ty - 1, r * 2, 6))
+            pygame.draw.rect(surf, WOOD, (tx - 2, ty - 7, 4, 9))                 # trunk
+            pygame.draw.circle(surf, base, (tx, ty - r - 4), r)                  # canopy base
+            pygame.draw.circle(surf, mid, (tx - 2, ty - r - 6), r - 2)           # mid
+            pygame.draw.circle(surf, hi, (tx - 4, ty - r - 8), r - 5)            # sunlit highlight
 
     # ---- people -----------------------------------------------------------
     def _legs(self, surf, x, y, step, moving, color=(52, 38, 28)):
