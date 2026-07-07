@@ -25,7 +25,7 @@ if TYPE_CHECKING:  # pragma: no cover
 
 def _genome_dict(g: Genome) -> dict:
     return {"appetites": dict(g.appetites), "forage_skill": g.forage_skill,
-            "grow_skill": g.grow_skill, "bravery": g.bravery,
+            "grow_skill": g.grow_skill, "craft_skill": g.craft_skill, "bravery": g.bravery,
             "attack": g.attack, "defense": g.defense, "lifespan": g.lifespan}
 
 
@@ -45,7 +45,8 @@ def from_atom(atom: dict, new_id: str) -> Agent:
     but the one line that it came from elsewhere."""
     gd = atom["genome"]
     g = Genome(appetites=dict(gd["appetites"]), forage_skill=gd["forage_skill"],
-               grow_skill=gd["grow_skill"], bravery=gd.get("bravery", 0.5),
+               grow_skill=gd["grow_skill"], craft_skill=gd.get("craft_skill", 0.5),
+               bravery=gd.get("bravery", 0.5),
                attack=gd.get("attack", 0.5), defense=gd.get("defense", 0.5),
                lifespan=gd["lifespan"])
     lang = PrivateLanguage(new_id, dict(atom["language"]["word_of"]),

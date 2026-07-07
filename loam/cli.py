@@ -7,6 +7,7 @@
   loam census                    # the numbers at a glance
   loam map                       # places, danger, bloom, who is where
   loam zones                     # the dangerous areas and the monsters they spawn
+  loam crafts                    # the professions and what each trade makes
   loam watch                     # what you'd have noticed lately
   loam visit a3                  # sit with one being
   loam translate kalo a5         # help a5 understand the word "kalo"
@@ -112,6 +113,18 @@ def cmd_map(args: argparse.Namespace) -> int:
         stock = w.bloom.get(place, 0.0)
         who = ", ".join(here) if here else "—"
         print(f"{place:14} {danger:6} bloom {stock:5.1f}  | {who}")
+    return 0
+
+
+def cmd_crafts(args: argparse.Namespace) -> int:
+    from . import crafts
+    print("Professions — a trade is a recipe (build one by adding a row to crafts.py):")
+    for name, p in crafts.PROFESSIONS.items():
+        made = ", ".join(f"{amt:g} {g}" for g, amt in p.yields.items())
+        needs = ", ".join(f"{q:g} {g}" for g, q in p.inputs.items()) or "—"
+        risk = "safe" if p.risk < 0.05 else "risky" if p.risk < 0.2 else "dangerous"
+        print(f"  {name:12} {p.kind:7} at {'/'.join(p.places)}")
+        print(f"               needs {needs}  ->  {made}   ({risk})")
     return 0
 
 
@@ -357,6 +370,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub.add_parser("census", help="the numbers").set_defaults(func=cmd_census)
     sub.add_parser("map", help="places, danger, bloom, who is where").set_defaults(func=cmd_map)
     sub.add_parser("zones", help="the dangerous areas and what they spawn").set_defaults(func=cmd_zones)
+    sub.add_parser("crafts", help="the professions and what each one makes").set_defaults(func=cmd_crafts)
 
     v = sub.add_parser("visit", help="sit with one being")
     v.add_argument("agent")

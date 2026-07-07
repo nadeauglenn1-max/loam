@@ -188,11 +188,20 @@ model can author richer tensions behind the same seam.
   beast" appears in the deepwood zone's spawn table as the same creature seen as a
   combat entity. The two are unified when the player can *enter* a zone and the
   abstract forage-roll is replaced by a real fight — the next brick.)
-- **next — the combat pillar** — player combat in the client (enter a zone, fight,
-  level, loot; where the action-vs-turn feel is chosen, and where the ecology
-  beast and the combat beast finally merge). Also: the village's everyday work
-  made playable; a "converse" beat. (Saving a newborn you like is already covered
-  by `save-char`.)
+- **v0.21 (done)** — **professions & goods** (`crafts.py`): the working economy as
+  data. A profession is a recipe — a hand's `craft_skill`, at a place, turning
+  inputs into goods, at some risk (`world.do_craft`). Fishing/mining/hunting/
+  husbandry/woodcutting gather; smelting/smithing/toolmaking/tanning/armoring/
+  weaving/cooking refine. Goods equip: a wielded weapon raises `combat_attack`,
+  armor raises `combat_defense`, a tool sharpens a gather — so the economy feeds
+  the combat pillar. It rides *beside* the survival ecology (bloom/hunger), never
+  through it, so the tuned balance is untouched. Adding a trade is a data row —
+  see `loam crafts`.
+- **next** — give the trades a place in the *living* village (villagers with
+  vocations working through the day); player combat in the client (enter a zone,
+  fight, level, loot; where the action-vs-turn feel is chosen, and where the
+  ecology beast and the combat beast finally merge); a "converse" beat.
+  (Saving a newborn you like is already covered by `save-char`.)
 - **later** — a bigger overarching story as the drive; language may retire from
   the engine (a common tongue); you *inhabit* a being (first person).
 

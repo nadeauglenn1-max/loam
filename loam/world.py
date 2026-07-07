@@ -334,6 +334,30 @@ class World:
         self.monsters.append(m)
         return m
 
+    # ---- the trades -------------------------------------------------------
+    def do_craft(self, agent: Agent, profession: str, rng: random.Random):
+        """A being works a profession: turns effort (and inputs) into goods,
+        maybe taking a mishap. Returns the Outcome (ok=False if it can't be done
+        here). The goods economy — never touches bloom or hunger."""
+        from . import crafts
+        prof = crafts.PROFESSIONS.get(profession)
+        if prof is None or not agent.alive:
+            return crafts.Outcome(False, reason=f"no such trade: {profession}")
+        outcome = crafts.perform(prof, skill=agent.genome.craft_skill,
+                                  location=agent.location, goods=agent.goods, rng=rng)
+        if not outcome.ok:
+            agent.memory.remember(self.tick, outcome.reason)
+            return outcome
+        made = ", ".join(f"{amt:g} {g}" for g, amt in outcome.produced.items())
+        agent.memory.remember(self.tick, f"worked {profession} — made {made}")
+        self._bump(f"craft_{profession}")
+        if outcome.fatal:
+            self._die(agent, "mishap", f"was lost to a mishap while {profession}")
+        elif outcome.hurt:
+            agent.vitality -= config.CRAFT_INJURY_COST
+            agent.memory.remember(self.tick, f"was hurt {profession}")
+        return outcome
+
     def monsters_at(self, location: str) -> list:
         return [m for m in self.monsters if m.alive and m.location == location]
 

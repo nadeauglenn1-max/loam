@@ -137,3 +137,15 @@ XP_PER_KILL = 2              # xp for a defeat = this × the foe's level
 # or dungeon is adding a data row; this is how many monsters a zone holds when
 # it is populated, before anyone thins them out.
 ZONE_SPAWN_DEFAULT = 3
+
+# ---- professions & goods -----------------------------------------------------
+# A profession is a recipe: it draws on a hand's skill (craft_skill), at a place,
+# to turn inputs into goods — sometimes at some risk. Fishing, mining, smithing,
+# husbandry and the rest are all data rows in crafts.py; adding a trade is adding
+# a row. These goods are a wealth-and-equipment economy that rides *beside* the
+# tuned survival ecology (bloom/hunger) — a smithed weapon sharpens combat; it is
+# not a shortcut around hunger, so the balance below is untouched.
+CRAFT_BASE_YIELD = 0.55       # yield multiplier at zero skill…
+CRAFT_SKILL_YIELD = 0.9       # …plus this much at full skill (and tools help)
+CRAFT_INJURY_COST = 0.14      # vitality lost to a mishap at a risky trade
+CRAFT_LETHAL = 0.05           # chance a mishap is truly grave (× risk × 1-skill)

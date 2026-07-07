@@ -48,7 +48,8 @@ class Agent:
     # body
     vitality: float = 1.0
     age: int = 0
-    bloom: float = 0.0            # held resource
+    bloom: float = 0.0            # held food (the survival resource)
+    goods: dict[str, float] = field(default_factory=dict)   # the wealth economy: fish, ore, tools…
     alive: bool = True
     # lineage
     generation: int = 0
@@ -61,6 +62,7 @@ class Agent:
     home: str = ""               # the household they belong to (a family, for the village)
     level: int = 1               # combat level, earned by fighting
     xp: int = 0                  # progress toward the next level
+    vocation: str = ""           # the trade they favour (a profession name, or none)
 
     # ---- birth ------------------------------------------------------------
     @classmethod
@@ -108,13 +110,18 @@ class Agent:
         return len(self.lexicon.known)
 
     # ---- combat interface (shared with monsters) --------------------------
+    # A being's aptitude, sharpened by what it wields — a forged weapon or a
+    # piece of armor it carries. Monsters have no goods, so they fight on aptitude
+    # alone; this is where the crafting economy feeds the combat pillar.
     @property
     def combat_attack(self) -> float:
-        return self.genome.attack
+        from . import crafts
+        return min(1.0, self.genome.attack + crafts.equip_bonus(self.goods, "weapon"))
 
     @property
     def combat_defense(self) -> float:
-        return self.genome.defense
+        from . import crafts
+        return min(1.0, self.genome.defense + crafts.equip_bonus(self.goods, "armor"))
 
     # ---- body states (read by cognition and the chronicle) ----------------
     @property

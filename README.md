@@ -205,6 +205,13 @@ already covered by `save-char`.)
   danger; standalone caves and dungeons carry their own. `world.populate_zone`
   rolls a table into live monsters. **Building a cave or dungeon is adding a
   row** — see `loam zones`.
+- **Professions & goods** — the working economy (`crafts.py`): fishing, mining,
+  hunting, husbandry, woodcutting, smelting, smithing, toolmaking, tanning,
+  armoring, weaving, cooking. **A profession is a recipe** — a hand's skill, at a
+  place, turning inputs into goods, at some risk. A forged weapon sharpens combat
+  and a tool sharpens a gather, so the economy feeds the combat pillar; it rides
+  *beside* the tuned survival ecology, never through it. **Adding a trade is
+  adding a row** — see `loam crafts`.
 
 **Next — the combat pillar**
 - **Player combat in the client** — enter a zone, fight, level, loot (this is
@@ -237,6 +244,7 @@ cast.py        the authored founding village — thirty souls, families, groups,
 combat.py      combat & leveling — attack/defense, damage off vitality, xp/levels
 bestiary.py    monsters as data-driven entities — a registry of kinds
 zones.py       dangerous areas as data — named area, danger, monster spawn table
+crafts.py      professions & goods as data — a trade is a recipe (skill×place→goods)
 cognition.py   Decision + RuleCognition (free/default/fallback) + ClaudeCognition (live)
 llm.py         the only place that touches the network
 world.py       the tick loop: ecology, life, death, birth, speech, and your levers
