@@ -22,12 +22,14 @@ from .config import CONCEPTS
 
 @dataclass
 class Player:
+    name: str = "You"
+    gender: str = ""                                                # "female" | "male" | "" — looks only, no mechanical difference
     understanding: dict[str, float] = field(default_factory=dict)   # family -> 0..1, against distrust
     skills: dict[str, float] = field(default_factory=dict)          # trade -> 0..1, grown by doing
     words: dict[str, list] = field(default_factory=dict)            # family -> concepts earned (prizes)
     bonds: dict[str, float] = field(default_factory=dict)           # being id -> 0..1, ties you tend
     spouse: str = ""                                                # a being you have wed
-    children: list = field(default_factory=list)                    # ids of children you have had
+    children: list = field(default_factory=list)                    # ids of children you have raised
 
     # ---- understanding a family (slow, distrust-gated, prizes) ------------
     def of(self, family: str) -> float:

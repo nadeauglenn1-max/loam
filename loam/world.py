@@ -603,30 +603,30 @@ class World:
         self._log(f"You and {a.name} are wed.")
         return {"ok": True, "spouse": being_id, "name": a.name}
 
-    def bear_child(self, rng: random.Random) -> dict:
-        """A child of you and the one you wed. Kept apart from the village's own
-        procreation — this line runs through you."""
+    def have_child(self, rng: random.Random) -> dict:
+        """A child comes to you and the one you wed — a family, nothing more.
+        Kept apart from the village's own procreation; this line runs through you."""
         if not self.player.spouse:
-            return {"ok": False, "reason": "you have no one to bear a child with"}
+            return {"ok": False, "reason": "you have no one to raise a child with"}
         spouse = self.agents.get(self.player.spouse)
         if spouse is None or not spouse.alive:
             return {"ok": False, "reason": "the one you wed is gone"}
         from .agent import Agent
         from .genome import Genome
         from .language import PrivateLanguage
-        you = Agent(id="you", name="You",
+        you = Agent(id="you", name=self.player.name or "You",
                     genome=Genome.genesis(f"you:{self.name or 'scratch'}"),
                     language=PrivateLanguage.for_agent("you"), generation=0)
         child_id = f"a{self.next_index}"
         self.next_index += 1
         child = Agent.child(child_id, spouse, you, rng)
         child.parents = (spouse.id, "you")
-        child.story = f"your child with {spouse.name}"
+        child.story = f"your child, with {spouse.name}"
         self.agents[child_id] = child
         self.player.children.append(child_id)
         self._bump("player_children")
-        spouse.memory.remember(self.tick, f"had a child, {child.name}, with the one who understands")
-        self._log(f"{child.name} is born to you and {spouse.name} (generation {child.generation}).")
+        spouse.memory.remember(self.tick, f"a child, {child.name}, came to us")
+        self._log(f"A child, {child.name}, comes to you and {spouse.name} (generation {child.generation}).")
         return {"ok": True, "child": child_id, "name": child.name, "generation": child.generation}
 
     def _broker_among_kin(self, a: Agent, fam: str) -> dict | None:

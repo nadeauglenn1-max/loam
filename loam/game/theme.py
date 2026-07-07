@@ -419,9 +419,10 @@ class Theme:
         tag = self.small.render(name, True, INK if highlight else MUTE)
         surf.blit(tag, (x - tag.get_width() // 2, y + 4))
 
-    def draw_player(self, surf, x, y, step, moving, facing):
+    def draw_player(self, surf, x, y, step, moving, facing, gender=""):
         x, y = int(x), int(y)
-        self._figure(surf, x, y, (245, 222, 178), (120, 90, 40), PLAYER, 1,
+        style = 1 if gender == "female" else 2 if gender == "male" else 0  # hair only — no difference
+        self._figure(surf, x, y, (245, 222, 178), (120, 90, 40), PLAYER, style,
                      step, moving, facing)
         pygame.draw.polygon(surf, (198, 168, 96),                               # a gold cape
                             [(x - 7, y - 18), (x + 7, y - 18), (x + 5, y - 4), (x - 5, y - 4)])

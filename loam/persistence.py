@@ -72,7 +72,8 @@ def to_dict(w: World) -> dict:
         "seed": w.seed, "tick": w.tick, "present": w.present, "next_index": w.next_index,
         "name": w.name, "role": w.role, "forked_from": w.forked_from,
         "predator": w.predator,
-        "player": {"understanding": w.player.understanding,
+        "player": {"name": w.player.name, "gender": w.player.gender,
+                   "understanding": w.player.understanding,
                    "skills": w.player.skills, "words": w.player.words,
                    "bonds": w.player.bonds, "spouse": w.player.spouse,
                    "children": w.player.children},
@@ -102,7 +103,8 @@ def from_dict(d: dict, model=None) -> World:
     w.fallen = list(d.get("fallen", []))
     w.tally = dict(d.get("tally", {}))
     pd = d.get("player", {})
-    w.player = Player(understanding=dict(pd.get("understanding", {})),
+    w.player = Player(name=pd.get("name", "You"), gender=pd.get("gender", ""),
+                      understanding=dict(pd.get("understanding", {})),
                       skills=dict(pd.get("skills", {})),
                       words={k: list(v) for k, v in pd.get("words", {}).items()},
                       bonds=dict(pd.get("bonds", {})),
