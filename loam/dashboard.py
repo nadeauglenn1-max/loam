@@ -52,14 +52,19 @@ def _e(s: str) -> str:
 
 
 def render_page(world: "World", *, refresh: int = 0) -> str:
+    from . import rifts
     c = metrics.census(world)
     frac, _, _ = metrics.coverage(world)
+    _tnow, _tchg, tway = metrics.tongue_trend(world)
+    _pfrac, pdone, ptotal = rifts.progress(world)
     colors = _tribe_colors(world)
     meta = f'<meta http-equiv="refresh" content="{refresh}">' if refresh else ""
 
     vitals = [
         ("tick", world.tick), ("alive", c["population"]), ("generations", c["generations"]),
-        ("avg vitality", c["avg_vitality"]), ("shared tongue", f"{frac * 100:.0f}%"),
+        ("avg vitality", c["avg_vitality"]),
+        ("shared tongue", f"{frac * 100:.0f}% · {tway}"),
+        ("you understand", f"{pdone}/{ptotal}"),
         ("born", c["births"]),
         ("died", c["deaths_hunger"] + c["deaths_age"] + c["deaths_forage"] + c["deaths_violence"]),
     ]
