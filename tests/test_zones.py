@@ -31,7 +31,7 @@ def test_populate_rolls_the_table_at_the_zones_location():
     monsters = zones.populate("the sunken barrow", random.Random(1), count=6)
     assert len(monsters) == 6
     kinds = {m.kind for m in monsters}
-    assert kinds <= {"lurker", "cave troll"}          # only what the table lists
+    assert kinds <= {"lurker", "wraith", "cave troll"}   # only what the table lists
     assert all(m.location == "the sunken barrow" for m in monsters)
     assert all(m.level >= 3 for m in monsters)         # the barrow spawns level 3+
 
