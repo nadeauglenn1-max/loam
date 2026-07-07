@@ -41,6 +41,25 @@ def coverage(world: "World") -> tuple[float, int, int]:
     return (edges / total, edges, total)
 
 
+def player_summary(world: "World") -> dict:
+    """Who you have become — the shape of your journey so far."""
+    from . import bonds, rifts
+    p = world.player
+    frac, done, total = rifts.progress(world)
+    close = sorted(((b, lvl) for b, lvl in p.bonds.items() if lvl > 0), key=lambda kv: -kv[1])
+    return {
+        "name": p.name, "gender": p.gender,
+        "understood": done, "families": total, "understanding": frac,
+        "words_earned": sum(len(v) for v in p.words.values()),
+        "trades": sorted(((t, lvl) for t, lvl in p.skills.items() if lvl > 0),
+                         key=lambda kv: -kv[1]),
+        "spouse": world.agents[p.spouse].name if p.spouse in world.agents else "",
+        "children": [world.agents[c].name for c in p.children if c in world.agents],
+        "closest": [(world.agents[b].name, bonds.tier(lvl, wed=(b == p.spouse)))
+                    for b, lvl in close[:5] if b in world.agents],
+    }
+
+
 def tongue_trend(world: "World", window: int = 5) -> tuple[float, float, str]:
     """How the shared tongue has moved lately — it is a living thing, rising as
     beings learn each other and fraying as elders (and their words) are lost and
