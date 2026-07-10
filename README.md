@@ -306,4 +306,6 @@ pip install -e ".[dev]"           # sim + tests; add ".[game]" for the explore c
 pytest --cov=loam --cov-fail-under=90
 ```
 
-Clean-room project. Proprietary; all rights reserved (see LICENSE).
+Clean-room project. Open source under the [MIT License](LICENSE) — fork it and
+build. Contributions are welcome, but every check-in to this repo requires
+maintainer approval; see [CONTRIBUTING.md](CONTRIBUTING.md).
